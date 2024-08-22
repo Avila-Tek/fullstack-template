@@ -19,7 +19,7 @@ services:
         RELEASE: $RELEASE
         TURBO_TEAM: $TURBO_TEAM
         TURBO_TOKEN: $TURBO_TOKEN
-    image: api
+    # image: api
     env_file: ./apps/api/.env
     restart: unless-stopped
     ports:

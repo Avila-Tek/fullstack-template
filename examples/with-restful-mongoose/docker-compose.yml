@@ -20,7 +20,7 @@ services:
         TURBO_TEAM: $TURBO_TEAM
         TURBO_TOKEN: $TURBO_TOKEN
     image: api
-    env_file: ./apps/api/src/.env
+    env_file: ./apps/api/.env
     restart: unless-stopped
     ports:
       - 3000:3000
