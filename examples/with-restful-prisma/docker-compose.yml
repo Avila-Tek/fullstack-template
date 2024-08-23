@@ -1,0 +1,91 @@
+version: '2'
+
+services:
+
+  api:
+    build:
+      context: .
+      dockerfile: ./apps/api/Dockerfile
+      args:
+        # Application Args
+        APP_PATH: ./apps/api
+        SCOPE: '@repo/api'
+        PORT: 3000
+        # Project Args
+        SENTRY_URL: $SENTRY_URL
+        SENTRY_ORG: $SENTRY_ORG
+        SENTRY_PROJECT: $SENTRY_PROJECT_API
+        SENTRY_TOKEN: $SENTRY_TOKEN
+        RELEASE: $RELEASE
+        TURBO_TEAM: $TURBO_TEAM
+        TURBO_TOKEN: $TURBO_TOKEN
+    # image: api
+    env_file: ./apps/api/.env
+    restart: unless-stopped
+    ports:
+      - 3000:3000
+    mem_limit: 2g
+    memswap_limit: -1
+    mem_swappiness: 20
+
+  client:
+    build:
+      context: .
+      dockerfile: ./apps/client/Dockerfile
+      args:
+        # Application Args
+        APP_PATH: ./apps/client
+        SCOPE: '@repo/client'
+        PORT: 3001
+        # Project Args
+        NEXT_PUBLIC_SENTRY_DSN: $NEXT_PUBLIC_SENTRY_DSN_CLIENT
+        SENTRY_URL: $SENTRY_URL
+        SENTRY_ORG: $SENTRY_ORG
+        SENTRY_PROJECT: $SENTRY_PROJECT_CLIENT
+        SENTRY_TOKEN: $SENTRY_TOKEN
+        RELEASE: $RELEASE
+        TURBO_TEAM: $TURBO_TEAM
+        TURBO_TOKEN: $TURBO_TOKEN
+    image: client
+    env_file: ./apps/client/.env.local
+    depends_on:
+      - 'api'
+    restart: unless-stopped
+    ports:
+      - 3001:3001
+    mem_limit: 2g
+    memswap_limit: -1
+    mem_swappiness: 20
+
+  admin:
+    build:
+      context: .
+      dockerfile: ./apps/admin/Dockerfile
+      args:
+        # Application Args
+        APP_PATH: ./apps/admin
+        SCOPE: '@repo/admin'
+        PORT: 3002
+        # Project Args
+        NEXT_PUBLIC_SENTRY_DSN: $NEXT_PUBLIC_SENTRY_DSN_CLIENT
+        SENTRY_URL: $SENTRY_URL
+        SENTRY_ORG: $SENTRY_ORG
+        SENTRY_PROJECT: $SENTRY_PROJECT_CLIENT
+        SENTRY_TOKEN: $SENTRY_TOKEN
+        RELEASE: $RELEASE
+        TURBO_TEAM: $TURBO_TEAM
+        TURBO_TOKEN: $TURBO_TOKEN
+    image: admin
+    env_file: ./apps/admin/.env.local
+    depends_on:
+      - 'api'
+    restart: unless-stopped
+    ports:
+      - 3002:3002
+    mem_limit: 2g
+    memswap_limit: -1
+    mem_swappiness: 20
+
+volumes:
+  cache:
+    driver: local
