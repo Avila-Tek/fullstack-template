@@ -13,7 +13,7 @@ export default withSentryConfig(nextConfig, {
 
   org: 'avilatek',
   // TODO: Replace this value with your project's name
-  project: 'example',
+  project: '',
 
   // Only print logs for uploading source maps in CI
   silent: !process.env.CI,
