@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "next dev --turbo -p 3003",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "test": "jest"
   },
   "dependencies": {
     "@headlessui/react": "^2.1.2",
@@ -23,12 +24,15 @@
     "clsx": "^2.1.1",
     "dayjs": "^1.11.13",
     "framer-motion": "^11.3.29",
+    "msw": "^2.4.2",
     "next": "14.2.5",
     "next-auth": "^4.24.7",
+    "next-themes": "^0.3.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-hook-form": "^7.52.2",
     "tailwind-merge": "^2.5.2",
+    "undici": "^6.19.8",
     "zod": "^3.23.8"
   },
   "devDependencies": {
