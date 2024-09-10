@@ -75,7 +75,7 @@ COPY --from=installer /app/${APP_PATH}/next.config.* /app/${APP_PATH}/next.confi
 COPY --from=installer /app/packages/ui /app/packages/ui
 COPY --from=installer /app/${APP_PATH}/public /app/${APP_PATH}/public
 COPY --from=installer --chown=nextjs:avilatek /app/${APP_PATH}/.next /app/${APP_PATH}/.next 
-COPY --from=installer /app/node_modules ./node_modules
+
 COPY --from=installer /app/${APP_PATH}/package.json /app/${APP_PATH}/package.json
 COPY --from=installer /app/${APP_PATH}/.env.local /app/${APP_PATH}/.env.local
 

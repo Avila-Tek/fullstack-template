@@ -77,7 +77,7 @@ USER avilatek
 COPY --from=installer /app/package*.json .
 COPY --from=installer /app/${APP_PATH}/dist ./${APP_PATH}/dist
 COPY --from=installer /app/${APP_PATH}/src/*.env* ./${APP_PATH}/src/*.env*
-COPY --from=installer /app/node_modules ./node_modules
+
 COPY --from=installer /app/${APP_PATH}/package.json ./${APP_PATH}/package.json
 # Prisma
 COPY --from=installer /app/${APP_PATH}/prisma ./${APP_PATH}/prisma
