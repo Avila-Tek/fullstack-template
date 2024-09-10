@@ -19,7 +19,7 @@ RUN turbo prune --scope=${SCOPE} --docker
 
 
 ### Intaller
-FROM builder AS installer
+FROM base AS installer
 RUN apk add --no-cache git libc6-compat tzdata g++ make py3-pip
 RUN apk update
 ENV TZ=America/Caracas
@@ -58,7 +58,7 @@ RUN npx prisma generate
 WORKDIR /app
 
 ## Runner
-FROM installer AS runner
+FROM base AS runner
 # Image args
 ARG SCOPE
 ARG APP_PATH
