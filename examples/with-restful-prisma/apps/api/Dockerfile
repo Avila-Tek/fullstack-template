@@ -1,5 +1,7 @@
+FROM node:22-alpine AS base
+
 ### Builder
-FROM node:22-alpine AS builder
+FROM base AS builder
 # Updates and dependencies
 RUN apk add --no-cache git libc6-compat tzdata g++ make py3-pip
 RUN apk update
