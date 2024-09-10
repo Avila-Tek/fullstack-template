@@ -7,10 +7,16 @@
     "lint": "turbo lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "format-and-lint": "biome check .",
-    "format-and-lint:fix": "biome check . --write"
+    "format-and-lint:fix": "biome check . --write",
+    "cypress:open": "cypress open",
+    "start": "turbo test:e2e",
+    "test:e2e": "cypress run",
+    "start:test": "npm-run-all -p start test:e2e"
   },
   "devDependencies": {
     "@biomejs/biome": "1.8.3",
+    "cypress": "^13.14.2",
+    "npm-run-all": "^4.1.5",
     "prettier": "^3.2.5",
     "turbo": "^2.0.13",
     "typescript": "^5.4.5"
@@ -19,5 +25,8 @@
     "node": ">=18"
   },
   "packageManager": "npm@10.5.0",
-  "workspaces": ["apps/*", "packages/*"]
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ]
 }
