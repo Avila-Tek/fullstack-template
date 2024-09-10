@@ -50,13 +50,6 @@ ENV RELEASE=$RELEASE
 ENV SENTRY_ORG=$SENTRY_ORG
 ENV SENTRY_PROJECT=$SENTRY_PROJECT
 ENV SENTRY_AUTH_TOKEN=$SENTRY_TOKEN
-# Sentry 
-RUN npm i -g @sentry/cli turbo
-RUN turbo run build --filter=${SCOPE}
-RUN sentry-cli releases new ${RELEASE} || echo "❌ Error creating new release ${RELEASE} to Sentry"
-RUN sentry-cli releases files ${RELEASE} upload-sourcemaps ./dist || echo "❌ Error sending data to Sentry"
-RUN sentry-cli releases finalize ${RELEASE} || echo "❌ Error sending data to Sentry"
-
 
 ## Runner
 FROM node:18-alpine AS runner

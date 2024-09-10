@@ -54,13 +54,6 @@ COPY --from=builder /app/${APP_PATH}/prisma/ ./${APP_PATH}/prisma/
 WORKDIR /app/${APP_PATH}
 RUN npx prisma generate
 WORKDIR /app
-# Sentry 
-RUN npm i -g @sentry/cli turbo
-RUN turbo run build --filter=${SCOPE}
-RUN sentry-cli releases new ${RELEASE} || echo "❌ Error creating new release ${RELEASE} to Sentry"
-RUN sentry-cli releases files ${RELEASE} upload-sourcemaps ./dist || echo "❌ Error sending data to Sentry"
-RUN sentry-cli releases finalize ${RELEASE} || echo "❌ Error sending data to Sentry"
-
 
 ## Runner
 FROM node:18-alpine AS runner
