@@ -32,7 +32,6 @@ RUN npm i -g turbo
 COPY .gitignore .gitignore
 COPY --from=builder /app/out/json/ .
 COPY --from=builder /app/out/package-lock.json ./package-lock.json
-RUN npm i turbo
 RUN npm ci
 # Build project
 COPY --from=builder /app/out/full/ .
