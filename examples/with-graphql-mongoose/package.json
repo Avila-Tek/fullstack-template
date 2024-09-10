@@ -9,9 +9,9 @@
     "format-and-lint": "biome check .",
     "format-and-lint:fix": "biome check . --write",
     "cypress:open": "cypress open",
-    "start": "turbo test:e2e",
-    "test:e2e": "cypress run",
-    "start:test": "npm-run-all -pino start test:e2e"
+    "test": "turbo test:e2e",
+    "test:run": "cypress run",
+    "start:test": "npm-run-all -p test test:run"
   },
   "devDependencies": {
     "@biomejs/biome": "1.8.3",

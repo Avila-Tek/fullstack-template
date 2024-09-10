@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "next dev --turbo -p 3003",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "test:e2e": "next start -p 3003"
   },
   "dependencies": {
     "@repo/ui": "*",

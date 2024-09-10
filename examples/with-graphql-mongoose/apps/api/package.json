@@ -10,7 +10,6 @@
     "dev": "tsx watch src .env pino-pretty --colorize",
     "test": "",
     "test:e2e": "node dist/index.js"
-
   },
   "author": "Avila Tek <devops@avilatek.com>",
   "license": "ISC",
