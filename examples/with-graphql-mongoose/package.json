@@ -11,7 +11,7 @@
     "cypress:open": "cypress open",
     "start": "turbo test:e2e",
     "test:e2e": "cypress run",
-    "start:test": "npm-run-all -p start test:e2e"
+    "start:test": "npm-run-all -pino start test:e2e"
   },
   "devDependencies": {
     "@biomejs/biome": "1.8.3",
