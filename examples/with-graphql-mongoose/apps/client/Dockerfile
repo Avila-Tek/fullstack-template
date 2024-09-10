@@ -17,7 +17,7 @@ RUN turbo prune --scope=${SCOPE} --docker
 
 
 ### Intaller
-FROM node:22-alpine AS installer
+FROM builder AS installer
 RUN apk add --no-cache git libc6-compat tzdata g++ make py3-pip
 RUN apk update
 ENV TZ=America/Caracas
@@ -52,7 +52,7 @@ ENV SENTRY_PROJECT=$SENTRY_PROJECT
 ENV SENTRY_AUTH_TOKEN=$SENTRY_TOKEN
 
 ## Runner
-FROM node:22-alpine AS runner
+FROM installer AS runner
 # Image args
 ARG SCOPE
 ARG APP_PATH
