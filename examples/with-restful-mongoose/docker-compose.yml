@@ -9,7 +9,6 @@ services:
       args:
         # Application Args
         APP_PATH: ./apps/api
-        SCOPE: '@repo/api'
         PORT: 3000
         # Project Args
         SENTRY_URL: $SENTRY_URL
@@ -35,7 +34,6 @@ services:
       args:
         # Application Args
         APP_PATH: ./apps/client
-        SCOPE: '@repo/client'
         PORT: 3001
         # Project Args
         NEXT_PUBLIC_SENTRY_DSN: $NEXT_PUBLIC_SENTRY_DSN_CLIENT
@@ -64,7 +62,6 @@ services:
       args:
         # Application Args
         APP_PATH: ./apps/admin
-        SCOPE: '@repo/admin'
         PORT: 3002
         # Project Args
         NEXT_PUBLIC_SENTRY_DSN: $NEXT_PUBLIC_SENTRY_DSN_CLIENT
