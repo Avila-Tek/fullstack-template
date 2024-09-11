@@ -42,6 +42,8 @@ ARG TURBO_TEAM
 ARG TURBO_TOKEN
 ENV TURBO_TEAM=$TURBO_TEAM
 ENV TURBO_TOKEN=$TURBO_TOKEN
+
+RUN npx turbo build --filter=${SCOPE}
 ## Runner
 FROM base AS runner
 # Image args

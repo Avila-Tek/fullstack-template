@@ -48,6 +48,7 @@ WORKDIR /app/${APP_PATH}
 RUN npx prisma generate
 WORKDIR /app
 
+RUN npx turbo build --filter=${SCOPE}
 ## Runner
 FROM base AS runner
 # Image args
