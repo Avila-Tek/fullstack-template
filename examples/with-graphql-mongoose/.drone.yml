@@ -3,7 +3,7 @@ name: CI - Build
 
 steps:
   - name: CI - Build
-    image: node:20-alpine
+    image: node:22-alpine
     environment:
       TURBO_TOKEN:
         from_secret: TURBO_TOKEN
@@ -17,26 +17,6 @@ steps:
         - development
         - staging
         - main
-
-  # - name: If failure notification
-  #   image: lesanpi/lark-plugin:send-message-v1
-  #   environment:
-  #     APP_ID:
-  #       from_secret: LARK_APP_ID
-  #     APP_SECRET:
-  #       from_secret: LARK_APP_SECRET
-  #     RECEIVE_ID:
-  #       from_secret: LARK_CHAT_ID
-  #     RECEIVE_ID_TYPE: 'chat_id'
-  #     CONTENT: '{\"text\": \"<b>❌🔧 Build failure for MEIT </b>\\\n review at [Drone](https://drone.avilatek.com/Avila-Tek/meit) \"}'
-  #     MSG_TYPE: text
-  #   when:
-  #     status:
-  #       - failure
-  #     branch:
-  #       - development
-  #       - staging
-  #       - main
 
 trigger:
   event:
