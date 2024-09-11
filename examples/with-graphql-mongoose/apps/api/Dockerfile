@@ -24,9 +24,7 @@ RUN apk add --no-cache git libc6-compat tzdata g++ make py3-pip
 RUN apk update
 ENV TZ=America/Caracas
 # Image args
-ARG SCOPE
 ARG APP_PATH
-ENV SCOPE=$SCOPE
 ENV APP_PATH=$APP_PATH
 # Install
 WORKDIR /app
@@ -56,9 +54,7 @@ ENV SENTRY_AUTH_TOKEN=$SENTRY_TOKEN
 ## Runner
 FROM base AS runner
 # Image args
-ARG SCOPE
 ARG APP_PATH
-ENV SCOPE=$SCOPE
 ENV APP_PATH=$APP_PATH
 # Environment and dependencies
 ENV NODE_ENV production
