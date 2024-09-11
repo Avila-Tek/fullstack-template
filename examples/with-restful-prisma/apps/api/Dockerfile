@@ -1,16 +1,16 @@
 FROM node:22-alpine AS base
 
+ENV SCOPE=@repo/api
+ARG APP_PATH
+ENV APP_PATH=$APP_PATH
+
 ### Builder
 FROM base AS builder
 # Updates and dependencies
 RUN apk add --no-cache git libc6-compat tzdata g++ make py3-pip
 RUN apk update
 ENV TZ=America/Caracas
-# Args
-ARG SCOPE
-ARG APP_PATH
-ENV SCOPE=$SCOPE
-ENV APP_PATH=$APP_PATH
+
 # Install and generate partial monorepo to have only the necessary to build ${SCOPE} app
 WORKDIR /app
 RUN npm i -g turbo 
@@ -23,9 +23,7 @@ FROM base AS installer
 RUN apk add --no-cache git libc6-compat tzdata g++ make py3-pip
 RUN apk update
 ENV TZ=America/Caracas
-# Image args
-ARG APP_PATH
-ENV APP_PATH=$APP_PATH
+
 # Install
 WORKDIR /app
 RUN npm i -g turbo
@@ -51,9 +49,7 @@ WORKDIR /app
 RUN npx turbo build --filter=${SCOPE}
 ## Runner
 FROM base AS runner
-# Image args
-ARG APP_PATH
-ENV APP_PATH=$APP_PATH
+
 # Environment and dependencies
 ENV NODE_ENV production
 RUN apk add --no-cache tzdata
