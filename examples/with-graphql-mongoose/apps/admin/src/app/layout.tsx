@@ -1,7 +1,14 @@
 import type { Metadata } from 'next';
 import localFont from 'next/font/local';
+import '../css/color-variables.css';
 import './globals.css';
+import '../css/bg-variables.css';
+import '../css/border-variables.css';
+import '../css/text-variables.css';
+import '../css/fg-variables.css';
+
 import { ApolloWrapper } from '@/lib/graphql/apollo-wrapper';
+import { ThemeProvider } from 'next-themes';
 
 const geistSans = localFont({
   src: './fonts/GeistVF.woff',
@@ -25,7 +32,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        <ApolloWrapper>{children}</ApolloWrapper>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <ApolloWrapper>{children}</ApolloWrapper>
+        </ThemeProvider>
       </body>
     </html>
   );
