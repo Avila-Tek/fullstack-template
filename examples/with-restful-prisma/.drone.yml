@@ -20,8 +20,8 @@ steps:
         - development
         - staging
         - main
-  - name: CI - Build [node:18]
-    image: node:18-alpine
+  - name: CI - Build [node:20]
+    image: node:20-alpine
     commands:
       - npm ci --legacy-peer-deps
       - npm run lint
