@@ -8,7 +8,7 @@ steps:
       GH_TOKEN:
         from_secret: GH_TOKEN
     commands:
-      - sudo apt install gh
+      - apt install gh
       - curl -fsSL https://docs.grit.io/install | bash
       - echo $GH_TOKEN > token.txt
       - gh auth login --with-token < gh_token.txt
