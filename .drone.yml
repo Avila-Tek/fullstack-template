@@ -9,7 +9,7 @@ steps:
         from_secret: GH_TOKEN
     commands:
       - apk add github-cli
-      - curl -fsSL https://docs.grit.io/install | bash
+      - curl -fsSL https://docs.grit.io/install | sh
       - echo $GH_TOKEN > token.txt
       - gh auth login --with-token < gh_token.txt
       - rm gh_token.txt
