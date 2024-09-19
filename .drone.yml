@@ -21,6 +21,7 @@ trigger:
   branch:
     - GritPoC
     - development
+    - staging
     - main
   event:
     - push
