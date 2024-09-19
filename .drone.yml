@@ -16,7 +16,12 @@ steps:
       - grit apply no_console_log
       - gh pr create --title 'REFACTOR:grit' --body '' --base 'main'
       - echo "✅ Pull Request created"
-
+    when:
+      branch:
+        - development
+        - staging
+        - main
+        - GritPoC
 trigger:
   branch:
     - GritPoC
@@ -25,3 +30,4 @@ trigger:
     - main
   event:
     - push
+    - pull_request
