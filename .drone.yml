@@ -3,14 +3,13 @@ name: Grit - Verification
 
 steps:
   - name: Grit - Code Check
-    image: node:18-alpine
+    image: ubuntu:rolling
     environment:
       GH_TOKEN:
         from_secret: GH_TOKEN
     commands:
-      - apk add github-cli
-      - apk add --no-cache curl jq
-      - curl -fsSL https://docs.grit.io/install | sh
+      - sudo apt install gh
+      - curl -fsSL https://docs.grit.io/install | bash
       - echo $GH_TOKEN > token.txt
       - gh auth login --with-token < gh_token.txt
       - rm gh_token.txt
