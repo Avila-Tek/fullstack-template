@@ -1,0 +1,27 @@
+kind: pipeline
+name: Grit - Verification
+
+steps:
+  - name: Grit - Code Check
+    image: node:18-alpine
+    environment:
+      GH_TOKEN:
+        from_secret: GH_TOKEN
+    commands:
+      - apk add github-cli
+      - npm install --location=global @getgrit/cli
+      - echo $GH_TOKEN > token.txt
+      - gh auth login --with-token < gh_token.txt
+      - rm gh_token.txt
+      - grit apply no_console_log
+      - gh pr create --title 'REFACTOR:grit' --body '' --base 'main'
+    when:
+      branch:
+        - development
+        - staging
+        - main
+        - GritPoC
+
+trigger:
+  event:
+    - push
