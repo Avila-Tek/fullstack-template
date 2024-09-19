@@ -13,7 +13,6 @@ export async function createApp() {
     connection = await mongoose
       .connect(String(process.env.DATABASE))
       .then((conn) => {
-        console.log('Connected to database');
         return conn;
       });
 
