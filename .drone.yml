@@ -26,3 +26,6 @@ trigger:
   event:
     - push
     - pull_request
+
+node:
+  kind: notification
