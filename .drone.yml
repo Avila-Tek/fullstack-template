@@ -9,7 +9,6 @@ steps:
         from_secret: GITHUB_TOKEN
     commands:
       - grit --help
-      - grit install
       - grit init
       - grit check
 trigger:
