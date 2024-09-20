@@ -11,6 +11,7 @@ steps:
       - curl -fsSL https://docs.grit.io/install | bash
       - ls
       - echo $HOME
+      - ls $HOME/.grit/bin/env
       - /bin/bash -c source $HOME/.grit/bin/env
       - grit --help
       # - rm gh_token.txt
