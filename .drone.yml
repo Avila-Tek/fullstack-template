@@ -23,7 +23,6 @@ steps:
       # - echo "✅ Pull Request created"
 trigger:
   branch:
-    - GritPoC
     - development
     - staging
     - main
