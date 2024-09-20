@@ -8,7 +8,6 @@ steps:
       GH_TOKEN:
         from_secret: GITHUB_TOKEN
     commands:
-      - grit --help
       - grit init
       - grit check
 trigger:
