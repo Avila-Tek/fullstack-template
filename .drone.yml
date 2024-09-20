@@ -23,7 +23,7 @@ node:
 
 ---
 kind: pipeline
-name: Grit - Verification
+name: Grit - Fix
 type: exec
 
 steps:
