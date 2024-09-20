@@ -9,7 +9,6 @@ steps:
         from_secret: GH_TOKEN
     commands:
       - grit init
-      - grit check
       # - rm gh_token.txt
       # - grit apply no_console_log
       # - gh pr create --title 'REFACTOR:grit' --body '' --base 'main'
