@@ -13,11 +13,6 @@ steps:
       - grit init
       - grit check
       # - echo $GITHUB_TOKEN | gh auth login --with-token
-      - grit apply es6_imports
-      - git status
-      - git checkout -b "RANDOM"
-      - git branch
-      - git add .
 
       # - rm gh_token.txt
       # - grit apply no_console_log
