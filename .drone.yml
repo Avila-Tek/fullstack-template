@@ -8,7 +8,7 @@ steps:
       GH_TOKEN:
         from_secret: GH_TOKEN
     commands:
-      - apt-get install -y --no-install-recommends curl gnupg lsb-release
+      - apt-get install -y --no-install-recommends curl
       - curl -fsSL https://docs.grit.io/install | bash
       - grit init
       - grit check
