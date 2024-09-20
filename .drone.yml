@@ -12,7 +12,7 @@ steps:
       - grit install
       - grit init
       # - echo $GITHUB_TOKEN | gh auth login --with-token
-      - grit apply no_console_log
+      - grit apply es6_imports
       - git status
       - git checkout -b "RANDOM"
       - git branch
