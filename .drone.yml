@@ -17,6 +17,30 @@ trigger:
     - main
   event:
     - pull_request
+
+node:
+  kind: grit
+
+---
+kind: pipeline
+name: Grit - Verification
+type: exec
+
+steps:
+  - name: Grit - Code Check
+    environment:
+      GH_TOKEN:
+        from_secret: GITHUB_TOKEN
+    commands:
+      - grit init
+      - grit check --fix
+      - git status
+trigger:
+  branch:
+    - development
+    - staging
+    - main
+  event:
     - push
 
 node:
