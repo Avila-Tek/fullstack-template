@@ -9,6 +9,7 @@ steps:
         from_secret: GITHUB_TOKEN
     commands:
       - grit --help
+      - grit install
       - grit init
       # - echo $GITHUB_TOKEN | gh auth login --with-token
       - grit apply no_console_log
