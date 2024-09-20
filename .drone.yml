@@ -11,6 +11,7 @@ steps:
       - grit --help
       - grit install
       - grit init
+      - grit check
       # - echo $GITHUB_TOKEN | gh auth login --with-token
       - grit apply es6_imports
       - git status
