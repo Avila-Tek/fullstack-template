@@ -6,12 +6,11 @@ steps:
   - name: Grit - Code Check
     environment:
       GH_TOKEN:
-        from_secret: GH_TOKEN
+        from_secret: GITHUB_TOKEN
     commands:
       - grit --help
       - gh --help
-      - gh auth login --with-token
-      - gh auth status
+      - echo $GITHUB_TOKEN | gh auth login --with-token
       - grit apply no_console_log
       - git status
       - git checkout -b "RANDOM"
