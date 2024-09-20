@@ -10,6 +10,13 @@ steps:
     commands:
       - grit --help
       - gh --help
+      - echo $GH_TOKEN
+      - grit apply no_console_log
+      - git status
+      - git checkout -b "RANDOM"
+      - git branch
+      - git add .
+
       # - rm gh_token.txt
       # - grit apply no_console_log
       # - gh pr create --title 'REFACTOR:grit' --body '' --base 'main'
