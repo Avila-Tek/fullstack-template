@@ -1,5 +1,6 @@
 kind: pipeline
 name: Grit - Verification
+type: exec
 
 steps:
   - name: Grit - Code Check
@@ -24,4 +25,4 @@ trigger:
     - pull_request
 
 node:
-  kind: notification
+  kind: grit
