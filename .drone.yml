@@ -10,6 +10,7 @@ steps:
     commands:
       - curl -fsSL https://docs.grit.io/install | bash
       - ls
+      - echo $HOME
       - /bin/bash -c source .grit/bin/env
       - grit --help
       # - rm gh_token.txt
