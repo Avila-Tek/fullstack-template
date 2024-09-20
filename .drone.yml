@@ -18,6 +18,7 @@ trigger:
     - main
   event:
     - pull_request
+    - push
 
 node:
   kind: grit
