@@ -11,6 +11,7 @@ steps:
       - grit --help
       - gh --help
       - echo $GH_TOKEN
+      - echo ${{ secrets.GITHUB_TOKEN }} | gh auth login --with-token
       - grit apply no_console_log
       - git status
       - git checkout -b "RANDOM"
