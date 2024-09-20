@@ -8,7 +8,7 @@ steps:
       GH_TOKEN:
         from_secret: GH_TOKEN
     commands:
-      - grit --help
+      - curl -fsSL https://docs.grit.io/install | bash
       - grit init
       # - rm gh_token.txt
       # - grit apply no_console_log
