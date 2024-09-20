@@ -3,13 +3,11 @@ name: Grit - Verification
 
 steps:
   - name: Grit - Code Check
-    image: ubuntu:latest
+    image: lesanpi/grit-reviewer
     environment:
       GH_TOKEN:
         from_secret: GH_TOKEN
     commands:
-      - apt-get install curl
-      - curl -fsSL https://docs.grit.io/install | bash
       - grit init
       - grit check
       # - rm gh_token.txt
