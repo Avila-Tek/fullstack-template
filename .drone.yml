@@ -12,7 +12,7 @@ steps:
       - ls
       - echo $HOME
       - ls $HOME/.grit/bin/env
-      - /bin/bash -c source $HOME/.grit/bin/env
+      - source $HOME/.grit/bin/env
       - grit --help
       # - rm gh_token.txt
       # - grit apply no_console_log
