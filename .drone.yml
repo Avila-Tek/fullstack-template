@@ -3,7 +3,7 @@ name: Grit - Verification
 
 steps:
   - name: Grit - Code Check
-    image: ubuntu
+    image: ubuntu:latest
     environment:
       GH_TOKEN:
         from_secret: GH_TOKEN
