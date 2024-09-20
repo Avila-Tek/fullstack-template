@@ -4,7 +4,6 @@ type: exec
 
 steps:
   - name: Grit - Code Check
-    image: lesanpi/grit-reviewer
     environment:
       GH_TOKEN:
         from_secret: GH_TOKEN
