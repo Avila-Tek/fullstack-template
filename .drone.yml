@@ -30,7 +30,7 @@ steps:
   - name: Grit - Code Check
     environment:
       GH_TOKEN:
-        from_secret: GITHUB_TOKEN
+        from_secret: GH_TOKEN
     commands:
       - grit init
       - grit check --fix
