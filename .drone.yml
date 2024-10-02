@@ -35,6 +35,12 @@ steps:
       - grit init
       - grit check --fix
       - git status
+      - git checkout -b "GRIT-REVIEW/$(shuf -i 1000-9999 -n 1)"
+      - git branch
+      - git add .
+      - git commit -m "refactor grit reviewer"
+      - gh pr create --title "Grit Review Code Fixes" --head "$(gh pr view --branch DRONE_BRANCH)" --base "$DRONE_BRANCH"
+
 trigger:
   branch:
     - development
