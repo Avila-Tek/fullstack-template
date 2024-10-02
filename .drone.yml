@@ -39,6 +39,7 @@ steps:
       - git branch
       - git add .
       - git commit -m "refactor grit reviewer"
+      - echo $DRONE_BRANCH
       - gh pr create --title "Grit Review Code Fixes" --head "$(gh pr view --branch DRONE_BRANCH)" --base "$DRONE_BRANCH"
 
 trigger:
