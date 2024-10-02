@@ -1,5 +1,4 @@
 // Import this first!
-import './instrument';
 import { schema } from '@/graphql/schema';
 import { ApolloServer } from '@apollo/server';
 import { ApolloServerPluginLandingPageDisabled } from '@apollo/server/plugin/disabled';

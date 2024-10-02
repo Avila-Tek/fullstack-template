@@ -1,9 +1,9 @@
 //@ts-ignore
-const { TextDecoder, TextEncoder } = require('node:util');
+import { TextDecoder, TextEncoder } from 'node:util';
 //@ts-ignore
-const { clearImmediate } = require('node:timers');
-const { ReadableStream, TransformStream } = require('node:stream/web');
-const { PerformanceObserver, performance } = require('node:perf_hooks');
+import { clearImmediate } from 'node:timers';
+import { ReadableStream, TransformStream } from 'node:stream/web';
+import { PerformanceObserver, performance } from 'node:perf_hooks';
 
 Object.defineProperties(globalThis, {
   TextDecoder: { value: TextDecoder },
@@ -15,8 +15,8 @@ Object.defineProperties(globalThis, {
   PerformanceObserver: { value: PerformanceObserver },
 });
 
-const { Blob, File } = require('node:buffer');
-const { fetch, Headers, FormData, Request, Response } = require('undici');
+import { Blob, File } from 'node:buffer';
+import { fetch, Headers, FormData, Request, Response } from 'undici';
 
 Object.defineProperties(globalThis, {
   fetch: { value: fetch, writable: true },

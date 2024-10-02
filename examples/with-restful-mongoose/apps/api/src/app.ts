@@ -1,5 +1,4 @@
 // Import this first!
-import './instrument';
 import cors from '@fastify/cors';
 import helmet from '@fastify/helmet';
 import rateLimit from '@fastify/rate-limit';

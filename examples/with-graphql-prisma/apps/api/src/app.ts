@@ -1,5 +1,4 @@
 // Import this first!
-import './instrument';
 import { prismaPlugin } from '@/plugins/prisma';
 import { schema } from '@/graphql/schema';
 import { ApolloServer } from '@apollo/server';

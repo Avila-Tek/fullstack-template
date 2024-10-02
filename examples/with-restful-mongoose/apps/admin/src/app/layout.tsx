@@ -1,11 +1,5 @@
 import type { Metadata } from 'next';
 import localFont from 'next/font/local';
-import '../css/color-variables.css';
-import './globals.css';
-import '../css/bg-variables.css';
-import '../css/border-variables.css';
-import '../css/text-variables.css';
-import '../css/fg-variables.css';
 import { ReactQueryProvider } from '@/context/react-query';
 import { ThemeProvider } from 'next-themes';
 

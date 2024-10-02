@@ -1,4 +1,4 @@
-import React from 'react';
+
 import Home from '@/app/page';
 import { render } from '../test-utils/test-utils';
 

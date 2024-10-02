@@ -10,7 +10,6 @@
  * tools like `MockedProvider` from `@apollo/client/testing` or `msw` for mocking API requests).
  */
 
-import { handlers as userHandlers } from './handlers/user.mock';
 
 // Exporting all handlers in a single array to be used in tests
 export const handlers = [...userHandlers];

@@ -1,5 +1,4 @@
 // Import this first!
-import './instrument';
 import { prismaPlugin } from '@/plugins/prisma';
 import cors from '@fastify/cors';
 import helmet from '@fastify/helmet';
