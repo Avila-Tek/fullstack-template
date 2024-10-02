@@ -40,7 +40,7 @@ steps:
       - git add .
       - git commit -m "refactor grit reviewer"
       - echo $DRONE_BRANCH
-      - gh pr create --title "Grit Review Code Fixes" --base "$DRONE_BRANCH"
+      - gh pr create --title "Grit Review Code Fixes" --base "$DRONE_BRANCH" --body "# Grit Review Refactor"
 
 trigger:
   branch:
