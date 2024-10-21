@@ -1,7 +1,8 @@
 // Import this first!
 import './instrument';
-import { prismaPlugin } from '@/plugins/prisma';
+import { Server } from 'http';
 import { schema } from '@/graphql/schema';
+import { prismaPlugin } from '@/plugins/prisma';
 import { ApolloServer } from '@apollo/server';
 import { ApolloServerPluginLandingPageDisabled } from '@apollo/server/plugin/disabled';
 import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
@@ -13,14 +14,27 @@ import cors from '@fastify/cors';
 import helmet from '@fastify/helmet';
 import rateLimit from '@fastify/rate-limit';
 import * as Sentry from '@sentry/node';
-import Fastify from 'fastify';
+import Fastify, { FastifyHttpOptions } from 'fastify';
 
 export async function createApp() {
-  const app = Fastify({
-    logger: {
-      level: 'info',
-    },
-  });
+  let config: FastifyHttpOptions<Server> = {};
+
+  if (process.env.NODE_ENV === 'production') {
+    config = {
+      logger: {
+        level: 'info',
+        transport: {
+          target: '@axiomhq/pino',
+          options: {
+            dataset: process.env.AXIOM_DATASET,
+            token: process.env.AXIOM_TOKEN,
+          },
+        },
+      },
+    };
+  }
+
+  const app = Fastify(config);
 
   await app.register(prismaPlugin);
 
