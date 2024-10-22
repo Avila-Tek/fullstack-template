@@ -406,3 +406,20 @@ Ready? Here's how we make features in Avila Tek; it's pretty simple.
 10. If everything is OK, your changes will be merged to the branch, and the cycle will start over again
     1. The reviewer must close the PR and the issue, and delete the branch
     2. Please only keep active branches (stale or older than a month should be deleted)
+
+## Our code philosofy
+
+We like simple and straightforward solutions. We believe that if we invest enough time in thinking through the problem in detail and simplifying our solution as much as possible, the code we produce is simple, reducing the potential for errors and increasing maintainability.
+
+For this reason, it is important to us that all our engineers take the necessary time to think about problems and their solutions, share possible solutions with their colleagues, and design the most robust solution possible. Experience has taught us that the more we think about solutions and express their pros and cons, the better we are able to program an excellent solution expressed in simple and easy-to-maintain code.
+
+To ensure a solution is robust, we like to consider some of the following things:
+
+1. All functionalities should be described through _User Stories (US)_
+2. All functionalities should be able to be activated or deactivated using _feature flags_
+3. All functionalities should have their respective migrations (and/or seeds)
+4. All functionalities should have at least two unit tests that validate the base case of their interface
+5. All refactors should be testable against the same set of tests as the original functionality
+6. All functionalities that involve integrations with third parties should be documented
+   1. That is, all new third-party integrations that are made should be added to the relevant documentation
+7. As much as possible, all functionalities should measure the events that occur in the product
