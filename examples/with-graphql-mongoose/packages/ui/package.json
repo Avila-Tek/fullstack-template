@@ -2,14 +2,19 @@
   "name": "@repo/ui",
   "version": "0.0.0",
   "private": true,
-  "exports": {
-    "./button": "./src/button.tsx",
-    "./card": "./src/card.tsx",
-    "./code": "./src/code.tsx"
-  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "sideEffects": false,
+  "license": "MIT",
+  "files": [
+    "dist/**"
+  ],
   "scripts": {
-    "generate:component": "turbo gen react-component",
-    "test": ""
+    "build": "tsup src/index.ts --format cjs,esm --dts",
+    "dev": "tsup-node --watch",
+    "lint": "cross-env TIMING=1 eslint src --fix",
+    "clean": "rimraf ./.turbo ./node_modules ./dist"
   },
   "devDependencies": {
     "@repo/typescript-config": "*",
@@ -17,9 +22,54 @@
     "@types/node": "22.9.0",
     "@types/react": "18.3.12",
     "@types/react-dom": "18.3.1",
-    "typescript": "5.6.3"
+    "typescript": "5.6.3",
+    "@tailwindcss/aspect-ratio": "^0.4.2",
+    "@tailwindcss/forms": "^0.5.3",
+    "@tailwindcss/line-clamp": "^0.4.4",
+    "@tailwindcss/typography": "^0.5.9",
+    "@types/react-table": "^7.7.14",
+    "@types/uuid": "^9.0.8",
+    "@types/webpack-env": "^1.18.4",
+    "@typescript-eslint/eslint-plugin": "^5.59.7",
+    "@typescript-eslint/parser": "^5.59.7",
+    "autoprefixer": "^10.4.14",
+    "cross-env": "^7.0.3",
+    "eslint-config-avilatek": "^1.18.0",
+    "eslint-config-avilatek-typescript": "^1.18.0",
+    "eslint-config-custom": "*",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-plugin-react": "^7.32.2",
+    "postcss": "^8.4.24",
+    "raw-loader": "^4.0.2",
+    "tailwindcss": "^3.3.2",
+    "tsup": "^7.2.0"
   },
   "dependencies": {
-    "react": "18.3.1"
+    "@repo/schemas": "*",
+    "@headlessui/react": "^1.7.14",
+    "@hello-pangea/dnd": "^16.5.0",
+    "@heroicons/react": "^2.0.18",
+    "@tanstack/match-sorter-utils": "^8.8.4",
+    "@tanstack/react-table": "^8.9.1",
+    "avilatek-utils": "^0.1.0",
+    "axios": "^1.4.0",
+    "chart.js": "^4.4.2",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.1.0",
+    "dayjs": "^1.11.7",
+    "framer-motion": "^10.12.16",
+    "highlight.js": "^11.9.0",
+    "react": "18.3.1",
+    "react-chartjs-2": "^5.2.0",
+    "react-dom": "^18.2.0",
+    "react-dropzone": "^14.2.3",
+    "react-phone-input-2": "^2.15.1",
+    "react-syntax-highlighter": "^15.5.0",
+    "swiper": "^11.0.5",
+    "tailwind-merge": "*",
+    "uuid": "^9.0.0"
+  },
+  "exports": {
+    ".": "./src/index.ts"
   }
 }
