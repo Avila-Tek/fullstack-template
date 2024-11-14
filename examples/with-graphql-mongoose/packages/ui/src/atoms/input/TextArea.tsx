@@ -1,5 +1,5 @@
 import React from 'react';
-import { Tooltip } from '@/src/components';
+import { Tooltip } from '../../components';
 import { InformationIcon } from '../../icons';
 
 export interface TextAreaClasses {

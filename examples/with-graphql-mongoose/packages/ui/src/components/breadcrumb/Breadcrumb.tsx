@@ -4,7 +4,7 @@ import React from 'react';
 import BreadcrumbItem from './BreadcrumbItem';
 import { cn } from '../../utils/cn';
 import { InformationIcon, LockIcon, MailIcon, UserIcon } from '../../icons';
-import { Button } from '@/src/atoms';
+import { Button } from '../../atoms';
 
 // #region Mock del archivo Routes.tsx
 interface IRoute {

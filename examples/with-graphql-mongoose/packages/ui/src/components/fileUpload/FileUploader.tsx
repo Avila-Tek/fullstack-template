@@ -5,7 +5,7 @@ import { useDropzone, type Accept } from 'react-dropzone';
 import { type DocumentModel } from '@repo/schemas/src/index';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { UploadIcon } from '../../icons';
-import { Button } from '@/src/atoms';
+import { Button } from '../../atoms';
 import { cn } from '../../utils/cn';
 import useFileUploader from '../../hooks/useFileUploader';
 import FileItem from './FileItem';
