@@ -1,5 +1,7 @@
 {
   "conventionalCommits.scopes": [
-    "packages/ui"
+    "packages/ui",
+    "with-graphql-mongoose",
+    "with-graphql-prisma"
   ]
 }
