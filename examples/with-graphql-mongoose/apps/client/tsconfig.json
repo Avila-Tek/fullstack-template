@@ -13,6 +13,7 @@
   "include": [
     "next-env.d.ts",
     "next.config.mjs",
+    "analytics.d.ts",
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts"

@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import dynamic from 'next/dynamic';
 import localFont from 'next/font/local';
 // import '../css/color-variables.css';
 import './globals.css';
@@ -8,7 +9,32 @@ import './globals.css';
 // import '../css/fg-variables.css';
 
 import { ApolloWrapper } from '@/lib/graphql/apollo-wrapper';
+import {
+  type TAnalyticsOption,
+  type TAnalyticsProviderProps,
+} from '@repo/ui/analytics';
+import {
+  type TFeateFlagConfig,
+  type TFeatureFlagContextProviderProps,
+} from '@repo/ui/feature-flags';
 import { ThemeProvider } from 'next-themes';
+
+const FeatureFlagContextProvider = dynamic<TFeatureFlagContextProviderProps>(
+  () =>
+    import('@repo/ui/feature-flags').then(
+      (mod) => mod.FeatureFlagContextProvider
+    ),
+  {
+    ssr: false,
+  }
+);
+
+const AnalyticsProvider = dynamic<TAnalyticsProviderProps>(
+  () => import('@repo/ui/analytics').then((mod) => mod.AnalyticsProvider),
+  {
+    ssr: false,
+  }
+);
 
 const geistSans = localFont({
   src: './fonts/GeistVF.woff',
@@ -29,12 +55,38 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // const config: TFeateFlagConfig = {
+  //   provider: 'posthog',
+  //   token: process.env.NEXT_PUBLIC_POSTHOG_KEY!,
+  //   api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST!,
+  // };
+  const config: TFeateFlagConfig = {
+    provider: 'growthbook',
+    apiHost: process.env.NEXT_PUBLIC_API_HOST,
+    clientKey: process.env.NEXT_PUBLIC_CLIENT_KEY,
+  };
+
+  const analyticsOptions: Array<TAnalyticsOption> = [
+    {
+      name: 'google-analytics',
+      id: '',
+    },
+  ];
+
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
-          <ApolloWrapper>{children}</ApolloWrapper>
-        </ThemeProvider>
+        <FeatureFlagContextProvider config={config}>
+          <AnalyticsProvider
+            analyticsAppName="avila-tek-project"
+            analyticsOptions={analyticsOptions}
+          >
+            <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
+              {/* <PostHogPageView /> */}
+              <ApolloWrapper>{children}</ApolloWrapper>
+            </ThemeProvider>
+          </AnalyticsProvider>
+        </FeatureFlagContextProvider>
       </body>
     </html>
   );
