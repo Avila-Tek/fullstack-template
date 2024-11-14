@@ -1,0 +1,119 @@
+/* IMPORTANT: Contact your design team if you need root colors!!! */
+:root {
+  /* Base Colors */
+  --color-base-white: #ffffff;
+  --color-base-black: #000000;
+  --color-base-transparent: rgba(255, 255, 255, 0);
+
+  /* Gray Light Mode */
+  --color-gray-light-25: #fcfcfd;
+  --color-gray-light-50: #f9fafb;
+  --color-gray-light-100: #f2f4f7;
+  --color-gray-light-200: #e4e7ec;
+  --color-gray-light-300: #d0d5dd;
+  --color-gray-light-400: #98a2b3;
+  --color-gray-light-500: #667085;
+  --color-gray-light-600: #475467;
+  --color-gray-light-700: #344054;
+  --color-gray-light-800: #182230;
+  --color-gray-light-900: #101828;
+  --color-gray-light-950: #0c111d;
+
+  /* Gray Dark Mode */
+  --color-gray-dark-25: #fafafa;
+  --color-gray-dark-50: #f5f5f6;
+  --color-gray-dark-100: #f0f1f1;
+  --color-gray-dark-200: #ececed;
+  --color-gray-dark-300: #cecfd2;
+  --color-gray-dark-400: #94969c;
+  --color-gray-dark-500: #85888e;
+  --color-gray-dark-600: #61646c;
+  --color-gray-dark-700: #333741;
+  --color-gray-dark-800: #1f242f;
+  --color-gray-dark-900: #161b26;
+  --color-gray-dark-950: #0c111d;
+
+  /* Brand Colors */
+  --color-brand-25: #f5fff6;
+  --color-brand-50: #edfff0;
+  --color-brand-100: #d6ffde;
+  --color-brand-200: #afffbe;
+  --color-brand-300: #71ff8d;
+  --color-brand-400: #2dfb54;
+  --color-brand-500: #02e52f;
+  --color-brand-600: #00bf22;
+  --color-brand-700: #00911d;
+  --color-brand-800: #06751d;
+  --color-brand-900: #085f1b;
+  --color-brand-950: #00360c;
+
+  /* Secondary Colors */
+  --color-secondary-25: #f7f7fd;
+  --color-secondary-50: #f1f1fc;
+  --color-secondary-100: #e5e5fa;
+  --color-secondary-200: #d1d0f5;
+  --color-secondary-300: #b6b3ee;
+  --color-secondary-400: #9f94e5;
+  --color-secondary-500: #8e7ada;
+  --color-secondary-600: #7e5fcc;
+  --color-secondary-700: #6347a4;
+  --color-secondary-800: #594291;
+  --color-secondary-900: #4a3b74;
+  --color-secondary-950: #2c2343;
+
+  /* Tertiary Colors */
+  --color-tertiary-25: #f5feff;
+  --color-tertiary-50: #ebfeff;
+  --color-tertiary-100: #cdf9ff;
+  --color-tertiary-200: #a1f0ff;
+  --color-tertiary-300: #66e3ff;
+  --color-tertiary-400: #1acaf6;
+  --color-tertiary-500: #00addc;
+  --color-tertiary-600: #0189b9;
+  --color-tertiary-700: #096e95;
+  --color-tertiary-800: #115979;
+  --color-tertiary-900: #134966;
+  --color-tertiary-950: #063046;
+
+  /* Error Colors */
+  --color-error-25: #fffbfa;
+  --color-error-50: #fef3f2;
+  --color-error-100: #fee4e2;
+  --color-error-200: #fecdca;
+  --color-error-300: #fda29b;
+  --color-error-400: #f97066;
+  --color-error-500: #f04438;
+  --color-error-600: #d92d20;
+  --color-error-700: #b42318;
+  --color-error-800: #912018;
+  --color-error-900: #7a271a;
+  --color-error-950: #55160c;
+
+  /* Warning Colors */
+  --color-warning-25: #fffcf5;
+  --color-warning-50: #fffaeb;
+  --color-warning-100: #fef0c7;
+  --color-warning-200: #fedf89;
+  --color-warning-300: #fec84b;
+  --color-warning-400: #fdb022;
+  --color-warning-500: #f79009;
+  --color-warning-600: #dc6803;
+  --color-warning-700: #b54708;
+  --color-warning-800: #93370d;
+  --color-warning-900: #7a2e0e;
+  --color-warning-950: #4e1d09;
+
+  /* Success Colors */
+  --color-success-25: #f6fef9;
+  --color-success-50: #ecfdf3;
+  --color-success-100: #dcfae6;
+  --color-success-200: #abefc6;
+  --color-success-300: #75e0a7;
+  --color-success-400: #47cd89;
+  --color-success-500: #17b26a;
+  --color-success-600: #079455;
+  --color-success-700: #067647;
+  --color-success-800: #085d3a;
+  --color-success-900: #074d31;
+  --color-success-950: #053321;
+}
