@@ -1,6 +1,6 @@
 import React from 'react';
-import { cn } from '../../utils/cn';
 import { CheckIcon } from '../../icons';
+import { cn } from '../../utils/cn';
 import useRadioGroup from './useRadioGroup';
 
 interface RadioGroupOptionProps {

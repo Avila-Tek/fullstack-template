@@ -1,10 +1,10 @@
 'use client';
 
 import React from 'react';
-import BreadcrumbItem from './BreadcrumbItem';
-import { cn } from '../../utils/cn';
-import { InformationIcon, LockIcon, MailIcon, UserIcon } from '../../icons';
 import { Button } from '../../atoms';
+import { InformationIcon, LockIcon, MailIcon, UserIcon } from '../../icons';
+import { cn } from '../../utils/cn';
+import BreadcrumbItem from './BreadcrumbItem';
 
 // #region Mock del archivo Routes.tsx
 interface IRoute {
@@ -113,28 +113,31 @@ export default function Breadcrumb({
                   </div>
                   <span className="text-white"> / </span>
                   <span
-                    className={`font-medium my-auto ${i === (routesHistory?.length ?? 0) - 1
+                    className={`font-medium my-auto ${
+                      i === (routesHistory?.length ?? 0) - 1
                         ? 'text-gray-400'
                         : 'text-slate-600'
-                      }`}
+                    }`}
                   >
                     {route?.text}
                   </span>
                 </>
               ) : (
                 <span
-                  className={`font-medium my-auto ${i === (routesHistory?.length ?? 0) - 1
+                  className={`font-medium my-auto ${
+                    i === (routesHistory?.length ?? 0) - 1
                       ? 'text-gray-400'
                       : 'text-slate-600'
-                    }`}
+                  }`}
                 >
                   {route?.text}
                 </span>
               )}
             </Button>
             <span
-              className={`font-medium mx-1 text-slate-600 ${i === (routesHistory?.length ?? 0) - 1 ? 'hidden' : ''
-                }`}
+              className={`font-medium mx-1 text-slate-600 ${
+                i === (routesHistory?.length ?? 0) - 1 ? 'hidden' : ''
+              }`}
             >
               /
             </span>

@@ -1,9 +1,9 @@
 'use client';
 
-import React from 'react';
 import { Listbox } from '@headlessui/react';
-import { twMerge } from 'tailwind-merge';
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid';
+import React from 'react';
+import { twMerge } from 'tailwind-merge';
 
 export interface TSelectClasses {
   buttonClasses?: string;
@@ -67,7 +67,10 @@ export default function Select({
             <ChevronUpDownIcon
               className={`${
                 classes?.upDownIconClasses
-                  ? twMerge(upDownIconDefaultClasses, classes?.upDownIconClasses)
+                  ? twMerge(
+                      upDownIconDefaultClasses,
+                      classes?.upDownIconClasses
+                    )
                   : upDownIconDefaultClasses
               }`}
               aria-hidden="true"

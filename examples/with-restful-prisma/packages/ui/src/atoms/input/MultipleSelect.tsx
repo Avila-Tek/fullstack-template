@@ -1,7 +1,7 @@
-/* eslint-disable no-nested-ternary */
-import React from 'react';
 import { Combobox, Transition } from '@headlessui/react';
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/24/solid';
+/* eslint-disable no-nested-ternary */
+import React from 'react';
 
 export type IOption = {
   _id: string;
@@ -147,8 +147,8 @@ export default function MultipleSelect({
                             active
                               ? 'bg-primary-400 text-white'
                               : option.disabled
-                              ? 'text-neutral-100 cursor-not-allowed'
-                              : 'text-gray-900'
+                                ? 'text-neutral-100 cursor-not-allowed'
+                                : 'text-gray-900'
                           }`
                         }
                       >

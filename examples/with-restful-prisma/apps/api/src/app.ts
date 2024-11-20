@@ -1,12 +1,12 @@
 // Import this first!
 import './instrument';
+import { Server } from 'http';
 import { prismaPlugin } from '@/plugins/prisma';
 import cors from '@fastify/cors';
 import helmet from '@fastify/helmet';
 import rateLimit from '@fastify/rate-limit';
 import * as Sentry from '@sentry/node';
 import Fastify, { FastifyHttpOptions } from 'fastify';
-import { Server } from 'http';
 
 export async function createApp() {
   let config: FastifyHttpOptions<Server> = {};
