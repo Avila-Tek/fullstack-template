@@ -1,13 +1,13 @@
 'use client';
 
-import React from 'react';
-import { useDropzone, type Accept } from 'react-dropzone';
 import { type DocumentModel } from '@repo/schemas/src/index';
+import React from 'react';
+import { type Accept, useDropzone } from 'react-dropzone';
+import { Button } from '../../atoms';
+import useFileUploader from '../../hooks/useFileUploader';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { UploadIcon } from '../../icons';
-import { Button } from '../../atoms';
 import { cn } from '../../utils/cn';
-import useFileUploader from '../../hooks/useFileUploader';
 import FileItem from './FileItem';
 
 interface FileUploaderProps {
@@ -57,10 +57,11 @@ export default function FileUploader({
       {hasDropzone && (
         <div
           data-testid="file-dropzone"
-          className={`flex flex-col cursor-pointer justify-center items-center rounded-xl text-black border border-neutral-300 border-solid py-4 px-6 ${isDragActive
+          className={`flex flex-col cursor-pointer justify-center items-center rounded-xl text-black border border-neutral-300 border-solid py-4 px-6 ${
+            isDragActive
               ? 'bg-gray-200 border-neutral-800'
               : 'bg-gray-100 bordery-gray-300'
-            }`}
+          }`}
           {...getRootProps()}
         >
           <div className="rounded-lg text-sm bg-white border border-neutral-200 shadow-sm p-2 hover:bg-neutral-50 ease transition duration-300 mb-3">

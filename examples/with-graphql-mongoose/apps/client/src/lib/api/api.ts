@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { fetchWrapper, type TFetchInput } from './fetchWrapper';
+import { type TFetchInput, fetchWrapper } from './fetchWrapper';
 
 /**
  * An API utility object that provides methods for making HTTP GET, POST, PUT, and DELETE requests.

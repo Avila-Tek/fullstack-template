@@ -1,26 +1,26 @@
 import React from 'react';
 import {
   Bar,
+  Bubble,
+  Doughnut,
   Line,
   Pie,
-  Doughnut,
   PolarArea,
   Radar,
   Scatter,
-  Bubble,
 } from 'react-chartjs-2';
 
 import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
+  ArcElement,
   BarElement,
+  CategoryScale,
+  ChartData,
+  Chart as ChartJS,
+  Legend,
+  LinearScale,
   Title,
   Tooltip,
-  Legend,
-  ArcElement,
   registerables,
-  ChartData,
   // ChartOptions,
 } from 'chart.js';
 

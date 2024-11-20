@@ -1,6 +1,12 @@
 import React from 'react';
+import {
+  CheckCircleIcon,
+  CloseIcon,
+  ExclamationCircleIcon,
+  ExclamationTriangleIcon,
+  InfoCircleIcon,
+} from '../../icons';
 import { cn } from '../../utils/cn';
-import { CloseIcon, CheckCircleIcon, InfoCircleIcon, ExclamationTriangleIcon, ExclamationCircleIcon } from '../../icons';
 
 type Severity = 'success' | 'info' | 'warning' | 'error';
 type Variant = 'standard' | 'outlined' | 'filled';

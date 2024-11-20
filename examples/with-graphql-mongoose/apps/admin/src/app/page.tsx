@@ -1,6 +1,6 @@
+import { Button } from '@repo/ui/atoms';
 import Image from 'next/image';
 import styles from './page.module.css';
-import { Button } from '@repo/ui/atoms';
 
 export default function Home() {
   return (
