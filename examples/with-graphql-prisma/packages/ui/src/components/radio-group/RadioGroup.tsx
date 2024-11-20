@@ -1,8 +1,8 @@
 import React from 'react';
 import { cn } from '../../utils/cn';
-import { RadioGroupProvider } from './RadioGroupContext';
 import Label from './Label';
 import Option from './Option';
+import { RadioGroupProvider } from './RadioGroupContext';
 
 interface RadioGroupProps {
   selectedOption: string;

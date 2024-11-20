@@ -15,7 +15,6 @@ export { default as Tabs } from './tabs/Tabs';
 export { Rating } from './Rating';
 export {
   default as Kanban,
-  resetServerContextKanban,
   type DropResult,
 } from './kanban/Kanban';
 export { default as Chip } from './chip/Chip';

@@ -1,7 +1,7 @@
 import {
+  type ApolloClient,
   ApolloError,
   type OperationVariables,
-  type ApolloClient,
   type QueryOptions,
 } from '@apollo/client';
 import { getClient } from './graphql-client';

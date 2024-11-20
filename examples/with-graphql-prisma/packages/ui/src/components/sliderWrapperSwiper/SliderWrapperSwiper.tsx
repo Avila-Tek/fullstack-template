@@ -7,10 +7,10 @@ import React from 'react';
 // import 'swiper/css/scrollbar';
 import {
   Autoplay,
-  Pagination,
-  Navigation,
-  Mousewheel,
   Keyboard,
+  Mousewheel,
+  Navigation,
+  Pagination,
 } from 'swiper/modules';
 import {
   Swiper,
