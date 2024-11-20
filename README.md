@@ -380,7 +380,7 @@ So you will be spending most of your time coding in [VSCode](https://code.visual
 
 You will be using [GitHub](https://github.com) and [Lark](https://www.larksuite.com) for chatting and issue tracking.
 
-> 💡 We have developed our unique workflow for Git; the idea is pretty simple.
+> 💡 We have developmented our unique workflow for Git; the idea is pretty simple.
 
 So every project in Avila Tek has a group of high-level features called **epics**. An _epic_ should have multiple features and requirements called **user stories (US or HU)**, and a _US_ could have one or more **tasks**. All _US or HU_ are grouped into two-week **sprints**. So when a _sprint_ starts, every dev will have a workload assigned.
 
@@ -423,3 +423,129 @@ To ensure a solution is robust, we like to consider some of the following things
 6. All functionalities that involve integrations with third parties should be documented
    1. That is, all new third-party integrations that are made should be added to the relevant documentation
 7. As much as possible, all functionalities should measure the events that occur in the product
+
+## Branching strategy
+
+This Git branching strategy is designed to:
+
+- Support scheduled releases, while we work on daily releases
+- Align with three deployment environments.
+- Facilitate tight integration with project management for issue tracking.
+- Enhance collaboration and code quality via mandatory code reviews and CI/CD integration.
+
+### Branching Model Overview
+
+1. **Main Branches**:
+
+   - **`main`**: Reflects the production-ready state of the code. Only stable, tested code is merged here.
+   - **`staging`**: Reflects the ready-to-production state of the code. Only stable, tested code is merged here.
+   - **`development`**: Integrates all completed features for the next release. Serves as the base for the staging environment.
+
+2. **Supporting Branches**:
+   - **Feature Branches**: Used by developers to work on new features or enhancements.
+   - **Hotfix Branches**: For urgent fixes that need to be applied to production.
+
+#### Supporting Branches
+
+- **Feature Branches** (`<task-id>`):
+
+  - **Purpose**: developers use these to work on individual features or tasks.
+  - **Naming Convention**: Include the Task ID.
+    - Example: `SOC-001`
+  - **Creation**: Branch off from `development`.
+  - **Integration**: Merge back into `development` after code review and CI checks.
+
+- **Hotfix Branches** (`hotfix/<task-id>`):
+  - **Purpose**: For critical fixes that need immediate deployment to production.
+  - **Creation**: Branch off from `main`.
+  - **Integration**: Merge into both `main` and `development` to ensure the fix is included in future releases.
+  - **Deployment**: Upon merging into `main`, automatically deployed to production.
+
+### Workflow Steps
+
+1. **Feature development**:
+
+   - Developer creates a feature branch from `development`.
+   - Work is committed to the feature branch.
+   - Upon completion, a pull request is created to merge into `development`.
+   - Team lead reviews the code.
+   - CI/CD runs automated tests.
+   - After approval and successful tests, merge into `development`.
+
+2. **Release Preparation**:
+
+   - At the end of the sprint (every 15 days), create a PR from `development` to `staging`.
+   - Perform final testing and make any necessary fixes.
+   - Update documentation and version numbers.
+   - Tag the `staging` branch with the release version release candidate (`v1.0.0-rc.0`).
+
+3. **Hotfixes**:
+   - Create a hotfix branch from `main`.
+   - Implement the fix.
+   - Create a pull request to merge into `main`, `staging` and `development`.
+   - Team lead reviews the code.
+   - After approval and CI/CD checks, merge into both branches.
+   - Deploy to production upon merging into `main`.
+
+---
+
+<!-- ### Integration with Linear
+
+- **Automation**:
+
+  - When a branch is created with a Linear issue ID, it links the branch to the issue.
+  - GitHub events (e.g., opening a pull request, merging) automatically update the issue status in Linear.
+  - Closing a pull request transitions the Linear issue to "Done."
+
+- **Best Practices**:
+  - Always include the Linear issue ID in commit messages and pull requests.
+    - Example: `Implement new search feature [LINEAR-1023]` -->
+
+---
+
+### CI/CD Pipeline with DroneCI
+
+- **Automated Testing**:
+
+  - Triggered on pull request creation and updates.
+  - Runs unit tests and integration tests.
+  - Results must pass before merging.
+
+- **Deployment**:
+  - **development Environment**:
+    - Feature branches can be optionally deployed here for testing.
+  - **Staging Environment**:
+    - `staging` branch is automatically deployed upon updates.
+  - **Production Environment**:
+    - `main` branch is deployed after merging release branches or hotfixes.
+
+---
+
+### Code Review Process
+
+- **Pull Requests**:
+
+  - Required for merging any branch.
+  - Must be reviewed and approved by the team lead.
+  - Review focuses on code quality, adherence to standards, and completeness.
+
+- **Merge Strategy**:
+  - Use **merge commits** to maintain a complete history.
+  - Avoid rebasing to keep the process simple for junior developers.
+  - Resolve conflicts locally, guided by the team lead.
+
+---
+
+### **Release Management**
+
+- **Versioning**:
+
+  - Adopt [Semantic Versioning](https://semver.org/): `MAJOR.MINOR.PATCH`
+    - **MAJOR**: Incompatible API changes.
+    - **MINOR**: Backward-compatible functionality.
+    - **PATCH**: Backward-compatible bug fixes.
+
+- **Tagging**:
+  - Tag the `main` branch upon merging a release branch.
+    - Example: `v1.2.0`
+  - Tags facilitate tracking of releases and rollback if necessary.
