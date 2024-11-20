@@ -1,6 +1,6 @@
+import { motion } from 'framer-motion';
 /* eslint-disable no-nested-ternary */
 import React from 'react';
-import { motion } from 'framer-motion';
 import { cn } from '../../utils/cn';
 import NavigationButton from '../navigation-elements/NavigationButton';
 

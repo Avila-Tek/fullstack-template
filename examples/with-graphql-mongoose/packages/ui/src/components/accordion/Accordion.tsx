@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { twMerge } from 'tailwind-merge';
 import { Disclosure } from '@headlessui/react';
+import { twMerge } from 'tailwind-merge';
 import { ChevronDownIcon, ChevronUpIcon } from '../../icons';
 
 type TListItem = {

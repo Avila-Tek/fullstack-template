@@ -1,9 +1,9 @@
+import { Tab } from '@headlessui/react';
 /* eslint-disable no-nested-ternary */
 import React from 'react';
-import { Tab } from '@headlessui/react';
 import { CheckEmptyIcon, CheckFullIcon } from '../../icons';
-import { StepperContext } from './Stepper';
 import { cn } from '../../utils/cn';
+import { StepperContext } from './Stepper';
 
 interface StepperStepProps {
   children: React.ReactNode;

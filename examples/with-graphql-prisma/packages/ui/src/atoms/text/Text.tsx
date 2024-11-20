@@ -1,5 +1,5 @@
+import { VariantProps, cva } from 'class-variance-authority';
 import React from 'react';
-import { cva, VariantProps } from 'class-variance-authority';
 import { cn } from '../../utils/cn';
 
 const textVariants = cva('text-primary-900', {

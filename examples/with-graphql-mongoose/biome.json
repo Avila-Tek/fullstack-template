@@ -111,7 +111,7 @@
       "quoteStyle": "single",
       "attributePosition": "auto"
     },
-    "globals": ["React", "JSX"]
+    "globals": ["React", "JSX", "jest"]
   },
   "overrides": [
     {

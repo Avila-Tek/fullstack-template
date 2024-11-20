@@ -1,6 +1,6 @@
 import React from 'react';
-import CheckboxContext from './CheckboxContext';
 import Checkbox from './Checkbox';
+import CheckboxContext from './CheckboxContext';
 
 interface CheckboxGroupProps {
   children: React.ReactNode;

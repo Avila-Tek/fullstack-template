@@ -1,11 +1,11 @@
-/* eslint-disable jsx-a11y/control-has-associated-label */
-import React from 'react';
 import {
   ChevronDoubleLeftIcon,
   ChevronDoubleRightIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
 } from '@heroicons/react/24/outline';
+/* eslint-disable jsx-a11y/control-has-associated-label */
+import React from 'react';
 import { useTable } from './Table';
 
 export default function TablePagination({

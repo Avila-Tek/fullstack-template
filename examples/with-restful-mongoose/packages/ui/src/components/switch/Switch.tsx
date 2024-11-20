@@ -1,7 +1,7 @@
 'use client';
 
-import React from 'react';
 import { Switch as HeadlessSwitch } from '@headlessui/react';
+import React from 'react';
 import { twMerge } from 'tailwind-merge';
 
 interface SwitchProps {

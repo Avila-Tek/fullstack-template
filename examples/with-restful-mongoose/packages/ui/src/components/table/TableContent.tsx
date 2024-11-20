@@ -1,5 +1,5 @@
-import React from 'react';
 import { flexRender } from '@tanstack/react-table';
+import React from 'react';
 import { useTable } from './Table';
 
 export interface MongooseModel {

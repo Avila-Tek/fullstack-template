@@ -5,8 +5,12 @@ function Skeleton() {
   const [height, setHeight] = React.useState(0);
 
   React.useEffect(() => {
-    setHeight((ref?.current ? ref?.current as HTMLElement : null)?.clientHeight ?? 0);
-  }, [(ref?.current ? ref?.current as HTMLElement : null)?.clientHeight ?? 0]);
+    setHeight(
+      (ref?.current ? (ref?.current as HTMLElement) : null)?.clientHeight ?? 0
+    );
+  }, [
+    (ref?.current ? (ref?.current as HTMLElement) : null)?.clientHeight ?? 0,
+  ]);
 
   if (!height || height === 0) <div />;
 

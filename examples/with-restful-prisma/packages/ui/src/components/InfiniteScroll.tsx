@@ -1,5 +1,5 @@
-import React from 'react';
 import { Pagination } from '@repo/schemas';
+import React from 'react';
 import { SpinnerIcon } from '../icons';
 
 /**
@@ -143,8 +143,9 @@ function InfiniteScroll({
   return (
     <div
       ref={fixedHeight ? containerRef : undefined}
-      className={`w-full ${className?.container} ${fixedHeight ? 'overflow-y-auto' : ''
-        }`}
+      className={`w-full ${className?.container} ${
+        fixedHeight ? 'overflow-y-auto' : ''
+      }`}
       style={{
         ...(fixedHeight ? { maxHeight: `${maxHeight_}px` } : {}),
       }}
@@ -153,8 +154,9 @@ function InfiniteScroll({
       {children}
       <div
         ref={loadingRef}
-        className={`w-full flex justify-center items-center ${data_?.pageInfo?.hasNextPage ? 'h-12 my-6' : ''
-          }`}
+        className={`w-full flex justify-center items-center ${
+          data_?.pageInfo?.hasNextPage ? 'h-12 my-6' : ''
+        }`}
       >
         {loading && data_?.pageInfo?.hasNextPage && (
           <SpinnerIcon

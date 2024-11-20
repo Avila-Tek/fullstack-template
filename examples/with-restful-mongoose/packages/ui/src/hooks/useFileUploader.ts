@@ -1,6 +1,5 @@
-import React from 'react';
 import { DocumentModel } from '@repo/schemas/src/index';
-import { v4 as uuid } from 'uuid';
+import React from 'react';
 
 type FileUploaderProps = {
   maximumFiles: number;
@@ -39,7 +38,7 @@ export default function useFileUploader({
       ...prev,
       ...filteredFiles.map((file) => ({
         file,
-        id: uuid(),
+        id: crypto.randomUUID(),
         src: URL.createObjectURL(file),
         name: file.name,
       })),

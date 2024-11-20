@@ -1,7 +1,5 @@
-/* eslint-disable jsx-a11y/control-has-associated-label */
-import React from 'react';
 import { validateString } from 'avilatek-utils';
-import { v4 as uuid } from 'uuid';
+import React from 'react';
 import { CloseIcon } from '../../icons';
 import Input from './Input';
 
@@ -37,11 +35,11 @@ function TagsInput({ tags = [], updateTags }: TagsInputProps) {
     if (validateString(text) && String(text).length < 127 && key === 'Enter') {
       setTags((__tags) => {
         if (__tags.length === 0) {
-          return [{ text, id: uuid() }];
+          return [{ text, id: crypto.randomUUID() }];
         }
         const filtered = __tags.filter((tag) => tag.text !== text);
         if (filtered.length > 0) {
-          return [...filtered, { text, id: uuid() }];
+          return [...filtered, { text, id: crypto.randomUUID() }];
         }
         return __tags;
       });

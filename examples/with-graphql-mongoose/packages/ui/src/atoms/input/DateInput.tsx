@@ -1,13 +1,13 @@
+import dayjs from 'dayjs';
 /* eslint-disable jsx-a11y/control-has-associated-label */
 import React from 'react';
-import dayjs from 'dayjs';
 import { ArrowIcon } from '../../icons';
 import {
+  WEEK_DAYS,
   getNextMonth,
   getPreviousMonth,
-  refactorDate,
-  WEEK_DAYS,
   months,
+  refactorDate,
 } from '../../utils';
 
 interface DateInputProps {

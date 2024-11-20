@@ -1,6 +1,6 @@
 import React from 'react';
-import { cn } from '../../utils/cn';
 import { InformationIcon } from '../../icons';
+import { cn } from '../../utils/cn';
 import Tooltip from '../tooltip/Tooltip';
 
 interface LabelProps {

@@ -1,8 +1,8 @@
-import React from 'react';
 import { VariantProps, cva } from 'class-variance-authority';
+import React from 'react';
 import { cn } from '../../utils/cn';
-import { Text } from './Text';
 import { Icon } from './Icon';
+import { Text } from './Text';
 
 interface BadgeProps
   extends Omit<React.HTMLProps<HTMLDivElement>, 'size'>,

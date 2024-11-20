@@ -1,31 +1,31 @@
-import React, { useContext } from 'react';
 import {
   Column,
-  Table,
-  useReactTable,
+  ColumnDef,
   ColumnFiltersState,
+  FilterFn,
+  FilterFns,
+  OnChangeFn,
+  PaginationState,
+  RowData,
+  SortingFn,
+  Table,
+  flexRender,
   getCoreRowModel,
-  getFilteredRowModel,
+  getFacetedMinMaxValues,
   getFacetedRowModel,
   getFacetedUniqueValues,
-  getFacetedMinMaxValues,
+  getFilteredRowModel,
   getPaginationRowModel,
-  sortingFns,
   getSortedRowModel,
-  FilterFn,
-  SortingFn,
-  ColumnDef,
-  flexRender,
-  FilterFns,
-  PaginationState,
-  OnChangeFn,
-  RowData,
+  sortingFns,
+  useReactTable,
 } from '@tanstack/react-table';
+import React, { useContext } from 'react';
 
 import {
   RankingInfo,
-  rankItem,
   compareItems,
+  rankItem,
 } from '@tanstack/match-sorter-utils';
 import Alert from '../alert/Alert';
 

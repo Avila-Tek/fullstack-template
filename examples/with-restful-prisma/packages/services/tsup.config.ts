@@ -10,5 +10,4 @@ export default defineConfig({
   format: ['cjs', 'esm'],
   outDir: 'dist',
   target: ['node20', 'deno2'],
-  
 });

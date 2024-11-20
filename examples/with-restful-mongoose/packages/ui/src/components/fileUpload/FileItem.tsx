@@ -1,9 +1,9 @@
 'use client';
 
-import React from 'react';
 import { type DocumentModel } from '@repo/schemas/src/index';
+import React from 'react';
 // import useS3Signature from 'client/src/hooks/use-s3-signature';
-import { PageIcon, TrashIcon, PDFIcon } from '../../icons';
+import { PDFIcon, PageIcon, TrashIcon } from '../../icons';
 
 interface FileItemProps {
   item: DocumentModel;

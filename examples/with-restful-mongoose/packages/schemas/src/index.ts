@@ -1,6 +1,5 @@
 export * from './users';
 
-
 // AUX MODELS
 
 export type PageInfo = {

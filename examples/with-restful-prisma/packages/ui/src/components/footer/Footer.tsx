@@ -1,6 +1,6 @@
 import React from 'react';
-import { Logo } from './Logo';
 import { Copyright } from './Copyright';
+import { Logo } from './Logo';
 
 interface FooterProps extends React.HTMLProps<HTMLDivElement> {
   children: React.ReactNode;

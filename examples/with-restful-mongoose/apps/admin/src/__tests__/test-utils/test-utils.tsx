@@ -1,7 +1,7 @@
-import React from 'react';
-import userEvent from '@testing-library/user-event';
-import { render, type RenderOptions } from '@testing-library/react';
 import { ReactQueryProvider } from '@/context/react-query';
+import { type RenderOptions, render } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import React from 'react';
 
 // mock next-auth/react
 jest.mock('next-auth/react', () => {

@@ -1,14 +1,12 @@
 'use client';
 
-import React from 'react';
 import {
   DragDropContext,
   Draggable,
   DropResult,
   Droppable,
-  OnDragEndResponder,
-  resetServerContext,
 } from '@hello-pangea/dnd';
+import React from 'react';
 
 interface KanbanProps {
   children: React.ReactNode;
@@ -79,9 +77,7 @@ const DraggableItem = ({ children, ...props }: DraggableProps) => (
     )}
   </Draggable>
 );
-export function resetServerContextKanban() {
-  resetServerContext();
-}
+
 Kanban.DroppableArea = DroppableArea;
 Kanban.DraggableItem = DraggableItem;
 
