@@ -1,7 +1,7 @@
 /* eslint-disable no-nested-ternary */
 import React from 'react';
-import { cn } from '../../utils/cn';
 import { ChevronDownIcon } from '../../icons';
+import { cn } from '../../utils/cn';
 
 interface NavigationButtonProps
   extends React.DetailedHTMLProps<
@@ -110,8 +110,8 @@ export default function NavigationButton({
                   ? 'rotate-180'
                   : ''
                 : JSON.stringify(subRoutes) === JSON.stringify(route?.subRoutes)
-                ? 'rotate-90'
-                : '-rotate-90'
+                  ? 'rotate-90'
+                  : '-rotate-90'
             }`}
           >
             <ChevronDownIcon />

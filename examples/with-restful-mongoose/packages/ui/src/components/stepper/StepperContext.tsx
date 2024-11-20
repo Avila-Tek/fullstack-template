@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { CheckFullIcon, CheckEmptyIcon } from '../../icons';
+import { CheckEmptyIcon, CheckFullIcon } from '../../icons';
 
 // type
 

@@ -3,8 +3,8 @@
 'use client';
 
 import React from 'react';
-import { cn } from '../../utils/cn';
 import { AlertCircleIcon, HelpCircleIcon } from '../../icons';
+import { cn } from '../../utils/cn';
 
 export interface TInputClasses {
   additionalLabelClasses?: string | null;

@@ -1,7 +1,7 @@
 'use client';
 
+import { AnimatePresence, motion } from 'framer-motion';
 import React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '../../utils/cn';
 import ClientOnlyPortal from '../portal/Portal';
 

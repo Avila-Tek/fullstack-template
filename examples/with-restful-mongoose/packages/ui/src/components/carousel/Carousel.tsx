@@ -1,8 +1,8 @@
 'use client';
 
 import React from 'react';
-import { useCarousel, type CarouselState } from './hooks/useCarousel';
 import { Slide } from './Slide';
+import { type CarouselState, useCarousel } from './hooks/useCarousel';
 
 const defaultCarouselContainerWidth = 10000;
 
