@@ -1,12 +1,5 @@
-import { schemaComposer } from 'graphql-compose';
+async function greater() {
+  return `Hello`;
+}
 
-const helloService = schemaComposer.createResolver({
-  name: 'greater',
-  kind: 'query',
-  type: 'String!',
-  async resolve({ context }) {
-    return `Hello`;
-  },
-});
-
-export const exampleService = Object.freeze({ helloService });
+export const exampleService = Object.freeze({ greater });
