@@ -14,7 +14,7 @@ const transport = pino.transport<LokiOptions>({
     host: process.env.LOKI_HOST,
     basicAuth: {
       username: process.env.LOKI_USERNAME,
-      password: process.env.LOKE_PASSWORD,
+      password: process.env.LOKI_PASSWORD,
     },
   },
 });
