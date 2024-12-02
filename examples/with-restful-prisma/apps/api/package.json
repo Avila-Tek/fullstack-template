@@ -38,6 +38,7 @@
     "fastify": "^4.28.1",
     "fastify-plugin": "^4.5.1",
     "jsonwebtoken": "^9.0.2",
+    "pino-loki": "^2.4.0",
     "postmark": "^4.0.5",
     "zod": "^3.23.8"
   }
