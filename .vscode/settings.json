@@ -1,0 +1,9 @@
+{
+  "conventionalCommits.scopes": [
+    "packages/ui",
+    "with-graphql-mongoose",
+    "with-graphql-prisma",
+    "with-restful-mongoose",
+    "with-restful-prisma"
+  ]
+}

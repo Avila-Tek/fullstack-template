@@ -97,7 +97,10 @@
         "noDangerouslySetInnerHtmlWithChildren": "error"
       }
     },
-    "ignore": ["**/.*.js", "**/node_modules/"]
+    "ignore": [
+      "**/.*.js",
+      "**/node_modules/"
+    ]
   },
   "javascript": {
     "formatter": {
@@ -111,14 +114,36 @@
       "quoteStyle": "single",
       "attributePosition": "auto"
     },
-    "globals": ["React", "JSX"]
+    "globals": [
+      "React",
+      "JSX",
+      "it",
+      "describe",
+      "expect",
+      "jest",
+      "test",
+      "before",
+      "beforeAll",
+      "beforeEach",
+      "after",
+      "afterAll",
+      "afterEach",
+      "Cypress",
+      "cy"
+    ]
   },
   "overrides": [
     {
-      "include": ["*.js?(x)", "*.ts?(x)"]
+      "include": [
+        "*.js?(x)",
+        "*.ts?(x)"
+      ]
     },
     {
-      "include": ["*.js?(x)", "*.mjs"]
+      "include": [
+        "*.js?(x)",
+        "*.mjs"
+      ]
     }
   ]
 }

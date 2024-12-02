@@ -1,6 +1,5 @@
-import nextJest from 'next/jest.js';
 import dotenv from 'dotenv';
-import { set } from 'zod';
+import nextJest from 'next/jest.js';
 
 // load .env.test environment variables Importante debe colocar el nombre del archivo de las variables de entorno de su proyecto
 dotenv.config({ path: '.env.local' });

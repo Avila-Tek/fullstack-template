@@ -1,0 +1,111 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@tailwind variants;
+
+@layer components {
+  .text-primary-900 {
+    @apply text-gray-light-mode-900;
+    @apply dark:text-gray-dark-mode-50;
+  }
+
+  .text-primary_on-brand {
+    @apply text-base-white;
+    @apply dark:text-gray-dark-mode-50;
+  }
+
+  .text-secondary-700 {
+    @apply text-gray-light-mode-700;
+    @apply dark:text-gray-dark-mode-300;
+  }
+
+  .text-secondary_hover {
+    @apply text-gray-light-mode-800;
+    @apply dark:text-gray-dark-mode-200;
+  }
+
+  .text-secondary_on-brand {
+    @apply text-brand-200;
+    @apply dark:text-gray-dark-mode-300;
+  }
+
+  .text-tertiary-600 {
+    @apply text-gray-light-mode-600;
+    @apply dark:text-gray-dark-mode-400;
+  }
+
+  .text-tertiary_hover {
+    @apply text-gray-light-mode-700;
+    @apply dark:text-gray-dark-mode-300;
+  }
+
+  .text-tertiary_on-brand {
+    @apply text-brand-200;
+    @apply dark:text-gray-dark-mode-400;
+  }
+
+  .text-quaternary-500 {
+    @apply text-gray-light-mode-500;
+    @apply dark:text-gray-dark-mode-400;
+  }
+
+  .text-quaternary_on-brand {
+    @apply text-brand-300;
+    @apply dark:text-gray-dark-mode-400;
+  }
+
+  .text-white {
+    @apply text-base-white;
+    @apply dark:text-base-white;
+  }
+
+  .text-disabled {
+    @apply text-gray-light-mode-500;
+    @apply dark:text-gray-dark-mode-500;
+  }
+
+  .text-placeholder {
+    @apply text-gray-light-mode-500;
+    @apply dark:text-gray-dark-mode-500;
+  }
+
+  .text-placeholder_subtle {
+    @apply text-gray-light-mode-300;
+    @apply dark:text-gray-dark-mode-700;
+  }
+
+  .text-brand-primary-900 {
+    @apply text-brand-900;
+    @apply dark:text-gray-dark-mode-50;
+  }
+
+  .text-brand-secondary-700 {
+    @apply text-brand-700;
+    @apply dark:text-gray-dark-mode-300;
+  }
+
+  .text-brand-tertiary-600 {
+    @apply text-brand-600;
+    @apply dark:text-gray-dark-mode-400;
+  }
+
+  .text-brand-tertiary_alt {
+    @apply text-brand-600;
+    @apply dark:text-gray-dark-mode-50;
+  }
+
+  .text-error-primary-600 {
+    @apply text-error-600;
+    @apply dark:text-error-400;
+  }
+
+  .text-warning-primary-600 {
+    @apply text-warning-600;
+    @apply dark:text-warning-400;
+  }
+
+  .text-success-primary-600 {
+    @apply text-success-600;
+    @apply dark:text-success-400;
+  }
+}
