@@ -14,6 +14,10 @@ changelog:
     - title: Bug fixes 🐛
       labels:
         - fix
+
+    - title: Documentation 📄
+      labels:
+        - documentation
     - title: Other Changes
       labels:
         - '*'
