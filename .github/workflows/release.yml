@@ -12,11 +12,6 @@ jobs:
   release:
     name: Release pushed tag
     runs-on: ubuntu-22.04
-    env:
-      VERSION: ${{ github.ref_name }}
-      LINK: https://github.com/${{ github.repository }}/releases/tag/${{ github.ref_name }}
-      RECEIVE_ID_TYPE: 'email'
-      RECEIVE_ID: 'lsanchez@avilatek.dev'
     steps:
       - name: Create release
         env:
@@ -28,4 +23,15 @@ jobs:
               --title="${tag#v}" \
               --generate-notes
       - name: New release
-        container: lesanpi/lark-release-version-card
+        uses: docker://lesanpi/lark-release-version-card:v1.0
+        # with:
+        #   args: 'comando1 arg1 comando2 arg2'
+
+        # runs-on: ubuntu-latest
+        # container:
+        #   image: lesanpi/lark-release-version-card
+        #   env:
+        #     VERSION: ${{ github.ref_name }}
+        #     LINK: https://github.com/${{ github.repository }}/releases/tag/${{ github.ref_name }}
+        #     RECEIVE_ID_TYPE: 'email'
+        #     RECEIVE_ID: 'lsanchez@avilatek.dev'
