@@ -12,6 +12,11 @@ jobs:
   release:
     name: Release pushed tag
     runs-on: ubuntu-22.04
+    env:
+      VERSION: ${{ github.ref_name }}
+      LINK: https://github.com/${{ github.repository }}/releases/tag/${{ github.ref_name }}
+      RECEIVE_ID_TYPE: 'email'
+      RECEIVE_ID: 'lsanchez@avilatek.dev'
     steps:
       - name: Create release
         env:
@@ -22,3 +27,6 @@ jobs:
               --repo="$GITHUB_REPOSITORY" \
               --title="${tag#v}" \
               --generate-notes
+      - name: New release
+        runs-on: ubuntu-22.04 # Or another suitable runner
+        container: lesanpi/lark-release-version-card
