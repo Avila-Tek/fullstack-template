@@ -24,14 +24,11 @@ jobs:
               --generate-notes
       - name: New release notification
         env:
-          APP_SECRET: ${{ secrets.LARK_APP_SECRET }}
-          APP_ID: ${{ secrets.LARK_APP_ID }}
-          REPOSITORY_NAME: Fullstack Template
-          RECEIVE_ID_TYPE: email
-          RECEIVE_ID: lsanchez@avilatek.dev
+          APP_NAME: Fullstack Template
           VERSION: ${{ github.ref_name }}
+          RECEIVE_EMAIL: lsanchez@avilatek.dev
           LINK: https://github.com/${{ github.repository }}/releases/tag/${{ github.ref_name }}
-        uses: docker://lesanpi/lark-release-version-card:v1.1
+        uses: docker://lesanpi/email-deploy:v1.0.0
         # with:
         #   args: 'comando1 arg1 comando2 arg2'
 
