@@ -30,14 +30,3 @@ jobs:
           RECEIVE_EMAIL: lsanchez@avilatek.dev
           LINK: https://github.com/${{ github.repository }}/releases/tag/${{ github.ref_name }}
         uses: docker://lesanpi/email-deploy:v1.0.0
-        # with:
-        #   args: 'comando1 arg1 comando2 arg2'
-
-        # runs-on: ubuntu-latest
-        # container:
-        #   image: lesanpi/lark-release-version-card
-        #   env:
-        #     VERSION: ${{ github.ref_name }}
-        #     LINK: https://github.com/${{ github.repository }}/releases/tag/${{ github.ref_name }}
-        #     RECEIVE_ID_TYPE: 'email'
-        #     RECEIVE_ID: 'lsanchez@avilatek.dev'
