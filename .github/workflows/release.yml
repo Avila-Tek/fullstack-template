@@ -26,6 +26,7 @@ jobs:
         env:
           APP_SECRET: ${{ secrets.LARK_APP_SECRET }}
           APP_ID: ${{ secrets.LARK_APP_ID }}
+          REPOSITORY_NAME: Fullstack Template
           RECEIVE_ID_TYPE: email
           RECEIVE_ID: lsanchez@avilatek.dev
           VERSION: ${{ github.ref_name }}
