@@ -23,6 +23,13 @@ jobs:
               --title="${tag#v}" \
               --generate-notes
       - name: New release
+        env:
+          APP_SECRET: ${{ secrets.LARK_APP_SECRET }}
+          APP_ID: ${{ secrets.LARK_APP_ID }}
+          RECEIVE_ID_TYPE: email
+          RECEIVE_ID: lsanchez@avilatek.dev
+          VERSION: ${{ github.ref_name }}
+          LINK: https://github.com/${{ github.repository }}/releases/tag/${{ github.ref_name }}
         uses: docker://lesanpi/lark-release-version-card:v1.0
         # with:
         #   args: 'comando1 arg1 comando2 arg2'
