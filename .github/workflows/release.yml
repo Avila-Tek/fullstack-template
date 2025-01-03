@@ -31,7 +31,7 @@ jobs:
           RECEIVE_ID: lsanchez@avilatek.dev
           VERSION: ${{ github.ref_name }}
           LINK: https://github.com/${{ github.repository }}/releases/tag/${{ github.ref_name }}
-        uses: docker://lesanpi/lark-release-version-card:v1.0
+        uses: docker://lesanpi/lark-release-version-card:v1.1
         # with:
         #   args: 'comando1 arg1 comando2 arg2'
 
