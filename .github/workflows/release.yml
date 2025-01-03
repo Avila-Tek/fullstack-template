@@ -24,6 +24,7 @@ jobs:
               --generate-notes
       - name: New release notification
         env:
+          POSTMARK_SERVER_TOKEN: ${{ secrets.POSTMARK_SERVER_TOKEN }}
           APP_NAME: Fullstack Template
           VERSION: ${{ github.ref_name }}
           RECEIVE_EMAIL: lsanchez@avilatek.dev
