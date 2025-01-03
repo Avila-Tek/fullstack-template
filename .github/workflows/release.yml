@@ -22,7 +22,7 @@ jobs:
               --repo="$GITHUB_REPOSITORY" \
               --title="${tag#v}" \
               --generate-notes
-      - name: New release
+      - name: New release notification
         env:
           APP_SECRET: ${{ secrets.LARK_APP_SECRET }}
           APP_ID: ${{ secrets.LARK_APP_ID }}
