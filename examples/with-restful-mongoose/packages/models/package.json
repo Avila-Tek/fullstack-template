@@ -1,0 +1,30 @@
+{
+    "name": "@avila-tek/models",
+    "version": "1.0.0",
+    "descriptions": "Models for Avila Tek projects",
+    "private": true,
+    "scripts":{
+        "lint": "eslint .",
+        "build": "tsup src/index.ts",
+        "dev": "tsup src/index.ts --format cjs --watch --dts",
+        "format": "prettier --write ."
+    },
+    "files": [
+        "dist/**"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "none"
+    },
+    "main": "./dist/index.js",
+    "module": "./src/index.mjs",
+    "types": "./src/index.d.ts",
+    "keywords": [],
+    "author": "Avila Tek",
+    "devDependencies": {
+        "@types/node": "^20.14.11",
+        "tsup": "^8.2.0",
+        "typescript": "^5.5.3",
+        "zod": "^3.23.8"
+    }
+}
