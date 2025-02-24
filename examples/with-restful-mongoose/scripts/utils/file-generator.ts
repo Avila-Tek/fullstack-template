@@ -1,5 +1,8 @@
 import {
   ExportDeclaration,
+  JSDocStructure,
+  OptionalKind,
+  ParameterDeclarationStructure,
   Project,
   SourceFile,
   VariableDeclarationKind,
@@ -42,6 +45,17 @@ interface IAddConstDeclaration {
 interface IExportDeclaration {
   export: string[];
   moduleSpecifier: string;
+}
+
+interface IFunctionDeclaration {
+  name: string;
+  statements: string | string[];
+  isDefaultExport?: boolean;
+  isExported?: boolean;
+  parameters: OptionalKind<ParameterDeclarationStructure>[];
+  returnType: string;
+  isAsync: boolean;
+  docs?: OptionalKind<JSDocStructure>[];
 }
 
 /**
@@ -222,6 +236,42 @@ export class FileGenerator {
       name,
       type,
       isExported,
+    });
+  }
+
+  /**
+   * @async
+   * @function
+   * @description Adds a function definition to the source file
+   * @listens {SourceFile}
+   * @param {IFunctionDeclaration} param0 - The function definition to add
+   * @requires ts-morph
+   * @returns {void}
+   * @see {@link https://ts-morph.com/details/functions}
+   * @since 1.0.0
+   * @summary Add a function definition to the source file
+   * @version 1
+   */
+
+  public addFunctionDefinition({
+    isDefaultExport = false,
+    isExported = false,
+    name,
+    parameters,
+    returnType,
+    statements,
+    docs,
+    isAsync,
+  }: IFunctionDeclaration): void {
+    this.file.addFunction({
+      isExported,
+      isDefaultExport,
+      name,
+      parameters,
+      returnType,
+      statements,
+      docs,
+      isAsync,
     });
   }
 
