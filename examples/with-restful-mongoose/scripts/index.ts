@@ -1,4 +1,3 @@
-import { bootstrap as apiBootstrap } from './api-generator';
 import { bootstrap as modelsBootstrap } from './models-generator';
 import { Command } from 'commander';
 
