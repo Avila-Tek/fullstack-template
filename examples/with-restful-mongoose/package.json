@@ -7,11 +7,14 @@
     "lint": "turbo lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "format-and-lint": "biome check .",
-    "format-and-lint:fix": "biome check . --write"
+    "format-and-lint:fix": "biome check . --write",
+    "g": "ts-node ./scripts/index.ts"
   },
   "devDependencies": {
     "@biomejs/biome": "1.8.3",
+    "commander": "^13.1.0",
     "prettier": "^3.3.3",
+    "ts-morph": "^25.0.1",
     "turbo": "^2.1.1",
     "typescript": "^5.6.2"
   },
