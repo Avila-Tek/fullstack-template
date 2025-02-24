@@ -25,9 +25,9 @@ import { FileGenerator } from '../utils';
 
 export async function bootstrap(
   component: string,
+  project: Project,
   overwrite?: boolean
 ): Promise<void> {
-  const project = new Project();
   const modelsPath = path.resolve(__dirname, '../../packages/models/src');
   const fullPath = `${modelsPath}/${component}`;
   createFolder(fullPath);
