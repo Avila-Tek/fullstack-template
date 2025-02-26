@@ -1,4 +1,5 @@
 import * as fs from 'fs';
+import { exec } from 'child_process';
 
 /**
  * @function
@@ -32,3 +33,19 @@ export function capitalize(str: string): string {
 }
 
 export * from './file-generator';
+
+export function formatFiles(files: string[]): void {
+  const command = `npx prettier --write ${files.join(' ')}`;
+
+  exec(command, (error, stdout, stderr) => {
+    if (error) {
+      console.error(`Error: ${error.message}`);
+      return;
+    }
+    if (stderr) {
+      console.error(`Prettier stderr: ${stderr}`);
+      return;
+    }
+    console.log(stdout);
+  });
+}

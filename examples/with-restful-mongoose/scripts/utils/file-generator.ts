@@ -5,7 +5,9 @@ import {
   ParameterDeclarationStructure,
   Project,
   SourceFile,
+  StatementStructures,
   VariableDeclarationKind,
+  WriterFunction,
 } from 'ts-morph';
 
 /**
@@ -49,7 +51,7 @@ interface IExportDeclaration {
 
 interface IFunctionDeclaration {
   name: string;
-  statements: string | string[];
+  statements: string | WriterFunction | (string | WriterFunction | StatementStructures)[];
   isDefaultExport?: boolean;
   isExported?: boolean;
   parameters: OptionalKind<ParameterDeclarationStructure>[];

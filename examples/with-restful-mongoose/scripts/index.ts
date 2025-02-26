@@ -3,6 +3,7 @@ import { Command } from 'commander';
 import { bootstrap as modelsBootstrap } from './models-generator';
 import { bootstrap as apiGenerator } from './api-generator';
 import { Project } from 'ts-morph';
+import { formatFiles } from './utils';
 
 function main() {
   const program = new Command();
@@ -62,6 +63,12 @@ function main() {
       await apiGenerator(name, project, options.algolia, options.overwrite);
 
       console.log('Generted API route');
+
+      // format the files after generation
+      formatFiles([
+        `packages/models/src/${name}`,
+        `apps/api/src/components/${name}`,
+      ]);
     });
 
   program.parse(process.argv);
