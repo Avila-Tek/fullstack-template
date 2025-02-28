@@ -68,8 +68,6 @@ export function installDependencies(
     )
     .join(' ')}`;
 
-  console.log('Installing Dependencies:', command);
-
   exec(command, (error, stdout, stderr) => {
     if (error) {
       console.error(`Error: ${error.message}`);
@@ -79,7 +77,6 @@ export function installDependencies(
       console.error(`Install Dependencies stderr: ${stderr}`);
       return;
     }
-    console.log(stdout);
   });
 }
 
@@ -89,7 +86,7 @@ export type Architecture = (typeof architecture)[number];
 export const orm = ['Mongoose', 'Prisma'] as const;
 export type Orm = (typeof orm)[number];
 
-export const webService = ['Admin', 'Client', 'Shared'] as const;
+export const webService = ['Shared', 'Admin', 'Client'] as const;
 export type WebService = (typeof webService)[number];
 
 export const serverLocation = ['app.ts', 'server.ts'] as const;
