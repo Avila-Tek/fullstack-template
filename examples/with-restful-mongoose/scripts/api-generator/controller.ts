@@ -6,7 +6,7 @@ export async function createControllerFile(
   project: Project,
   component: string,
   overwrite: boolean = false
-): Promise<string> {
+): Promise<void> {
   const fileGenerator = new FileGenerator(project, component);
   const file = `${fullPath}/${component}.controller.ts`;
   fileGenerator.setFile(file, overwrite);
@@ -17,41 +17,40 @@ export async function createControllerFile(
   const tCreate = `TCreate${input}`;
   const tDelete = `TDelete${input}`;
   const tFilter = `TFilter${input}`;
+  const tFindOne = `TFindOne${input}`;
   const tUpdate = `TUpdate${input}`;
   const iModel = `I${capitalized}`;
+
+  // Imports
 
   fileGenerator.addImports([
     {
       moduleSpecifier: 'fastify',
       import: ['FastifyReply'],
       isTypeOnly: true,
-      default: false,
     },
     {
       moduleSpecifier: 'fastify',
       import: ['FastifyRequest'],
-      default: false,
     },
     {
       moduleSpecifier: '@avila-tek/models',
-      import: [tCreate, tDelete, tFilter, tUpdate, iModel],
-      default: false,
+      import: [tCreate, tDelete, tFilter, tUpdate, iModel, tFindOne],
     },
     {
       moduleSpecifier: `./${component}.service`,
       import: [`${component}Service`],
-      default: false,
     },
     {
       moduleSpecifier: '@/utils/pagination',
-      import: ['Pagination', 'paginateModel'],
-      default: false,
+      import: ['Pagination'],
     },
   ]);
 
   const create = `create${capitalized}`;
   const update = `update${capitalized}`;
   const findOne = `findOne${capitalized}`;
+  const paginate = `paginate${capitalized}`;
   const _delete = `delete${capitalized}`;
 
   // Create
@@ -120,7 +119,7 @@ export async function createControllerFile(
     parameters: [
       {
         name: 'request',
-        type: `FastifyRequest<{ Params: ${tFilter} }>`,
+        type: `FastifyRequest<{ Params: ${tFindOne} }>`,
       },
       {
         name: 'reply',
@@ -139,16 +138,64 @@ export async function createControllerFile(
     ],
   });
 
+  // Paginate
+  fileGenerator.addFunctionDefinition({
+    isAsync: true,
+    name: paginate,
+    parameters: [
+      {
+        name: 'request',
+        type: `FastifyRequest<{ Querystring: ${tFilter} ; Params: { page: number; perPage: number } }>`,
+      },
+      {
+        name: 'reply',
+        type: `FastifyReply`,
+      },
+    ],
+    returnType: `Promise<Pagination<${iModel}>>`,
+    statements: [
+      `try { 
+    const resp = await ${component}Service.paginate${capitalized}(request.query, request.params.page, request.params.perPage);
+    return reply.code(200).send(resp);
+      }catch(e) { 
+    request.log.error(e);
+    return reply.send(500).send(e);
+      }`,
+    ],
+  });
+
+  // Delete
+  fileGenerator.addFunctionDefinition({
+    isAsync: true,
+    name: _delete,
+    parameters: [
+      {
+        name: 'request',
+        type: `FastifyRequest<{ Params: ${tDelete} }>`,
+      },
+      {
+        name: 'reply',
+        type: `FastifyReply`,
+      },
+    ],
+    returnType: `Promise<${iModel}>`,
+    statements: [
+      `try { 
+    const ${component} = await ${component}Service.delete${capitalized}(request.params);
+    return reply.code(200).send(${component});
+      }catch(e) { 
+    request.log.error(e);
+    return reply.send(500).send(e);
+      }`,
+    ],
+  });
+
   // Export controller
 
   fileGenerator.addConstDeclaration({
     name: `${component}Controller`,
-    initializer: `Object.freeze({
-            ${create},
-            ${update},
-            ${findOne},});`,
+    initializer: `Object.freeze({${create},${update},${findOne},${paginate}, ${_delete} });`,
   });
 
   await fileGenerator.save();
-  return file;
 }
