@@ -56,6 +56,7 @@ function main() {
         `apps/api/src/components/${name}`,
         `apps/api/src/routes.ts`,
         `apps/api/src/${answers.serverLocation}`,
+        `packages/services`,
       ]);
     });
 

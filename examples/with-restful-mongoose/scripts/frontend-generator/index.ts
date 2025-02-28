@@ -1,6 +1,6 @@
 import { IBoostrap } from '../utils';
 import { generateServicePackage } from './services-package-generator';
-
+import { bootstrap as sharedBootstrap } from './shared';
 
 export async function bootstrap(input: IBoostrap): Promise<void> {
   const {
@@ -12,7 +12,8 @@ export async function bootstrap(input: IBoostrap): Promise<void> {
     case 'Client':
       break;
     case 'Shared':
-      const filePath = await generateServicePackage();
+      await generateServicePackage();
+      await sharedBootstrap(input);
       break;
   }
 }
