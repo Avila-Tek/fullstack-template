@@ -20,9 +20,9 @@ import {
  * @summary Imports Interface
  * @version 1
  */
-interface IImports {
+export interface IImports {
   import: string[];
-  default: boolean;
+  default?: boolean;
   moduleSpecifier: string;
   isTypeOnly?: boolean;
 }
@@ -51,7 +51,10 @@ interface IExportDeclaration {
 
 interface IFunctionDeclaration {
   name: string;
-  statements: string | WriterFunction | (string | WriterFunction | StatementStructures)[];
+  statements:
+    | string
+    | WriterFunction
+    | (string | WriterFunction | StatementStructures)[];
   isDefaultExport?: boolean;
   isExported?: boolean;
   parameters: OptionalKind<ParameterDeclarationStructure>[];
@@ -131,10 +134,17 @@ export class FileGenerator {
 
   public addImports(imports: IImports[]): void {
     imports.forEach((imp) => {
+      const isDefault = imp?.default ?? false;
       this.file.addImportDeclaration({
         moduleSpecifier: imp.moduleSpecifier,
-        namedImports: imp.import,
-        defaultImport: imp.default ? imp.import[0] : undefined,
+        ...(isDefault
+          ? {
+              defaultImport: imp.import[0],
+            }
+          : {
+              namedImports: imp.import,
+              defaultImport: undefined,
+            }),
         isTypeOnly: imp.isTypeOnly,
       });
     });
@@ -275,6 +285,44 @@ export class FileGenerator {
       docs,
       isAsync,
     });
+  }
+
+  /**
+   * @async
+   * @function
+   * @description Appends new statements to a function
+   * @param {string | WritterFunction | StatementStructures[]} statements The statements to be added to the function
+   * @param {string} functionName - Name of the function to look for.
+   * @param {boolean} generateFuncionOnError - Generates the function if it is not found
+   * @requires ts-morph
+   * @returns {void} - Nothing
+   * @since 1.0.0
+   * @summary Adds new statements to a function
+   * @version
+   */
+
+  public appendToExistingFunction(
+    statements: string | WriterFunction | StatementStructures[],
+    functionName: string,
+    generateFuncionOnError: boolean = false
+  ): void {
+    const routesFunction = this.file.getFunction(functionName);
+    if (!routesFunction) {
+      if (generateFuncionOnError) {
+        this.addFunctionDefinition({
+          isExported: true,
+          name: functionName,
+          statements: '',
+          returnType: '',
+          parameters: [],
+          isAsync: false,
+        });
+      } else {
+        throw new Error('Function not Found!');
+      }
+    }
+    // Get the existing statements and append the new ones
+    routesFunction.addStatements(statements);
   }
 
   /**
