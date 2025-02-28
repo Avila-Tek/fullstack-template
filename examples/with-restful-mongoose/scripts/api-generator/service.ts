@@ -29,22 +29,18 @@ export async function createServiceFile(
         'ProjectionType',
         'Document',
       ],
-      default: false,
     },
     {
       moduleSpecifier: '@avila-tek/models',
       import: [tCreate, tDelete, tFilter, iModel],
-      default: false,
     },
     {
       moduleSpecifier: `./${component}.model`,
       import: [capitalized],
-      default: false,
     },
     {
       moduleSpecifier: '@/utils/pagination',
       import: ['Pagination', 'paginateModel'],
-      default: false,
     },
   ]);
 
@@ -154,6 +150,7 @@ export async function createServiceFile(
       {
         name: 'filter',
         type: `FilterQuery<${iModel}>`,
+        hasQuestionToken: true,
       },
       {
         name: 'projection',

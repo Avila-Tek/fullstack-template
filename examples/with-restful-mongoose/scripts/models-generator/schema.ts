@@ -15,24 +15,20 @@ export async function createSchemaFile(
     {
       moduleSpecifier: 'zod',
       import: ['z'],
-      default: false,
       isTypeOnly: true,
     },
     {
       moduleSpecifier: 'mongoose',
       import: ['Schema'],
-      default: false,
     },
     {
       moduleSpecifier: 'mongoose',
       import: ['Types', 'Document'],
-      default: false,
       isTypeOnly: true,
     },
     {
       moduleSpecifier: `./${component}.dto`,
       import: [`${component}Definition`],
-      default: false,
     },
   ]);
 

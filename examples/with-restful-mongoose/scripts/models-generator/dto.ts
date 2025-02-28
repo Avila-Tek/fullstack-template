@@ -10,22 +10,19 @@ export async function createDtoFile(
 ) {
   const capitalized = capitalize(component);
   const fileGenerator = new FileGenerator(project, component);
-fileGenerator.setFile(`${fullPath}/${component}.dto.ts`, overwrite);
+  fileGenerator.setFile(`${fullPath}/${component}.dto.ts`, overwrite);
   fileGenerator.addImports([
     {
       moduleSpecifier: 'zod',
       import: ['z'],
-      default: false,
     },
     {
       moduleSpecifier: 'mongoose',
       import: ['Types'],
-      default: false,
     },
     {
       moduleSpecifier: '../basicDefinitions',
       import: ['basicModelDefinition'],
-      default: false,
     },
   ]);
 

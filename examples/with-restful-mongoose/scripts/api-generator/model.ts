@@ -1,26 +1,24 @@
-import { Project } from "ts-morph";
-import { capitalize, FileGenerator } from "../utils";
+import { Project } from 'ts-morph';
+import { capitalize, FileGenerator } from '../utils';
 
 export async function createModelFile(
   fullPath: string,
   project: Project,
   component: string,
   algolia: boolean,
-  overwrite: boolean = false,
+  overwrite: boolean = false
 ): Promise<void> {
   const fileGenerator = new FileGenerator(project, component);
   fileGenerator.setFile(`${fullPath}/${component}.model.ts`, overwrite);
   const schema = `${component}Schema`;
   fileGenerator.addImports([
     {
-      moduleSpecifier: "mongoose",
-      import: ["model"],
-      default: false,
+      moduleSpecifier: 'mongoose',
+      import: ['model'],
     },
     {
-      moduleSpecifier: "@avila-tek/models",
+      moduleSpecifier: '@avila-tek/models',
       import: [schema],
-      default: false,
     },
   ]);
 
