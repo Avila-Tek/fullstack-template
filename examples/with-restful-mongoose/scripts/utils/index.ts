@@ -35,7 +35,7 @@ export function capitalize(str: string): string {
 export * from './file-generator';
 
 export function formatFiles(files: string[]): void {
-  const command = `npx prettier --write ${files.join(' ')}`;
+  const command = `npx prettier --write ${files.join(' ')} --single-quote`;
 
   exec(command, (error, stdout, stderr) => {
     if (error) {
