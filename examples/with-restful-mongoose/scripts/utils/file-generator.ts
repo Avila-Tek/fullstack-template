@@ -326,6 +326,20 @@ export class FileGenerator {
   }
 
   /**
+   * @function
+   * @description Writes to a non-ts file
+   * @param {string} content - The content to write to the file
+   * @requires ts-morph
+   * @returns {void}
+   * @since 1.0.0
+   * @summary Write to a non-ts file
+   * @version 1
+   */
+  public writeInNonTsFile(content: string): void {
+    this.file.insertText(0, content);
+  }
+
+  /**
    * @async
    * @function
    * @description Saves the file
