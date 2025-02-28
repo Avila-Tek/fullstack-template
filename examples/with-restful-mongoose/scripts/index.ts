@@ -1,9 +1,9 @@
-import inquirer from 'inquirer';
 import { Command } from 'commander';
 import { bootstrap as modelsBootstrap } from './models-generator';
-import { bootstrap as apiGenerator } from './api-generator';
+import { bootstrap as apiBoostrap } from './api-generator';
+import { bootstrap as frontendBoostrap } from './frontend-generator';
 import { Project } from 'ts-morph';
-import { formatFiles } from './utils';
+import { formatFiles, IAnswer, propmtTechStack } from './utils';
 
 function main() {
   const program = new Command();
@@ -21,52 +21,17 @@ function main() {
     .option('-o, --overwrite', 'Overwrite existing components', true)
     .option('-a, --algolia', 'Algolia integration added', false)
     .action(async (name: string, options) => {
-      const answers = await inquirer.prompt([
-        // {
-        //   type: 'list',
-        //   name: 'backendArchitecture',
-        //   message: 'Select backend architecture',
-        //   choices: ['RESTful', 'GraphQL'],
-        // },
-        // {
-        //   type: 'list',
-        //   name: 'ORM',
-        //   message: 'Select ORM',
-        //   choices: ['Mongoose', 'Prisma'],
-        // },
-        // {
-        //   type: 'list',
-        //   name: 'overwrite',
-        //   message: 'Do you want to overwrite the existing component?',
-        //   choices: ['Yes', 'No'],
-        // },
-        // {
-        //   type: 'list',
-        //   name: 'algolia',
-        //   message: 'Do you want to enable Algolia?',
-        //   choices: ['Yes', 'No'],
-        // },
-        // {
-        //   type: 'list',
-        //   name: 'shared',
-        //   message: 'Where do you want the services for the frontend to be?',
-        //   choices: ['Admin', 'Client', 'Both'],
-        // },
-        {
-          type: 'list',
-          name: 'serverLocation',
-          message: 'Where is your server located?',
-          choices: ['app.ts', 'server.ts'],
-        },
-      ]);
+      const answers: IAnswer = await propmtTechStack();
 
       console.log('Creating component:', name);
+      // Add the params to choose the tech stack
       await modelsBootstrap(name, project, options.overwrite);
       console.log('Model created successfully!');
 
       console.log('Generating API component for:', name);
 
-      await apiGenerator(
+      // Add the params to choose the tech stack
+      await apiBoostrap(
         name,
         project,
         options.algolia,
@@ -75,6 +40,15 @@ function main() {
       );
 
       console.log('Generted API route');
+
+      console.log('Generating frontend component for:', name);
+
+      await frontendBoostrap({
+        name,
+        project,
+        overwrite: options.overwrite,
+        techStack: answers,
+      });
 
       // format the files after generation
       formatFiles([
