@@ -3,7 +3,7 @@ import fs from 'fs';
 import { Project } from 'ts-morph';
 import { createFolder, FileGenerator, installDependencies } from '../../utils';
 
-export async function generateServicePackage(): Promise<string> {
+export async function generateServicePackage(): Promise<void> {
   const project = new Project();
   const servicePath = path.resolve(__dirname, '../../../packages');
   const root = `${servicePath}/services`;
@@ -81,6 +81,4 @@ export async function generateServicePackage(): Promise<string> {
     );
     await fileGenerator.save();
   }
-
-  return src;
 }
