@@ -1,9 +1,12 @@
-import { Project } from "ts-morph";
-import { createFolder } from "../utils";
-import * as path from "path";
-import { createModelFile } from "./model";
-import { createServiceFile } from "./service";
-import { createPaginationFile } from "./pagination";
+import { Project } from 'ts-morph';
+import { createFolder } from '../utils';
+import * as path from 'path';
+import { createModelFile } from './model';
+import { createServiceFile } from './service';
+import { createPaginationFile } from './pagination';
+import { createControllerFile } from './controller';
+import { createRoutesFile } from './routes';
+import { updateRootRoutes } from './root.routes';
 
 /**
  * @async
@@ -24,8 +27,9 @@ export async function bootstrap(
   project: Project,
   algolia: boolean = false,
   overwrite: boolean = false,
+  serverName: string = 'app.ts'
 ): Promise<void> {
-  const apiPath = path.resolve(__dirname, "../../apps/api/src");
+  const apiPath = path.resolve(__dirname, '../../apps/api/src');
 
   // First try to create the utils folder and add the pagination portion
   createFolder(`${apiPath}/utils`);
@@ -37,6 +41,11 @@ export async function bootstrap(
 
   const modelPath = `${apiPath}/components/${component}`;
 
-  await createModelFile(modelPath, project, component, algolia, overwrite);
-  await createServiceFile(modelPath, project, component, overwrite);
+  await Promise.all([
+    createModelFile(modelPath, project, component, algolia, overwrite),
+    createServiceFile(modelPath, project, component, overwrite),
+    createControllerFile(modelPath, project, component, overwrite),
+    createRoutesFile(modelPath, project, component, overwrite),
+    updateRootRoutes(apiPath, project, component, serverName),
+  ]);
 }
