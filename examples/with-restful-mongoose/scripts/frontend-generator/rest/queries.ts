@@ -45,18 +45,20 @@ export async function createQueriesFile(
         name: 'input',
         type: tFindOne,
       },
+      {
+        name: 'options',
+        type: 'RequestInit',
+        hasQuestionToken: true,
+      },
     ],
-    returnType: `Promise<TFetchOutput<${iModel} | null>>`,
+    returnType: `Promise<${iModel} | null>`,
     statements: [
       `// ! Change to actual param to filter\n`,
-      `return await api.get<${iModel}>({ url: \`/${name}/v1?_id=$\{input._id\}\` })`,
+      `const { data } = await api.get<${iModel}>({ url: \`/${name}/v1?_id=$\{input?._id\}\`, options })
+      return data;`,
     ],
     docs: docs({
       description: `Finds one ${name} with filters`,
-      returns: {
-        type: `Promise<TFetchOutput<${iModel} | null>>`,
-        description: `The ${name} found`,
-      },
       params: [
         {
           name: 'input',
@@ -88,18 +90,19 @@ export async function createQueriesFile(
         type: tFilter,
         hasQuestionToken: true,
       },
+      {
+        name: 'options',
+        type: 'RequestInit',
+        hasQuestionToken: true,
+      },
     ],
-    returnType: `Promise<TFetchOutput<Pagination<${iModel} | null>>>`,
     statements: [
       `// ! Add the filter to the url as needed`,
-      `return await api.get<Pagination<${iModel}>>({ url: \`/${name}/v1/paginate/$\{paginationParams?.page\}/$\{paginationParams?.perPage\}?_id=$\{input?._id\}\` })`,
+      `const { data } = await api.get<Pagination<${iModel}>>({ url: \`/${name}/v1\`, options })
+      return data;`,
     ],
     docs: docs({
       description: `Paginates ${name}s with filters`,
-      returns: {
-        type: `Promise<TFetchOutput<Pagination<${iModel} | null>>>`,
-        description: `The ${name}s paginated `,
-      },
       params: [
         {
           name: 'input',

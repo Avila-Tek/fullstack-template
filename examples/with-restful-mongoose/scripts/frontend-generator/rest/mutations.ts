@@ -46,17 +46,14 @@ export async function createMutationsFile(
         type: tCreate,
       },
     ],
-    returnType: `Promise<TFetchOutput<${iModel} | null>>`,
+    returnType: `Promise<${iModel}>`,
     statements: [
       `// ! Change to actual param to filter\n`,
-      `return await api.post<${iModel}>({ url: \`/${name}/v1\`, options: { body: JSON.stringify(input) } })`,
+      `const { data } = await api.post<${iModel}>({ url: \`/${name}/v1\`, options: { body: JSON.stringify(input) } })
+      return data;`,
     ],
     docs: docs({
       description: `Creates one ${name}`,
-      returns: {
-        type: `Promise<TFetchOutput<${iModel} | null>>`,
-        description: `The ${name} created.`,
-      },
       params: [
         {
           name: 'input',
@@ -84,15 +81,16 @@ export async function createMutationsFile(
         type: tUpdate,
       },
     ],
-    returnType: `Promise<TFetchOutput<${iModel} | null>>`,
+    returnType: `Promise<${iModel}>`,
     statements: [
       `// ! Change to actual param to filter\n`,
-      `return await api.put<${iModel}>({ url: \`/${name}/v1\`, options: { body: JSON.stringify(input) } })`,
+      `const { data } = await api.put<${iModel}>({ url: \`/${name}/v1\`, options: { body: JSON.stringify(input) } })
+      return data;`,
     ],
     docs: docs({
       description: `Updates one ${name}`,
       returns: {
-        type: `Promise<TFetchOutput<${iModel} | null>>`,
+        type: `Promise<${iModel}>`,
         description: `The ${name} created.`,
       },
       params: [
@@ -122,15 +120,16 @@ export async function createMutationsFile(
         type: tDelete,
       },
     ],
-    returnType: `Promise<TFetchOutput<${iModel} | null>>`,
+    returnType: `Promise<${iModel}>`,
     statements: [
       `// ! Change to actual param to filter\n`,
-      `return await api.delete<${iModel}>({ url: \`/${name}/v1/$\{input._id\}\` })`,
+      `const { data } = await api.delete<${iModel}>({ url: \`/${name}/v1/\${input._id}\` })
+      return data;`,
     ],
     docs: docs({
       description: `Soft Deletes one ${name}`,
       returns: {
-        type: `Promise<TFetchOutput<${iModel} | null>>`,
+        type: `Promise<${iModel}>`,
         description: `The ${name} created.`,
       },
       params: [
