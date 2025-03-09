@@ -1,4 +1,4 @@
-import { JSDocStructure, OptionalKind } from "ts-morph";
+import { JSDocStructure, OptionalKind } from 'ts-morph';
 
 interface IParam {
   name?: string;
@@ -13,7 +13,7 @@ interface IDocs {
   listens?: string;
   params?: IParam[];
   requires?: string;
-  returns: IParam;
+  returns?: IParam;
   since: string;
   summary: string;
   todo?: string;
@@ -46,36 +46,37 @@ export function docs({
   version,
 }: IDocs): OptionalKind<JSDocStructure>[] {
   const tags = [];
-  if (async) tags.push({ tagName: "async" });
+  if (async) tags.push({ tagName: 'async' });
 
-  tags.push({ tagName: "description", text: description });
+  tags.push({ tagName: 'description', text: description });
 
-  if (_implements) tags.push({ tagName: "implements", text: _implements });
+  if (_implements) tags.push({ tagName: 'implements', text: _implements });
 
-  if (listens) tags.push({ tagName: "listens", text: listens });
+  if (listens) tags.push({ tagName: 'listens', text: listens });
 
   if (params?.length !== 0)
     tags.push(
       ...params.map(({ name, type, description }) => ({
-        tagName: "param",
+        tagName: 'param',
         text: `{${type}} ${name} - ${description}`,
-      })),
+      }))
     );
 
-  if (requires) tags.push({ tagName: "requires", text: requires });
+  if (requires) tags.push({ tagName: 'requires', text: requires });
 
-  tags.push({
-    tagName: "returns",
-    text: `{${returns?.type}} - ${returns?.description}`,
-  });
+  if (returns)
+    tags.push({
+      tagName: 'returns',
+      text: `{${returns?.type}} - ${returns?.description}`,
+    });
 
-  tags.push({ tagName: "since", text: since });
+  tags.push({ tagName: 'since', text: since });
 
-  tags.push({ tagName: "summary", text: summary });
+  tags.push({ tagName: 'summary', text: summary });
 
-  if (todo) tags.push({ tagName: "todo", text: todo });
+  if (todo) tags.push({ tagName: 'todo', text: todo });
 
-  tags.push({ tagName: "version", text: version });
+  tags.push({ tagName: 'version', text: version });
 
   return [
     {
