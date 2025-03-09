@@ -2,6 +2,7 @@ import * as fs from 'fs';
 import { exec } from 'child_process';
 import inquirer from 'inquirer';
 import { Project } from 'ts-morph';
+import path from 'path';
 export * from './file-generator';
 
 /**
@@ -51,6 +52,30 @@ export function formatFiles(files: string[]): void {
   });
 }
 
+// Creating init file
+
+export async function createInitFile(packageName: string): Promise<void> {
+  const root = path.resolve(__dirname, '../../');
+  const jsonPath = `${root}/avila-config.json`;
+
+  if (!fs.existsSync(jsonPath)) {
+    fs.writeFileSync(
+      jsonPath,
+      JSON.stringify({ project: packageName }, null, 2)
+    );
+  }
+}
+
+// Reading init File
+
+export function readAvilaConfig(): { project: string } {
+  const root = path.resolve(__dirname, '../../');
+  const jsonData = JSON.parse(
+    fs.readFileSync(`${root}/avila-config.json`, 'utf-8')
+  );
+  return jsonData;
+}
+
 interface IDependency {
   name: string;
   dev: boolean;
@@ -79,6 +104,8 @@ export function installDependencies(
     }
   });
 }
+
+// #region Tech Stack
 
 export const architecture = ['RESTful', 'GraphQL'] as const;
 export type Architecture = (typeof architecture)[number];
@@ -134,3 +161,5 @@ export interface IBoostrap {
   overwrite: boolean;
   techStack: IAnswer;
 }
+
+// #endregion

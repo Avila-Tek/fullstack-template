@@ -58,7 +58,7 @@ interface IFunctionDeclaration {
   isDefaultExport?: boolean;
   isExported?: boolean;
   parameters: OptionalKind<ParameterDeclarationStructure>[];
-  returnType: string;
+  returnType?: string;
   isAsync: boolean;
   docs?: OptionalKind<JSDocStructure>[];
 }
