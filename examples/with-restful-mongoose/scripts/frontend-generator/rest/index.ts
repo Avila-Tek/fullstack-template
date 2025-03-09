@@ -6,6 +6,7 @@ import { Project } from 'ts-morph';
 import { createQueriesFile } from './queries';
 import { createIndexFile } from './_index';
 import { createMutationsFile } from './mutations';
+import { createHooksFile } from './hooks';
 
 export async function restBootstrap(
   fileGenerator: FileGenerator,
@@ -28,6 +29,7 @@ export async function restBootstrap(
 
   await createQueriesFile(src, name, fileGenerator);
   await createMutationsFile(src, name, fileGenerator);
+  await createHooksFile(src, name, fileGenerator);
   // The index inside the ${name} folder
   await createIndexFile(src, fileGenerator);
 
