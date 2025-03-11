@@ -54,7 +54,7 @@ export async function generateModelsPackage(): Promise<void> {
   if (!fs.existsSync(packagejson)) {
     fileGenerator.setFile(packagejson, true);
     fileGenerator.writeInNonTsFile(
-      `{\n  "name": "@${packageName}/models",\n  "version": "1.0.0",\n  "descriptions":"Models for Avila Tek projects",\n  "private": true,\n  "scripts": {\n    "lint": "eslint .",\n    "build": "tsup src/index.ts",\n    "dev": "tsup src/index.ts --format cjs --watch --dts"\n  },\n  "format": "prettier --write .",\n  "files": [\n    "dist/**"\n  ],\n  "repository": {\n    "type": "git",\n    "url": "none"\n  },\n  "main": "./dist/index.js",\n  "module": "./src/index.mjs",\n  "types": "./src/index.d.ts",\n  "keywords": [],\n  "author": "Avila Tek"\n}`
+      `{\n  "name": "@${packageName}/models",\n  "version": "1.0.0",\n  "descriptions":"Models for Avila Tek projects",\n  "private": true,\n  "scripts": {\n    "lint": "eslint .",\n    "build": "tsup src/index.ts",\n    "dev": "tsup src/index.ts --format cjs --watch --dts"\n,    "format": "prettier --write ."  },\n  "files": [\n    "dist/**"\n  ],\n  "repository": {\n    "type": "git",\n    "url": "none"\n  },\n  "main": "./dist/index.js",\n  "module": "./src/index.mjs",\n  "types": "./src/index.d.ts",\n  "keywords": [],\n  "author": "Avila Tek"\n}`
     );
   }
 
@@ -101,8 +101,17 @@ export async function generateModelsPackage(): Promise<void> {
   ]);
 
   fileGenerator.File.addExportAssignment({
-    expression:
-      "defineConfig({\n  entryPoints: ['src/index.ts'],\n  format: ['cjs', 'esm'],\n  dts: true,\n  sourcemap: true,\n  clean: true,\n  outDir: 'dist',\n  external: ['zod'],\n})",
+    expression: `defineConfig({entry: ['src/index.ts'],
+  outDir: 'dist',
+  format: ['cjs'],
+  platform: 'node',
+  splitting: false,
+  clean: true,
+  sourcemap: true,
+  target: 'node18',
+  shims: true,
+  bundle: true,
+  skipNodeModulesBundle: true,})`,
     isExportEquals: false,
   });
 
