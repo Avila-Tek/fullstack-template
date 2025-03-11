@@ -52,23 +52,9 @@ export function formatFiles(files: string[]): void {
   });
 }
 
-// Creating init file
-
-export async function createInitFile(packageName: string): Promise<void> {
-  const root = path.resolve(__dirname, '../../');
-  const jsonPath = `${root}/avila-config.json`;
-
-  if (!fs.existsSync(jsonPath)) {
-    fs.writeFileSync(
-      jsonPath,
-      JSON.stringify({ project: packageName }, null, 2)
-    );
-  }
-}
-
 // Reading init File
 
-export function readAvilaConfig(): { project: string } {
+export function readAvilaConfig(): IAnswer {
   const root = path.resolve(__dirname, '../../');
   const jsonData = JSON.parse(
     fs.readFileSync(`${root}/avila-config.json`, 'utf-8')
@@ -116,18 +102,22 @@ export type Orm = (typeof orm)[number];
 export const webService = ['Shared', 'Admin', 'Client'] as const;
 export type WebService = (typeof webService)[number];
 
-export const serverLocation = ['app.ts', 'server.ts'] as const;
-export type ServerLocation = (typeof serverLocation)[number];
-
 export type IAnswer = {
+  project: string;
   backendArchitecture: Architecture;
   ORM: Orm;
   webService: WebService;
-  serverLocation: ServerLocation;
+  serverLocation: string;
 };
 
 export function propmtTechStack() {
+  // TODO: remove webService and prompt it with every run of the script
   return inquirer.prompt([
+    {
+      type: 'input',
+      name: 'project',
+      message: 'Project name',
+    },
     {
       type: 'list',
       name: 'backendArchitecture',
@@ -147,10 +137,9 @@ export function propmtTechStack() {
       choices: webService,
     },
     {
-      type: 'list',
+      type: 'input',
       name: 'serverLocation',
       message: 'Where is your server located?',
-      choices: serverLocation,
     },
   ]);
 }

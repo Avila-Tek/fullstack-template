@@ -355,4 +355,18 @@ export class FileGenerator {
   public async save(): Promise<void> {
     await this.file.save();
   }
+
+  public appendExportDeclaration(indexPath: string, component: string) {
+    this.project.addSourceFileAtPath(indexPath);
+    this.setFile('', null, this.project.getSourceFileOrThrow(indexPath));
+    const hasAlreadyBeenExported = this.getExportDeclaration(`./${component}`);
+    if (!hasAlreadyBeenExported) {
+      this.addExportDeclaration([
+        {
+          export: undefined,
+          moduleSpecifier: `./${component}`,
+        },
+      ]);
+    }
+  }
 }
