@@ -5,6 +5,7 @@ import { createDtoFile } from './dto';
 import { createSchemaFile } from './schema';
 import { createIndexFile } from './_index';
 import { FileGenerator } from '../utils';
+import { generateModelsPackage } from './models-package-generator';
 
 /**
  * @async
@@ -28,6 +29,8 @@ export async function bootstrap(
   project: Project,
   overwrite?: boolean
 ): Promise<void> {
+  
+  await generateModelsPackage();
   const modelsPath = path.resolve(__dirname, '../../packages/models/src');
   const fullPath = `${modelsPath}/${component}`;
   createFolder(fullPath);
@@ -38,25 +41,8 @@ export async function bootstrap(
 
   const indexFilePath = path.resolve(modelsPath, 'index.ts');
   const fileGenerator = new FileGenerator(project, '');
-  fileGenerator.project.addSourceFileAtPath(indexFilePath);
 
-  fileGenerator.setFile(
-    '',
-    null,
-    fileGenerator.project.getSourceFileOrThrow(indexFilePath)
-  );
+  fileGenerator.appendExportDeclaration(indexFilePath, component);
 
-  const hasAlreadyBeenExported = fileGenerator.getExportDeclaration(
-    `./${component}`
-  );
-
-  if (!hasAlreadyBeenExported) {
-    fileGenerator.addExportDeclaration([
-      {
-        moduleSpecifier: `./${component}`,
-        export: undefined,
-      },
-    ]);
-  }
-  await fileGenerator.save();
+  await project.save();
 }
