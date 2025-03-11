@@ -1,5 +1,5 @@
 import { Project } from 'ts-morph';
-import { capitalize, FileGenerator } from '../utils';
+import { capitalize, FileGenerator, readAvilaConfig } from '../utils';
 
 export async function createModelFile(
   fullPath: string,
@@ -11,13 +11,16 @@ export async function createModelFile(
   const fileGenerator = new FileGenerator(project, component);
   fileGenerator.setFile(`${fullPath}/${component}.model.ts`, overwrite);
   const schema = `${component}Schema`;
+
+  const { project: projectName } = readAvilaConfig();
+
   fileGenerator.addImports([
     {
       moduleSpecifier: 'mongoose',
       import: ['model'],
     },
     {
-      moduleSpecifier: '@avila-tek/models',
+      moduleSpecifier: `@${projectName}/models`,
       import: [schema],
     },
   ]);

@@ -1,5 +1,5 @@
 import { Project } from 'ts-morph';
-import { capitalize, FileGenerator } from '../utils';
+import { capitalize, FileGenerator, readAvilaConfig } from '../utils';
 
 export async function createControllerFile(
   fullPath: string,
@@ -10,6 +10,7 @@ export async function createControllerFile(
   const fileGenerator = new FileGenerator(project, component);
   const file = `${fullPath}/${component}.controller.ts`;
   fileGenerator.setFile(file, overwrite);
+  const { project: projectName } = readAvilaConfig();
 
   const capitalized = capitalize(component);
   const input = `${capitalized}Input`;
@@ -34,7 +35,7 @@ export async function createControllerFile(
       import: ['FastifyRequest'],
     },
     {
-      moduleSpecifier: '@avila-tek/models',
+      moduleSpecifier: `@${projectName}/models`,
       import: [tCreate, tDelete, tFilter, tUpdate, iModel, tFindOne],
     },
     {

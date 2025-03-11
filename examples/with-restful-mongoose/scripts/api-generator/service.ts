@@ -1,5 +1,5 @@
 import { Project } from 'ts-morph';
-import { capitalize, FileGenerator } from '../utils';
+import { capitalize, FileGenerator, readAvilaConfig } from '../utils';
 import { docs } from '../utils/docs.template';
 
 export async function createServiceFile(
@@ -12,6 +12,7 @@ export async function createServiceFile(
   fileGenerator.setFile(`${fullPath}/${component}.service.ts`, overwrite);
 
   const capitalized = capitalize(component);
+  const { project: projectName } = readAvilaConfig();
   const input = `${capitalized}Input`;
 
   const tCreate = `TCreate${input}`;
@@ -31,7 +32,7 @@ export async function createServiceFile(
       ],
     },
     {
-      moduleSpecifier: '@avila-tek/models',
+      moduleSpecifier: `@${projectName}/models`,
       import: [tCreate, tDelete, tFilter, iModel],
     },
     {

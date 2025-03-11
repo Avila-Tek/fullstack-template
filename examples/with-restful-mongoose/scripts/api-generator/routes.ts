@@ -1,5 +1,5 @@
 import { Project } from 'ts-morph';
-import { capitalize, FileGenerator } from '../utils';
+import { capitalize, FileGenerator, readAvilaConfig } from '../utils';
 
 export async function createRoutesFile(
   fullPath: string,
@@ -12,6 +12,7 @@ export async function createRoutesFile(
   fileGenerator.setFile(file, overwrite);
 
   const capitalized = capitalize(component);
+  const { project: projectName } = readAvilaConfig();
   const input = `${capitalized}Input`;
 
   const tCreate = `TCreate${input}`;
@@ -32,7 +33,7 @@ export async function createRoutesFile(
 
   fileGenerator.addImports([
     {
-      moduleSpecifier: '@avila-tek/models',
+      moduleSpecifier: `@${projectName}/models`,
       import: [tCreate, tUpdate, tDelete, tFilter, tFindOne],
     },
     {
