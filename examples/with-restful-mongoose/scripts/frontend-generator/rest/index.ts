@@ -26,21 +26,16 @@ export async function restBootstrap(
   if (!fs.existsSync(apiFile)) {
     await createApiFile(apiFile, project);
   }
-
-  await createQueriesFile(src, name, fileGenerator);
-  await createMutationsFile(src, name, fileGenerator);
-  await createHooksFile(src, name, fileGenerator);
-  // The index inside the ${name} folder
-  await createIndexFile(src, fileGenerator);
+  createQueriesFile(src, name, fileGenerator);
+  createMutationsFile(src, name, fileGenerator);
+  createHooksFile(src, name, fileGenerator);
+  createIndexFile(`${src}/${name}`, fileGenerator);
 
   // Update the index.ts file in the src folder
 
   const indexFile = `${src}/index.ts`;
+  fileGenerator.setFile(indexFile, true);
+  fileGenerator.appendExportDeclaration(indexFile, name);
 
-  if (!fs.existsSync(indexFile)) {
-    fileGenerator.setFile(indexFile, false);
-    await fileGenerator.save();
-  } else {
-    // Do some logic here to append the export of the new component
-  }
+  await project.save();
 }

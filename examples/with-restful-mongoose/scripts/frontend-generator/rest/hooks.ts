@@ -6,16 +6,16 @@ import {
 } from '../../utils';
 import { docs } from '../../utils/docs.template';
 
-export async function createHooksFile(
+export function createHooksFile(
   src: string,
   name: string,
   fileGenerator: FileGenerator
-): Promise<void> {
+): void {
   const component = `${src}/${name}`;
 
   createFolder(component);
 
-  const { project: packageName } = readAvilaConfig();
+  const { project: projectName } = readAvilaConfig();
 
   fileGenerator.setFile(`${component}/hooks.ts`, true);
 
@@ -58,11 +58,9 @@ export async function createHooksFile(
         tDelete,
         tFindOne,
         tFilter,
-        'Pagination',
         'TPaginateParams',
       ],
-      // ! FixMe: Change this to packageName
-      moduleSpecifier: `@avila-tek/models`,
+      moduleSpecifier: `@${projectName}/models`,
     },
     {
       import: [
@@ -276,6 +274,4 @@ export async function createHooksFile(
     }),
     isExported: true,
   });
-
-  await fileGenerator.save();
 }

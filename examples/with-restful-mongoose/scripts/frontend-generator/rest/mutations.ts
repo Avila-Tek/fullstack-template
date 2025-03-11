@@ -1,11 +1,16 @@
-import { capitalize, createFolder, FileGenerator } from '../../utils';
+import {
+  capitalize,
+  createFolder,
+  FileGenerator,
+  readAvilaConfig,
+} from '../../utils';
 import { docs } from '../../utils/docs.template';
 
-export async function createMutationsFile(
+export function createMutationsFile(
   src: string,
   name: string,
   fileGenerator: FileGenerator
-): Promise<void> {
+): void {
   const component = `${src}/${name}`;
 
   createFolder(component);
@@ -13,6 +18,7 @@ export async function createMutationsFile(
   fileGenerator.setFile(`${component}/mutations.ts`, true);
 
   const capitalized = capitalize(name);
+  const { project } = readAvilaConfig();
 
   const input = `${capitalized}Input`;
 
@@ -28,10 +34,10 @@ export async function createMutationsFile(
   fileGenerator.addImports([
     {
       moduleSpecifier: '../lib/api',
-      import: ['api', 'TFetchOutput'],
+      import: ['api'],
     },
     {
-      moduleSpecifier: '@avila-tek/models',
+      moduleSpecifier: `@${project}/models`,
       import: [iModel, tCreate, tUpdate, tDelete],
     },
   ]);
@@ -147,6 +153,4 @@ export async function createMutationsFile(
     }),
     isExported: true,
   });
-
-  await fileGenerator.save();
 }

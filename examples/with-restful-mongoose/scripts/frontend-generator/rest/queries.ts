@@ -1,11 +1,16 @@
-import { capitalize, createFolder, FileGenerator } from '../../utils';
+import {
+  capitalize,
+  createFolder,
+  FileGenerator,
+  readAvilaConfig,
+} from '../../utils';
 import { docs } from '../../utils/docs.template';
 
-export async function createQueriesFile(
+export function createQueriesFile(
   src: string,
   name: string,
   fileGenerator: FileGenerator
-): Promise<void> {
+): void {
   const component = `${src}/${name}`;
 
   createFolder(component);
@@ -23,14 +28,15 @@ export async function createQueriesFile(
 
   const tFindOne = `T${capitalize(findOne)}`;
   const tFilter = `T${capitalize(filter)}`;
+  const { project } = readAvilaConfig();
 
   fileGenerator.addImports([
     {
       moduleSpecifier: '../lib/api',
-      import: ['api', 'TFetchOutput'],
+      import: ['api'],
     },
     {
-      moduleSpecifier: '@avila-tek/models',
+      moduleSpecifier: `@${project}/models`,
       import: [iModel, tFindOne, tFilter, paginateParams, 'Pagination'],
     },
   ]);
@@ -98,7 +104,7 @@ export async function createQueriesFile(
     ],
     statements: [
       `// ! Add the filter to the url as needed`,
-      `const { data } = await api.get<Pagination<${iModel}>>({ url: \`/${name}/v1\`, options })
+      `const { data } = await api.get<Pagination<${iModel}>>({ url: \`/${name}/v1/paginate/$\{paginationParams?.page\}/$\{paginationParams?.perPage\}?_id=$\{input?._id\}\`, ...options })
       return data;`,
     ],
     docs: docs({
@@ -118,6 +124,4 @@ export async function createQueriesFile(
     }),
     isExported: true,
   });
-
-  await fileGenerator.save();
 }
