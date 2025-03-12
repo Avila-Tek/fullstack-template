@@ -8,7 +8,7 @@
     "resolveJsonModule": true,
     "removeComments": true,
     "newLine": "lf",
-    "noUnusedLocals": true,
+    "noUnusedLocals": false,
     "noFallthroughCasesInSwitch": true,
     "isolatedModules": true,
     "forceConsistentCasingInFileNames": true,

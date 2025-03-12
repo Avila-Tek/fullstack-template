@@ -36,20 +36,26 @@ export function capitalize(str: string): string {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
+function execCommand(command: string): void {
+  exec(
+    command,
+    { cwd: path.resolve(__dirname, '../../..') },
+    (error, stdout, stderr) => {
+      if (error) {
+        console.error(`Error: ${error.message}`);
+        return;
+      }
+      if (stderr) {
+        console.error(`stderr: ${stderr}`);
+        return;
+      }
+    }
+  );
+}
+
 export function formatFiles(files: string[]): void {
   const command = `npx prettier --write ${files.join(' ')} --single-quote`;
-
-  exec(command, (error, stdout, stderr) => {
-    if (error) {
-      console.error(`Error: ${error.message}`);
-      return;
-    }
-    if (stderr) {
-      console.error(`Prettier stderr: ${stderr}`);
-      return;
-    }
-    console.log(stdout);
-  });
+  execCommand(command);
 }
 
 // Reading init File
@@ -104,17 +110,7 @@ export function installDependencies(
         `${dep.name}${dep.dev ? ' -D' : ''}${dep.peer ? ' --save-peer' : ''}`
     )
     .join(' ')}`;
-
-  exec(command,{ cwd: '../../../' } ,(error, stdout, stderr) => {
-    if (error) {
-      console.error(`Error: ${error.message}`);
-      return;
-    }
-    if (stderr) {
-      console.error(`Install Dependencies stderr: ${stderr}`);
-      return;
-    }
-  });
+  execCommand(command);
 }
 
 // #region Tech Stack
