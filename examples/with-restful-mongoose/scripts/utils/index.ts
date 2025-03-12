@@ -62,6 +62,32 @@ export function readAvilaConfig(): IAnswer {
   return jsonData;
 }
 
+interface IServicePath {
+  type: WebService;
+  src: string;
+  lib: string;
+  apiFile: string;
+}
+
+export function getServicePath(webService: WebService): IServicePath | null {
+  const roots: Record<WebService, string> = {
+    Shared: '../../../packages/services',
+    Admin: '../../../apps/admin',
+    Client: '../../../apps/client',
+  };
+
+  const root = roots[webService];
+
+  if (!root) return null;
+
+  return {
+    type: webService,
+    src: `${root}/src${webService === 'Shared' ? '' : '/services'}`,
+    lib: `${root}/src/lib`,
+    apiFile: `${root}/src/lib/api${webService === 'Shared' ? '.ts' : '/api.ts'}`,
+  };
+}
+
 interface IDependency {
   name: string;
   dev: boolean;
@@ -131,15 +157,20 @@ export function propmtTechStack() {
       choices: orm,
     },
     {
+      type: 'input',
+      name: 'serverLocation',
+      message: 'Where is your server located?',
+    },
+  ]);
+}
+
+export function promptWebService() {
+  return inquirer.prompt([
+    {
       type: 'list',
       name: 'webService',
       message: 'Where do you want the services for the frontend to be?',
       choices: webService,
-    },
-    {
-      type: 'input',
-      name: 'serverLocation',
-      message: 'Where is your server located?',
     },
   ]);
 }
