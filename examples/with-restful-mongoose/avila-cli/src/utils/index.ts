@@ -122,13 +122,23 @@ export function install(): void {
 export function addLocalDependency(
   path: string,
   dependency: string,
-  type: 'Dev' | 'Regular',
+  type: 'Dev' | 'Regular'
 ) {
   const packageJson = JSON.parse(fs.readFileSync(path, 'utf-8'));
-  const dependencies =
-    packageJson[type === 'Dev' ? 'devDependencies' : 'dependencies'];
 
-  packageJson[dependencies][dependency] = '*';
+  if (type === 'Dev') {
+    if (!packageJson.devDependencies) {
+      packageJson.devDependencies = {};
+    }
+
+    packageJson.devDependencies[dependency] = '*';
+  } else {
+    if (!packageJson.dependencies) {
+      packageJson.dependencies = {};
+    }
+
+    packageJson.dependencies[dependency] = '*';
+  }
 
   fs.writeFileSync(path, JSON.stringify(packageJson, null, 2), 'utf-8');
 }

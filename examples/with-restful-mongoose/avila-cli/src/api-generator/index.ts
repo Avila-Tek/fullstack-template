@@ -1,9 +1,5 @@
 import { Project } from 'ts-morph';
-import {
-  addLocalDependency,
-  createFolder,
-  readAvilaConfig,
-} from '../utils';
+import { addLocalDependency, createFolder, readAvilaConfig } from '../utils';
 import * as path from 'path';
 import { createModelFile } from './model';
 import { createServiceFile } from './service';
@@ -56,5 +52,9 @@ export async function bootstrap(
     updateRootRoutes(apiPath, project, component, serverName),
   ]);
 
-  addLocalDependency(`${api}/package.json`, `${projectName}/models`, 'Dev');
+  addLocalDependency(
+    `${api}/package.json`,
+    `@${projectName}/models`,
+    'Regular'
+  );
 }
