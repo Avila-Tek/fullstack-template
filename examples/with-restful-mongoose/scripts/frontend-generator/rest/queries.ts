@@ -3,13 +3,15 @@ import {
   createFolder,
   FileGenerator,
   readAvilaConfig,
+  WebService,
 } from '../../utils';
 import { docs } from '../../utils/docs.template';
 
 export function createQueriesFile(
   src: string,
   name: string,
-  fileGenerator: FileGenerator
+  fileGenerator: FileGenerator,
+  hasExtraDots: boolean
 ): void {
   const component = `${src}/${name}`;
 
@@ -32,7 +34,7 @@ export function createQueriesFile(
 
   fileGenerator.addImports([
     {
-      moduleSpecifier: '../lib/api',
+      moduleSpecifier: `../${hasExtraDots ? '../' : ''}lib/api`,
       import: ['api'],
     },
     {

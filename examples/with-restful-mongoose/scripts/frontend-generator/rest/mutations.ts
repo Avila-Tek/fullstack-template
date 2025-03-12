@@ -3,20 +3,21 @@ import {
   createFolder,
   FileGenerator,
   readAvilaConfig,
+  WebService,
 } from '../../utils';
 import { docs } from '../../utils/docs.template';
 
 export function createMutationsFile(
   src: string,
   name: string,
-  fileGenerator: FileGenerator
+  fileGenerator: FileGenerator,
+  hasExtraDots: boolean
 ): void {
   const component = `${src}/${name}`;
 
   createFolder(component);
 
   fileGenerator.setFile(`${component}/mutations.ts`, true);
-
   const capitalized = capitalize(name);
   const { project } = readAvilaConfig();
 
@@ -33,7 +34,7 @@ export function createMutationsFile(
 
   fileGenerator.addImports([
     {
-      moduleSpecifier: '../lib/api',
+      moduleSpecifier: `../${hasExtraDots ? '../' : ''}lib/api`,
       import: ['api'],
     },
     {

@@ -1,23 +1,59 @@
 import path from 'path';
 import fs from 'fs';
 import { createApiFile } from '../api';
-import { createFolder, FileGenerator } from '../../utils';
+import {
+  createFolder,
+  FileGenerator,
+  getServicePath,
+  WebService,
+} from '../../utils';
 import { Project } from 'ts-morph';
 import { createQueriesFile } from './queries';
 import { createIndexFile } from './_index';
 import { createMutationsFile } from './mutations';
 import { createHooksFile } from './hooks';
+import { generateServicePackage } from '../services-package-generator';
+
+/**
+ * @async
+ * @function
+ * @description Bootstraps the code generation of the REST portion of the project.
+ * @implements {ts-morph}
+ * @param {FileGenerator} fileGenerator - The file generator object.
+ * @param {Project} project - The project to create the file in.
+ * @param {string} name - The name of the component to generate.
+ * @param {WebService} webService - The web service to generate the code for.
+ * @requires ts-morph
+ * @requires fs
+ * @requires path
+ * @requires generateServicePackage
+ * @returns {Promise<void>}
+ * @see {@link https://ts-morph.com/}
+ * @since 1.0.0
+ * @summary REST Generation
+ * @version 1
+ */
 
 export async function restBootstrap(
   fileGenerator: FileGenerator,
   project: Project,
-  name: string
+  name: string,
+  webService: WebService
 ): Promise<void> {
   // First, we create the lib folder to store the api wrapper for requests
-  const servicePath = path.resolve(__dirname, '../../../packages');
-  const root = `${servicePath}/services`;
-  const src = `${root}/src`;
-  const lib = `${src}/lib`;
+  const appPath = getServicePath(webService);
+
+  if (!appPath) {
+    throw new Error('The web service is not supported');
+  }
+
+  if (appPath.type === 'Shared') {
+    generateServicePackage();
+  }
+
+  const src = path.resolve(__dirname, appPath.src);
+  const lib = path.resolve(__dirname, appPath.lib);
+
   // Create the lib folder and if it already exists, it won't overwrite it
   createFolder(lib);
   const apiFile = `${lib}/api.ts`;
@@ -26,8 +62,11 @@ export async function restBootstrap(
   if (!fs.existsSync(apiFile)) {
     await createApiFile(apiFile, project);
   }
-  createQueriesFile(src, name, fileGenerator);
-  createMutationsFile(src, name, fileGenerator);
+
+  const hasExtraDots = webService !== 'Shared';
+
+  createQueriesFile(src, name, fileGenerator, hasExtraDots);
+  createMutationsFile(src, name, fileGenerator, hasExtraDots);
   createHooksFile(src, name, fileGenerator);
   createIndexFile(`${src}/${name}`, fileGenerator);
 

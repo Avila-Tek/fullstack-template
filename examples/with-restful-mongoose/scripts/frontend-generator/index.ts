@@ -1,19 +1,18 @@
-import { IBoostrap } from '../utils';
-import { generateServicePackage } from './services-package-generator';
-import { bootstrap as sharedBootstrap } from './shared';
+import { FileGenerator, IBoostrap } from '../utils';
+import { restBootstrap } from './rest';
 
 export async function bootstrap(input: IBoostrap): Promise<void> {
   const {
-    techStack: { webService },
+    project,
+    techStack: { backendArchitecture, webService },
+    name,
   } = input;
-  switch (webService) {
-    case 'Admin':
-      break;
-    case 'Client':
-      break;
-    case 'Shared':
-      await generateServicePackage();
-      await sharedBootstrap(input);
+
+  const fileGenerator = new FileGenerator(project, '');
+
+  switch (backendArchitecture) {
+    case 'RESTful':
+      await restBootstrap(fileGenerator, project, name, webService);
       break;
   }
 }
