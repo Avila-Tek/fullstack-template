@@ -71,7 +71,7 @@ function main() {
 
       // format the files after generation
       formatFiles([
-        `packages/models/${name}`,
+        `packages/models/src/${name}`,
         `packages/services`,
         `apps/api/src/components/${name}`,
         `apps/api/src/routes.ts`,
