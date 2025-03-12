@@ -9,6 +9,9 @@
         "generate": "ts-node ./src/index.ts",
         "build": "tsc -b"
     },
+    "bin": {
+        "avila-cli": "bin/avila.ts"
+    },
     "author": "Avila Tek <info@avilatek.dev>",
     "devDependencies": {
         "commander": "^13.1.0",

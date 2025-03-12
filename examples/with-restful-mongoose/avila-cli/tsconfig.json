@@ -15,7 +15,8 @@
     "skipLibCheck": true,
     "lib": [
       "ESNext"
-    ]
+    ],
+    "noEmit": true,
   },
   "include": ["src/**/*.ts", "tests/**/*.ts", "tsup.config.ts"],
   "exclude": ["./dist/**", "node_modules"]

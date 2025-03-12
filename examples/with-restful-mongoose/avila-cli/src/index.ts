@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 import { Command } from 'commander';
 import { bootstrap as modelsBootstrap } from './models-generator';
 import { bootstrap as apiBoostrap } from './api-generator';
@@ -11,7 +12,7 @@ import {
   readAvilaConfig,
 } from './utils';
 
-function main() {
+export function main() {
   const program = new Command();
   const project = new Project();
 
@@ -87,4 +88,4 @@ function main() {
   program.parse(process.argv);
 }
 
-main();
+// main();
