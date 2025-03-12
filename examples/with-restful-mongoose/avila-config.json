@@ -1,0 +1,7 @@
+{
+  "project": "prueba",
+  "backendArchitecture": "RESTful",
+  "ORM": "Mongoose",
+  "serverLocation": "app.ts",
+  "ui": []
+}

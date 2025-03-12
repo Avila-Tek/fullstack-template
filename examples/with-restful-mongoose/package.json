@@ -8,7 +8,8 @@
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "format-and-lint": "biome check .",
     "format-and-lint:fix": "biome check . --write",
-    "g": "ts-node ./scripts/index.ts"
+    "g": "ts-node ./scripts/index.ts",
+    "i": "ts-node ./scripts/utils/init-config.ts"
   },
   "devDependencies": {
     "@biomejs/biome": "1.8.3",
