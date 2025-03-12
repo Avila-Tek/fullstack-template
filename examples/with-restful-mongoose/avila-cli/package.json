@@ -1,0 +1,19 @@
+{
+    "name": "@avilatek/cli",
+    "description": "Cli for Avila Tek projects",
+    "version": "1.0.0",
+    "main": "./dist/index.js",
+    "module": "./src/index.mjs",
+    "types": "./src/index.d.ts",
+    "scripts": {
+        "generate": "ts-node ./src/index.ts",
+        "build": "tsc -b"
+    },
+    "author": "Avila Tek <info@avilatek.dev>",
+    "devDependencies": {
+        "commander": "^13.1.0",
+        "inquirer": "^12.4.3",
+        "ts-morph": "^25.0.1",
+        "typescript": "^5.8.2"
+    }
+}
