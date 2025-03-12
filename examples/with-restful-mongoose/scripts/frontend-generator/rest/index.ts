@@ -49,6 +49,9 @@ export async function restBootstrap(
 
   if (appPath.type === 'Shared') {
     generateServicePackage();
+  } else {
+    const servicesPath = path.resolve(__dirname, appPath.src);
+    createFolder(servicesPath);
   }
 
   const src = path.resolve(__dirname, appPath.src);
