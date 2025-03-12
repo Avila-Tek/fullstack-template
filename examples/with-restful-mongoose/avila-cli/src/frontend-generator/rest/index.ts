@@ -2,9 +2,11 @@ import * as path from 'path';
 import * as fs from 'fs';
 import { createApiFile } from '../api';
 import {
+  addLocalDependency,
   createFolder,
   FileGenerator,
   getServicePath,
+  readAvilaConfig,
   WebService,
 } from '../../utils';
 import { Project } from 'ts-morph';
@@ -54,6 +56,7 @@ export async function restBootstrap(
     createFolder(servicesPath);
   }
 
+  const root = path.resolve(__dirname, appPath.root);
   const src = path.resolve(__dirname, appPath.src);
   const lib = path.resolve(__dirname, appPath.lib);
 
@@ -78,6 +81,10 @@ export async function restBootstrap(
   const indexFile = `${src}/index.ts`;
   fileGenerator.setFile(indexFile, true);
   fileGenerator.appendExportDeclaration(indexFile, name);
+
+  const { project: projectName } = readAvilaConfig();
+
+  addLocalDependency(`${root}/package.json`, `@${projectName}/models`, 'Dev');
 
   await project.save();
 }

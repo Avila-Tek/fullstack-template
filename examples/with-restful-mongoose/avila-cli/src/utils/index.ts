@@ -69,6 +69,7 @@ export function readAvilaConfig(): IAnswer {
 }
 
 interface IServicePath {
+  root: string;
   type: WebService;
   src: string;
   lib: string;
@@ -87,6 +88,7 @@ export function getServicePath(webService: WebService): IServicePath | null {
   if (!root) return null;
 
   return {
+    root,
     type: webService,
     src: `${root}/src${webService === 'Shared' ? '' : '/services'}`,
     lib: `${root}/src/lib`,
@@ -111,6 +113,24 @@ export function installDependencies(
     )
     .join(' ')}`;
   execCommand(command);
+}
+
+export function install(): void {
+  execCommand('npm i');
+}
+
+export function addLocalDependency(
+  path: string,
+  dependency: string,
+  type: 'Dev' | 'Regular',
+) {
+  const packageJson = JSON.parse(fs.readFileSync(path, 'utf-8'));
+  const dependencies =
+    packageJson[type === 'Dev' ? 'devDependencies' : 'dependencies'];
+
+  packageJson[dependencies][dependency] = '*';
+
+  fs.writeFileSync(path, JSON.stringify(packageJson, null, 2), 'utf-8');
 }
 
 // #region Tech Stack

@@ -39,7 +39,7 @@ export async function generateServicePackage(): Promise<void> {
   if (!fs.existsSync(packagejson)) {
     fileGenerator.setFile(packagejson, true);
     fileGenerator.writeInNonTsFile(
-      `{\n  "name": "@${packageName}/services",\n  "version": "0.0.0",\n  "private": true,\n  "exports": {\n    ".": "./src/index.ts"\n  },\n  "scripts": {\n    "lint": "eslint .",\n    "lint:fix": "eslint . --fix",\n    "dev": "tsup src/index.ts --format cjs --watch --dts"\n  },\n  "devDependencies": {\n    "@avila-tek/models": "*"\n  }\n}`
+      `{\n  "name": "@${packageName}/services",\n  "version": "0.0.0",\n  "private": true,\n  "exports": {\n    ".": "./src/index.ts"\n  },\n  "scripts": {\n    "lint": "eslint .",\n    "lint:fix": "eslint . --fix",\n    "dev": "tsup src/index.ts --format cjs --watch --dts"\n  },\n  "devDependencies": {\n    "@${packageName}/models": "*"\n  }\n}`
     );
   }
 

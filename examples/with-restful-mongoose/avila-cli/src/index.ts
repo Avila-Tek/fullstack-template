@@ -6,6 +6,7 @@ import { Project } from 'ts-morph';
 import {
   formatFiles,
   IAnswer,
+  install,
   promptWebService,
   readAvilaConfig,
 } from './utils';
@@ -68,6 +69,8 @@ function main() {
           webService,
         },
       });
+
+      install();
 
       // format the files after generation
       formatFiles([
