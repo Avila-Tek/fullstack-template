@@ -1,5 +1,5 @@
 {
-    "name": "@avilatek/cli",
+    "name": "@avila-tek/cli",
     "description": "Cli for Avila Tek projects",
     "version": "1.0.0",
     "main": "./dist/index.js",
@@ -7,10 +7,10 @@
     "types": "./src/index.d.ts",
     "scripts": {
         "generate": "ts-node ./src/index.ts",
-        "build": "tsc -b"
+        "build": "rm -rf dist; tsc -b"
     },
     "bin": {
-        "avila-cli": "bin/avila.ts"
+        "avila-cli": "src/index.js"
     },
     "author": "Avila Tek <info@avilatek.dev>",
     "devDependencies": {
