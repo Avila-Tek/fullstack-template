@@ -22,6 +22,12 @@ export function createFolder(folderPath: string): void {
   }
 }
 
+export function resolvePath(...paths: string[]): string {
+  const basePath = process.cwd();
+  const relativePath = !process.env.production ? '' : '../';
+  return path.resolve(basePath, relativePath, ...paths);
+}
+
 /**
  * @function
  * @description Capitalizes the first letter of a string
@@ -37,20 +43,16 @@ export function capitalize(str: string): string {
 }
 
 function execCommand(command: string): void {
-  exec(
-    command,
-    { cwd: path.resolve(__dirname, '../../..') },
-    (error, stdout, stderr) => {
-      if (error) {
-        console.error(`Error: ${error.message}`);
-        return;
-      }
-      if (stderr) {
-        console.error(`stderr: ${stderr}`);
-        return;
-      }
+  exec(command, { cwd: resolvePath() }, (error, stdout, stderr) => {
+    if (error) {
+      console.error(`Error: ${error.message}`);
+      return;
     }
-  );
+    if (stderr) {
+      console.error(`stderr: ${stderr}`);
+      return;
+    }
+  });
 }
 
 export function formatFiles(files: string[]): void {
@@ -61,7 +63,7 @@ export function formatFiles(files: string[]): void {
 // Reading init File
 
 export function readAvilaConfig(): IAnswer {
-  const root = path.resolve(__dirname, '../../../');
+  const root = resolvePath();
   const jsonData = JSON.parse(
     fs.readFileSync(`${root}/avila-config.json`, 'utf-8')
   );
@@ -78,9 +80,9 @@ interface IServicePath {
 
 export function getServicePath(webService: WebService): IServicePath | null {
   const roots: Record<WebService, string> = {
-    Shared: '../../../../packages/services',
-    Admin: '../../../../apps/admin',
-    Client: '../../../../apps/client',
+    Shared: 'packages/services',
+    Admin: 'apps/admin',
+    Client: 'apps/client',
   };
 
   const root = roots[webService];

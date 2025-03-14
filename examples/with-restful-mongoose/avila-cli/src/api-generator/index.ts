@@ -1,6 +1,10 @@
 import { Project } from 'ts-morph';
-import { addLocalDependency, createFolder, readAvilaConfig } from '../utils';
-import * as path from 'path';
+import {
+  addLocalDependency,
+  createFolder,
+  readAvilaConfig,
+  resolvePath,
+} from '../utils';
 import { createModelFile } from './model';
 import { createServiceFile } from './service';
 import { createPaginationFile } from './pagination';
@@ -29,7 +33,7 @@ export async function bootstrap(
   overwrite: boolean = false,
   serverName: string = 'app.ts'
 ): Promise<void> {
-  const api = path.resolve(__dirname, '../../../apps/api');
+  const api = resolvePath('apps/api');
   const apiPath = `${api}/src`;
 
   // First try to create the utils folder and add the pagination portion

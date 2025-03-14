@@ -1,12 +1,10 @@
-import { IAnswer, propmtTechStack } from './index';
-import * as path from 'path';
-import * as fs from 'fs';
+import { IAnswer, propmtTechStack, resolvePath } from './index';
+import fs from 'fs';
 
 export default async function createInitFile() {
+  const root = resolvePath();
   const answers: IAnswer = await propmtTechStack();
-  const root = path.resolve(__dirname, '../../../');
   const jsonPath = `${root}/avila-config.json`;
-
   if (!fs.existsSync(jsonPath)) {
     fs.writeFileSync(
       jsonPath,
@@ -21,5 +19,3 @@ export default async function createInitFile() {
     );
   }
 }
-
-createInitFile();

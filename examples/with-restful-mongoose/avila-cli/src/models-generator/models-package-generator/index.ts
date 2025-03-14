@@ -1,15 +1,15 @@
-import * as path from 'path';
-import * as fs from 'fs';
+import fs from 'fs';
 import { Project } from 'ts-morph';
 import {
   createFolder,
   FileGenerator,
   installDependencies,
   readAvilaConfig,
+  resolvePath,
 } from '../../utils';
 
 export async function generateModelsPackage(): Promise<void> {
-  const servicePath = path.resolve(__dirname, '../../../../packages');
+  const servicePath = resolvePath('packages');
   const root = `${servicePath}/models`;
 
   // if the folder already exists, we don't overwrite it and we return

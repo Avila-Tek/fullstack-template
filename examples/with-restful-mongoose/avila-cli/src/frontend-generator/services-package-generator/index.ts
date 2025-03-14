@@ -1,16 +1,16 @@
-import * as path from 'path';
-import * as fs from 'fs';
+import fs from 'fs';
 import { Project } from 'ts-morph';
 import {
   createFolder,
   FileGenerator,
   installDependencies,
   readAvilaConfig,
+  resolvePath,
 } from '../../utils';
 
 export async function generateServicePackage(): Promise<void> {
   const project = new Project();
-  const servicePath = path.resolve(__dirname, '../../../../packages');
+  const servicePath = resolvePath('packages');
   const root = `${servicePath}/services`;
   const src = `${root}/src`;
 

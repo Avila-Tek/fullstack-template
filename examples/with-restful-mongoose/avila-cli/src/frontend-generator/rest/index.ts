@@ -1,4 +1,3 @@
-import * as path from 'path';
 import * as fs from 'fs';
 import { createApiFile } from '../api';
 import {
@@ -7,6 +6,7 @@ import {
   FileGenerator,
   getServicePath,
   readAvilaConfig,
+  resolvePath,
   WebService,
 } from '../../utils';
 import { Project } from 'ts-morph';
@@ -52,13 +52,13 @@ export async function restBootstrap(
   if (appPath.type === 'Shared') {
     generateServicePackage();
   } else {
-    const servicesPath = path.resolve(__dirname, appPath.src);
+    const servicesPath = resolvePath(appPath.src);
     createFolder(servicesPath);
   }
 
-  const root = path.resolve(__dirname, appPath.root);
-  const src = path.resolve(__dirname, appPath.src);
-  const lib = path.resolve(__dirname, appPath.lib);
+  const root = resolvePath(appPath.root);
+  const src = resolvePath(appPath.src);
+  const lib = resolvePath(appPath.lib);
 
   // Create the lib folder and if it already exists, it won't overwrite it
   createFolder(lib);

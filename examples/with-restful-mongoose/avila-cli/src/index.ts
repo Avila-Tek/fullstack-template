@@ -10,6 +10,10 @@ import {
   promptWebService,
   readAvilaConfig,
 } from './utils';
+import createInitFile from './utils/init-config';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 export function main() {
   const program = new Command();
@@ -82,6 +86,13 @@ export function main() {
         `apps/client`,
         `apps/admin`,
       ]);
+    });
+
+  program
+    .command('init')
+    .description('Initialize the project')
+    .action(() => {
+      createInitFile();
     });
 
   program.parse(process.argv);

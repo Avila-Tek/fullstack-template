@@ -11,6 +11,7 @@ import {
   promptWebService,
   readAvilaConfig,
 } from '../src/utils';
+import createInitFile from '../src/utils/init-config';
 
 export function main() {
   const program = new Command();
@@ -83,6 +84,13 @@ export function main() {
         `apps/client`,
         `apps/admin`,
       ]);
+    });
+
+  program
+    .command('init')
+    .description('Initialize the project')
+    .action(() => {
+      createInitFile();
     });
 
   program.parse(process.argv);

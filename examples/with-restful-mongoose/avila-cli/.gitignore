@@ -4,3 +4,4 @@
 /src/**/*.d.ts
 /bin/**/*.d.ts
 /bin/**/*.js
+.env

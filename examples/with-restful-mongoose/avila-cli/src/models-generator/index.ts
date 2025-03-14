@@ -1,6 +1,5 @@
-import * as path from 'path';
 import { Project } from 'ts-morph';
-import { createFolder } from '../utils';
+import { createFolder, resolvePath } from '../utils';
 import { createDtoFile } from './dto';
 import { createSchemaFile } from './schema';
 import { createIndexFile } from './_index';
@@ -30,7 +29,7 @@ export async function bootstrap(
   overwrite?: boolean
 ): Promise<void> {
   await generateModelsPackage();
-  const modelsPath = path.resolve(__dirname, '../../../packages/models/src');
+  const modelsPath = resolvePath('packages/models/src');
   const fullPath = `${modelsPath}/${component}`;
   createFolder(fullPath);
 
@@ -38,7 +37,7 @@ export async function bootstrap(
   await createSchemaFile(fullPath, project, component, overwrite);
   await createIndexFile(fullPath, project, component, overwrite);
 
-  const indexFilePath = path.resolve(modelsPath, 'index.ts');
+  const indexFilePath = resolvePath(modelsPath, 'index.ts');
   const fileGenerator = new FileGenerator(project, '');
 
   fileGenerator.appendExportDeclaration(indexFilePath, component);
