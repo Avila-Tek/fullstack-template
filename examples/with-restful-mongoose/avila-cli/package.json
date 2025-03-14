@@ -10,7 +10,7 @@
         "build": "rm -rf dist; tsc -b"
     },
     "bin": {
-        "avila-cli": "src/index.js"
+        "avila": "bin/avila.js"
     },
     "author": "Avila Tek <info@avilatek.dev>",
     "devDependencies": {
