@@ -12,6 +12,15 @@ import { createControllerFile } from './controller';
 import { createRoutesFile } from './routes';
 import { updateRootRoutes } from './root.routes';
 
+interface ApiBootstrapProps {
+  component: string;
+  project: Project;
+  algolia?: boolean;
+  overwrite?: boolean;
+  serverName?: string;
+  isProtected?: boolean;
+}
+
 /**
  * @async
  * @function
@@ -26,13 +35,14 @@ import { updateRootRoutes } from './root.routes';
  * @version 1
  */
 
-export async function bootstrap(
-  component: string,
-  project: Project,
-  algolia: boolean = false,
-  overwrite: boolean = false,
-  serverName: string = 'app.ts',
-): Promise<void> {
+export async function bootstrap({
+  component,
+  project,
+  algolia = false,
+  overwrite = false,
+  serverName = 'app.ts',
+  isProtected = false,
+}: ApiBootstrapProps): Promise<void> {
   const api = resolvePath('apps/api');
   const apiPath = `${api}/src`;
 
@@ -53,12 +63,12 @@ export async function bootstrap(
     createServiceFile(modelPath, project, component, overwrite),
     createControllerFile(modelPath, project, component, overwrite),
     createRoutesFile(modelPath, project, component, overwrite),
-    updateRootRoutes(apiPath, project, component, serverName),
+    updateRootRoutes(apiPath, project, component, serverName, isProtected),
   ]);
 
   addLocalDependency(
     `${api}/package.json`,
     `@${projectName}/models`,
-    'Regular',
+    'Regular'
   );
 }

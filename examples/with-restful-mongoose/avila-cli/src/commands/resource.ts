@@ -24,16 +24,23 @@ export async function resourceCallback(name: string, project: Project) {
   }
   console.log('Creating component:', name);
   // Add the params to choose the tech stack
-  await modelsBootstrap(name, project, true);
+  // await modelsBootstrap(name, project, true);
   console.log('Model created successfully!');
 
   console.log('Generating API component for:', name);
 
   // Add the params to choose the tech stack
 
-  await promptApi();
+  const { isProtected } = await promptApi();
 
-  await apiBoostrap(name, project, false, true, answers.serverLocation);
+  await apiBoostrap({
+    component: name,
+    project,
+    algolia: false,
+    overwrite: true,
+    serverName: answers.serverLocation,
+    isProtected,
+  });
 
   console.log('Generted API route');
 

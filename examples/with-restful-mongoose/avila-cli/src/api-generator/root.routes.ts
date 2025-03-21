@@ -6,11 +6,14 @@ export async function updateRootRoutes(
   fullPath: string,
   project: Project,
   component: string,
-  serverName: string
+  serverName: string,
+  isProtected: boolean
 ) {
   const fileGenerator = new FileGenerator(project, component);
   const file = `${fullPath}/routes.ts`;
   const willAppend = fs.existsSync(file);
+
+  const routeFunctionName = `${isProtected ? 'protected' : 'public'}Routes`;
 
   function addImports(isNew: boolean, imports: IImports[]) {
     if (isNew) {
@@ -55,7 +58,11 @@ export async function updateRootRoutes(
     const registerStatement = `await fastify.register(${component}Router, { prefix: '${component}' });`;
 
     if (!fileText.includes(registerStatement)) {
-      fileGenerator.appendToExistingFunction(registerStatement, 'routes', true);
+      fileGenerator.appendToExistingFunction(
+        registerStatement,
+        `${routeFunctionName}`,
+        true
+      );
     }
   } else {
     // Create the file if it doesn't exist
@@ -69,7 +76,7 @@ export async function updateRootRoutes(
     ]);
 
     fileGenerator.addFunctionDefinition({
-      name: 'routes',
+      name: `${routeFunctionName}`,
       isAsync: true,
       returnType: 'Promise<void>',
       parameters: [
@@ -84,7 +91,7 @@ export async function updateRootRoutes(
 
     fileGenerator.appendToExistingFunction(
       `await fastify.register(${component}Router, { prefix: '${component}' });`,
-      'routes'
+      `${routeFunctionName}`
     );
   }
 

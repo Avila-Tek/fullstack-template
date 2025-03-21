@@ -248,8 +248,8 @@ export function promptApi() {
   return inquirer.prompt([
     {
       type: 'confirm',
-      name: 'protected',
-      message: 'Is the service public or protected? (y=protected, n=public)',
+      name: 'isProtected',
+      message: 'Is the service protected? (y=protected, n=public)',
     },
   ]);
 }
