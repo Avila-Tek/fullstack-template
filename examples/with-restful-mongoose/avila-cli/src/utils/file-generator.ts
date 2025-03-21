@@ -1,5 +1,7 @@
 import {
+  ArrowFunction,
   ExportDeclaration,
+  FunctionDeclaration,
   JSDocStructure,
   OptionalKind,
   ParameterDeclarationStructure,
@@ -106,7 +108,7 @@ export class FileGenerator {
   setFile(
     fullPath: string,
     overwrite: boolean | undefined,
-    sourceFile?: SourceFile,
+    sourceFile?: SourceFile
   ) {
     // It'll create the file and overwrite it if it already exists
     if (!sourceFile) {
@@ -190,7 +192,7 @@ export class FileGenerator {
    */
 
   public getExportDeclaration(
-    moduleSpecifier: string,
+    moduleSpecifier: string
   ): ExportDeclaration | undefined {
     return this.file.getExportDeclaration(moduleSpecifier);
   }
@@ -298,6 +300,9 @@ export class FileGenerator {
    * @param {string | WritterFunction | StatementStructures[]} statements The statements to be added to the function
    * @param {string} functionName - Name of the function to look for.
    * @param {boolean} generateFuncionOnError - Generates the function if it is not found
+   * @param {boolean} generateFuncionOnError - Whether to generate the function if it is not found
+   * @implements ts-morph
+   * @listens {SourceFile}
    * @requires ts-morph
    * @returns {void} - Nothing
    * @since 1.0.0
@@ -308,10 +313,11 @@ export class FileGenerator {
   public appendToExistingFunction(
     statements: string | WriterFunction | StatementStructures[],
     functionName: string,
-    generateFuncionOnError: boolean = false,
+    generateFuncionOnError: boolean = false
   ): void {
-    const routesFunction = this.file.getFunction(functionName);
-    if (!routesFunction) {
+    const _function = this.findFunction(functionName);
+
+    if (!_function) {
       if (generateFuncionOnError) {
         this.addFunctionDefinition({
           isExported: true,
@@ -326,7 +332,30 @@ export class FileGenerator {
       }
     }
     // Get the existing statements and append the new ones
-    routesFunction?.addStatements(statements);
+    _function?.addStatements(statements);
+  }
+
+  private findFunction(
+    functionName: string
+  ): FunctionDeclaration | ArrowFunction | undefined {
+    const sourceFile = this.file; // assuming this.file is a SourceFile object
+
+    // First, try to find a regular function
+    let _function = sourceFile.getFunction(functionName);
+
+    if (!_function) {
+      // If it's not a regular function, try to find an arrow function
+      const arrowFunction = sourceFile
+        .getFunctions()
+        .find(
+          (func) =>
+            func.getName() === functionName && func instanceof ArrowFunction
+        );
+
+      _function = arrowFunction;
+    }
+
+    return _function;
   }
 
   /**
