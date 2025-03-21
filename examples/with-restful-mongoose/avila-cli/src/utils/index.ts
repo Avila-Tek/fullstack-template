@@ -165,7 +165,6 @@ export type IAnswer = {
 };
 
 export function propmtTechStack() {
-  // TODO: remove webService and prompt it with every run of the script
   return inquirer.prompt([
     {
       type: 'input',
@@ -199,6 +198,16 @@ export function promptWebService() {
       name: 'webService',
       message: 'Where do you want the services for the frontend to be?',
       choices: webService,
+    },
+  ]);
+}
+
+export function promptApi() {
+  return inquirer.prompt([
+    {
+      type: 'confirm',
+      name: 'protected',
+      message: 'Is the service public or protected? (y=protected, n=public)',
     },
   ]);
 }

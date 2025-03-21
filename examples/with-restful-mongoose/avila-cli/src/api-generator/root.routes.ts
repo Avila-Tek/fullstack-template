@@ -26,6 +26,8 @@ export async function updateRootRoutes(
     }
   }
 
+  // Search from namedRoutes in the avila.config.json
+
   if (willAppend) {
     const routesFile = fileGenerator.project.addSourceFileAtPath(file);
     fileGenerator.setFile('', false, routesFile);

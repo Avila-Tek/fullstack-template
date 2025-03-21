@@ -6,7 +6,7 @@
     "module": "./src/index.mjs",
     "types": "./src/index.d.ts",
     "scripts": {
-        "generate": "ts-node ./src/index.ts",
+        "generate": "npm run build; ts-node ./src/index.ts",
         "build": "rm -rf dist; tsc -b"
     },
     "bin": {

@@ -7,6 +7,7 @@ import {
   formatFiles,
   IAnswer,
   install,
+  promptApi,
   promptWebService,
   readAvilaConfig,
 } from './utils';
@@ -37,7 +38,7 @@ export function main() {
         answers = readAvilaConfig();
       } catch (e) {
         console.log(
-          'Error: Not config file found please run `npm run i` to create the config file'
+          'Error: Not config file found please run `avila init` to create the config file'
         );
         process.exit(1);
       }
@@ -49,6 +50,9 @@ export function main() {
       console.log('Generating API component for:', name);
 
       // Add the params to choose the tech stack
+
+      await promptApi();
+
       await apiBoostrap(
         name,
         project,
@@ -98,4 +102,3 @@ export function main() {
   program.parse(process.argv);
 }
 
-main();
