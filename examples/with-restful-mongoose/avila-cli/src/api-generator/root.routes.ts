@@ -61,7 +61,13 @@ export async function updateRootRoutes(
       fileGenerator.appendToExistingFunction(
         registerStatement,
         `${routeFunctionName}`,
-        true
+        true,
+        [
+          {
+            name: 'fastify',
+            type: 'FastifyInstance',
+          },
+        ]
       );
     }
   } else {

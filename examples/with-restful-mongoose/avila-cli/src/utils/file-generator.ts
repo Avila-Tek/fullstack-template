@@ -314,7 +314,8 @@ export class FileGenerator {
   public appendToExistingFunction(
     statements: string | WriterFunction | StatementStructures[],
     functionName: string,
-    generateFuncionOnError: boolean = false
+    generateFuncionOnError: boolean = false,
+    parameters: OptionalKind<ParameterDeclarationStructure>[] = []
   ): void {
     const _function = this.findFunction(functionName);
 
@@ -323,10 +324,10 @@ export class FileGenerator {
         this.addFunctionDefinition({
           isExported: true,
           name: functionName,
-          statements: '',
+          statements: statements,
           returnType: '',
-          parameters: [],
-          isAsync: false,
+          parameters,
+          isAsync: true,
         });
       } else {
         throw new Error('Function not Found!');
