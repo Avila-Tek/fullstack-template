@@ -1,5 +1,6 @@
 import {
   ArrowFunction,
+  Block,
   ExportDeclaration,
   FunctionDeclaration,
   JSDocStructure,
@@ -331,8 +332,16 @@ export class FileGenerator {
         throw new Error('Function not Found!');
       }
     }
-    // Get the existing statements and append the new ones
-    _function?.addStatements(statements);
+    // Append statements depending on whether it's a regular function or an arrow function
+    if (_function instanceof FunctionDeclaration) {
+      _function.addStatements(statements);
+    } else if (_function instanceof ArrowFunction) {
+      // For arrow functions, you can append the statements differently, based on how you want to structure it
+      const body = _function.getBody();
+      if (body && body instanceof Block) {
+        body.addStatements(statements); // Adding statements to the block of the arrow function
+      }
+    }
   }
 
   private findFunction(
@@ -340,11 +349,11 @@ export class FileGenerator {
   ): FunctionDeclaration | ArrowFunction | undefined {
     const sourceFile = this.file; // assuming this.file is a SourceFile object
 
-    // First, try to find a regular function
-    let _function = sourceFile.getFunction(functionName);
+    // First, try to find a regular function declaration
+    let _function: any = sourceFile.getFunction(functionName);
 
     if (!_function) {
-      // If it's not a regular function, try to find an arrow function
+      // If it's not a regular function, try to find an arrow function (including async arrow functions)
       const arrowFunction = sourceFile
         .getFunctions()
         .find(
@@ -352,7 +361,20 @@ export class FileGenerator {
             func.getName() === functionName && func instanceof ArrowFunction
         );
 
-      _function = arrowFunction;
+      // Check if the function is an assignment to a variable
+      if (!arrowFunction) {
+        const variableDeclaration =
+          sourceFile.getVariableDeclaration(functionName);
+        if (variableDeclaration) {
+          // Check if the variable is an arrow function
+          const initializer = variableDeclaration.getInitializer();
+          if (initializer && initializer instanceof ArrowFunction) {
+            _function = initializer;
+          }
+        }
+      } else {
+        _function = arrowFunction;
+      }
     }
 
     return _function;
