@@ -3,5 +3,10 @@
   "backendArchitecture": "RESTful",
   "ORM": "Mongoose",
   "serverLocation": "app.ts",
+  "apps": {
+    "client": "client",
+    "admin": "admin",
+    "api": "api"
+  },
   "ui": []
 }

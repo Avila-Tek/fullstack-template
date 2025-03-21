@@ -24,8 +24,7 @@ export function createFolder(folderPath: string): void {
 
 export function resolvePath(...paths: string[]): string {
   const basePath = process.cwd();
-  const relativePath = !process.env.production ? '' : '../';
-  return path.resolve(basePath, relativePath, ...paths);
+  return path.resolve(basePath, ...paths);
 }
 
 /**
@@ -65,7 +64,7 @@ export function formatFiles(files: string[]): void {
 export function readAvilaConfig(): IAnswer {
   const root = resolvePath();
   const jsonData = JSON.parse(
-    fs.readFileSync(`${root}/avila-config.json`, 'utf-8'),
+    fs.readFileSync(`${root}/avila-config.json`, 'utf-8')
   );
   return jsonData;
 }
@@ -106,12 +105,12 @@ interface IDependency {
 
 export function installDependencies(
   workspace: string,
-  dependencies: IDependency[],
+  dependencies: IDependency[]
 ): void {
   const command = `npm install -S --workspace ${workspace} ${dependencies
     .map(
       (dep) =>
-        `${dep.name}${dep.dev ? ' -D' : ''}${dep.peer ? ' --save-peer' : ''}`,
+        `${dep.name}${dep.dev ? ' -D' : ''}${dep.peer ? ' --save-peer' : ''}`
     )
     .join(' ')}`;
   execCommand(command);
@@ -124,7 +123,7 @@ export function install(): void {
 export function addLocalDependency(
   path: string,
   dependency: string,
-  type: 'Dev' | 'Regular',
+  type: 'Dev' | 'Regular'
 ) {
   const packageJson = JSON.parse(fs.readFileSync(path, 'utf-8'));
 
@@ -156,39 +155,82 @@ export type Orm = (typeof orm)[number];
 export const webService = ['Shared', 'Admin', 'Client'] as const;
 export type WebService = (typeof webService)[number];
 
+interface Apps {
+  client: string;
+  admin: string;
+  api: string;
+}
+
 export type IAnswer = {
   project: string;
   backendArchitecture: Architecture;
   ORM: Orm;
   webService?: WebService;
   serverLocation: string;
+  apps: Apps;
 };
 
-export function propmtTechStack() {
-  return inquirer.prompt([
-    {
-      type: 'input',
-      name: 'project',
-      message: 'Project name',
-    },
-    {
-      type: 'list',
-      name: 'backendArchitecture',
-      message: 'Select backend architecture',
-      choices: architecture,
-    },
-    {
-      type: 'list',
-      name: 'ORM',
-      message: 'Select ORM',
-      choices: orm,
-    },
-    {
-      type: 'input',
-      name: 'serverLocation',
-      message: 'Where is your server located?',
-    },
-  ]);
+export async function propmtTechStack() {
+  return inquirer
+    .prompt([
+      {
+        type: 'input',
+        name: 'project',
+        message: 'Project name',
+      },
+      {
+        type: 'list',
+        name: 'backendArchitecture',
+        message: 'Select backend architecture',
+        choices: architecture,
+      },
+      {
+        type: 'list',
+        name: 'ORM',
+        message: 'Select ORM',
+        choices: orm,
+      },
+      {
+        type: 'input',
+        name: 'serverLocation',
+        message: 'Where is your server located?',
+      },
+      {
+        type: 'input',
+        name: 'clientApp',
+        message: 'What is the name for the client app?',
+        validate: (input) =>
+          input ? true : 'Please enter a name for the client app.',
+      },
+      {
+        type: 'input',
+        name: 'adminApp',
+        message: 'What is the name for the admin app?',
+        validate: (input) =>
+          input ? true : 'Please enter a name for the admin app.',
+      },
+      {
+        type: 'input',
+        name: 'apiApp',
+        message: 'What is the name for the API app?',
+        validate: (input) =>
+          input ? true : 'Please enter a name for the API app.',
+      },
+    ])
+    .then((answers) => {
+      // Construct the apps object
+      const apps = {
+        client: answers.clientApp,
+        admin: answers.adminApp,
+        api: answers.apiApp,
+      };
+
+      delete answers.clientApp;
+      delete answers.adminApp;
+      delete answers.apiApp;
+
+      return { ...answers, apps };
+    });
 }
 
 export function promptWebService() {
