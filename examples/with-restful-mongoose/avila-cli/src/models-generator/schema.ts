@@ -6,7 +6,7 @@ export async function createSchemaFile(
   fullPath: string,
   project: Project,
   component: string,
-  overwrite = false
+  overwrite = false,
 ) {
   const capitalized = capitalize(component);
   const fileGenerator = new FileGenerator(project, component);

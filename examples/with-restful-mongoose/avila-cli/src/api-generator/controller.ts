@@ -5,7 +5,7 @@ export async function createControllerFile(
   fullPath: string,
   project: Project,
   component: string,
-  overwrite: boolean = false
+  overwrite: boolean = false,
 ): Promise<void> {
   const fileGenerator = new FileGenerator(project, component);
   const file = `${fullPath}/${component}.controller.ts`;

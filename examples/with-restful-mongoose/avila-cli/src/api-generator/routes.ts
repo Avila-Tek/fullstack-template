@@ -5,7 +5,7 @@ export async function createRoutesFile(
   fullPath: string,
   project: Project,
   component: string,
-  overwrite: boolean = false
+  overwrite: boolean = false,
 ) {
   const fileGenerator = new FileGenerator(project, component);
   const file = `${fullPath}/${component}.routes.ts`;

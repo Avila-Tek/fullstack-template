@@ -38,7 +38,7 @@ export function main() {
         answers = readAvilaConfig();
       } catch (e) {
         console.log(
-          'Error: Not config file found please run `avila init` to create the config file'
+          'Error: Not config file found please run `avila init` to create the config file',
         );
         process.exit(1);
       }
@@ -58,7 +58,7 @@ export function main() {
         project,
         options.algolia,
         options.overwrite,
-        answers.serverLocation
+        answers.serverLocation,
       );
 
       console.log('Generted API route');
@@ -101,4 +101,3 @@ export function main() {
 
   program.parse(process.argv);
 }
-

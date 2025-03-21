@@ -19,7 +19,7 @@ import { docs } from '../utils/docs.template';
 
 export async function createPaginationFile(
   fullPath: string,
-  project: Project
+  project: Project,
 ): Promise<void> {
   const fileGenerator = new FileGenerator(project, '');
 

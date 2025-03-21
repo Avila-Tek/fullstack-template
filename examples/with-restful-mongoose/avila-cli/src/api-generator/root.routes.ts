@@ -6,7 +6,7 @@ export async function updateRootRoutes(
   fullPath: string,
   project: Project,
   component: string,
-  serverName: string
+  serverName: string,
 ) {
   const fileGenerator = new FileGenerator(project, component);
   const file = `${fullPath}/routes.ts`;
@@ -38,7 +38,7 @@ export async function updateRootRoutes(
       .some(
         (imp) =>
           imp.getModuleSpecifierValue() ===
-          `./components/${component}/${component}.routes`
+          `./components/${component}/${component}.routes`,
       );
 
     if (!importExists) {
@@ -84,7 +84,7 @@ export async function updateRootRoutes(
 
     fileGenerator.appendToExistingFunction(
       `await fastify.register(${component}Router, { prefix: '${component}' });`,
-      'routes'
+      'routes',
     );
   }
 
@@ -92,7 +92,7 @@ export async function updateRootRoutes(
     fullPath,
     project,
     serverName,
-    'await <name>.register(routes);'
+    'await <name>.register(routes);',
   );
 
   await fileGenerator.save();
@@ -102,7 +102,7 @@ export async function updateAppFile(
   fullPath: string,
   project: Project,
   serverName: string,
-  statementToAdd: string
+  statementToAdd: string,
 ) {
   const file = `${fullPath}/${serverName}`;
   if (!fs.existsSync(file)) {
@@ -120,7 +120,7 @@ export async function updateAppFile(
   // **If import exists, exit early (no need to update anything)**
   if (importExists) {
     console.log(
-      `'routes' import already exists in ${serverName}. No changes needed.`
+      `'routes' import already exists in ${serverName}. No changes needed.`,
     );
     return;
   }
@@ -147,7 +147,7 @@ export async function updateAppFile(
         const appVariable = match[1]; // Extract variable name (e.g., 'app', 'server', etc.)
         const modifiedStatement = statementToAdd.replace('<name>', appVariable);
         stmt.replaceWithText(
-          `// Adding routes\n\n${modifiedStatement}\n\n${text}`
+          `// Adding routes\n\n${modifiedStatement}\n\n${text}`,
         );
         updated = true;
       }
@@ -156,7 +156,7 @@ export async function updateAppFile(
 
   if (!updated) {
     console.warn(
-      `No 'await <name>.ready();' statement found inside functions in ${file}.`
+      `No 'await <name>.ready();' statement found inside functions in ${file}.`,
     );
   }
 

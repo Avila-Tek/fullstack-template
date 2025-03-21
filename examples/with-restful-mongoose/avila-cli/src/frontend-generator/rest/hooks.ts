@@ -9,7 +9,7 @@ import { docs } from '../../utils/docs.template';
 export function createHooksFile(
   src: string,
   name: string,
-  fileGenerator: FileGenerator
+  fileGenerator: FileGenerator,
 ): void {
   const component = `${src}/${name}`;
 

@@ -42,7 +42,7 @@ export async function paginateModel<T extends Model<any>, U extends Document>(
   model: T,
   filter: FilterQuery<T> = {},
   projection: ProjectionType<T> | null = null,
-  options: QueryOptions<T> | null = {}
+  options: QueryOptions<T> | null = {},
 ): Promise<Pagination<U>> {
   const count = await model.countDocuments(filter);
   const pageCount = Math.ceil(count / perPage);
@@ -90,7 +90,7 @@ export async function complexPagination<
   page: number,
   perPage: number,
   model: T,
-  options: AggregateOptions = {}
+  options: AggregateOptions = {},
 ): Promise<Pagination<U>> {
   const from = (Number(page ?? 1) - 1) * Number(perPage ?? 10);
   const [response] = await model.aggregate<{ count: number; items: U[] }>(
@@ -112,7 +112,7 @@ export async function complexPagination<
         },
       },
     ],
-    options
+    options,
   );
 
   const count = response?.count ?? 0;

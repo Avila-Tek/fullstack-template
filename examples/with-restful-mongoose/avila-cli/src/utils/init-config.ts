@@ -14,8 +14,8 @@ export default async function createInitFile() {
           ui: [],
         },
         null,
-        2
-      )
+        2,
+      ),
     );
   }
 }

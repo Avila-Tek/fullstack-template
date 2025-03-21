@@ -29,7 +29,7 @@ export async function generateServicePackage(): Promise<void> {
   if (!fs.existsSync(eslintFile)) {
     fileGenerator.setFile(eslintFile, true);
     fileGenerator.writeInNonTsFile(
-      '/** @type {import("eslint").Linter.Config} */\nmodule.exports = {\n  root: true,\n  parser: "@typescript-eslint/parser",\n  parserOptions: {\n    project: true,\n  },\n};'
+      '/** @type {import("eslint").Linter.Config} */\nmodule.exports = {\n  root: true,\n  parser: "@typescript-eslint/parser",\n  parserOptions: {\n    project: true,\n  },\n};',
     );
   }
 
@@ -39,7 +39,7 @@ export async function generateServicePackage(): Promise<void> {
   if (!fs.existsSync(packagejson)) {
     fileGenerator.setFile(packagejson, true);
     fileGenerator.writeInNonTsFile(
-      `{\n  "name": "@${packageName}/services",\n  "version": "0.0.0",\n  "private": true,\n  "exports": {\n    ".": "./src/index.ts"\n  },\n  "scripts": {\n    "lint": "eslint .",\n    "lint:fix": "eslint . --fix",\n    "dev": "tsup src/index.ts --format cjs --watch --dts"\n  },\n  "devDependencies": {\n    "@${packageName}/models": "*"\n  }\n}`
+      `{\n  "name": "@${packageName}/services",\n  "version": "0.0.0",\n  "private": true,\n  "exports": {\n    ".": "./src/index.ts"\n  },\n  "scripts": {\n    "lint": "eslint .",\n    "lint:fix": "eslint . --fix",\n    "dev": "tsup src/index.ts --format cjs --watch --dts"\n  },\n  "devDependencies": {\n    "@${packageName}/models": "*"\n  }\n}`,
     );
   }
 
@@ -65,13 +65,13 @@ export async function generateServicePackage(): Promise<void> {
   if (!fs.existsSync(tsconfigFile)) {
     fileGenerator.setFile(tsconfigFile, true);
     fileGenerator.writeInNonTsFile(
-      '{\n  "extends": "@repo/typescript-config/react-library.json",\n  "compilerOptions": {\n    "outDir": "dist"\n  },\n  "include": ["src"],\n  "exclude": ["node_modules", "dist"]\n}'
+      '{\n  "extends": "@repo/typescript-config/react-library.json",\n  "compilerOptions": {\n    "outDir": "dist"\n  },\n  "include": ["src"],\n  "exclude": ["node_modules", "dist"]\n}',
     );
 
     const tsconfigFileJson = `${root}/tsconfig.lint.json`;
     fileGenerator.setFile(tsconfigFileJson, true);
     fileGenerator.writeInNonTsFile(
-      '{\n  "extends": "@repo/typescript-config/react-library.json",\n  "compilerOptions": {\n    "outDir": "dist"\n  },\n  "include": ["src","turbo"],\n  "exclude": ["node_modules", "dist"]\n}'
+      '{\n  "extends": "@repo/typescript-config/react-library.json",\n  "compilerOptions": {\n    "outDir": "dist"\n  },\n  "include": ["src","turbo"],\n  "exclude": ["node_modules", "dist"]\n}',
     );
   }
 
@@ -81,7 +81,7 @@ export async function generateServicePackage(): Promise<void> {
   if (!fs.existsSync(turboFile)) {
     fileGenerator.setFile(turboFile, true);
     fileGenerator.writeInNonTsFile(
-      '{\n  "$schema": "https://turbo.build/schema.json",\n  "extends": ["//"],\n  "tasks": {\n    "build": {\n      "outputs": ["dist/**"]\n    }\n  }\n}'
+      '{\n  "$schema": "https://turbo.build/schema.json",\n  "extends": ["//"],\n  "tasks": {\n    "build": {\n      "outputs": ["dist/**"]\n    }\n  }\n}',
     );
   }
 

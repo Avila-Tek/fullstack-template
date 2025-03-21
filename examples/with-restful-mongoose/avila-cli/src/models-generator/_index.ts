@@ -22,7 +22,7 @@ export async function createIndexFile(
   fullPath: string,
   project: Project,
   component: string,
-  overwrite = false
+  overwrite = false,
 ): Promise<void> {
   const fileGenerator = new FileGenerator(project, component);
   fileGenerator.setFile(`${fullPath}/index.ts`, overwrite);

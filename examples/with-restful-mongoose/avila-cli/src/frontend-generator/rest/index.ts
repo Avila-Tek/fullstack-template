@@ -40,7 +40,7 @@ export async function restBootstrap(
   fileGenerator: FileGenerator,
   project: Project,
   name: string,
-  webService: WebService
+  webService: WebService,
 ): Promise<void> {
   // First, we create the lib folder to store the api wrapper for requests
   const appPath = getServicePath(webService);

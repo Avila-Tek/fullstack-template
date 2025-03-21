@@ -106,7 +106,7 @@ export class FileGenerator {
   setFile(
     fullPath: string,
     overwrite: boolean | undefined,
-    sourceFile?: SourceFile
+    sourceFile?: SourceFile,
   ) {
     // It'll create the file and overwrite it if it already exists
     if (!sourceFile) {
@@ -190,7 +190,7 @@ export class FileGenerator {
    */
 
   public getExportDeclaration(
-    moduleSpecifier: string
+    moduleSpecifier: string,
   ): ExportDeclaration | undefined {
     return this.file.getExportDeclaration(moduleSpecifier);
   }
@@ -308,7 +308,7 @@ export class FileGenerator {
   public appendToExistingFunction(
     statements: string | WriterFunction | StatementStructures[],
     functionName: string,
-    generateFuncionOnError: boolean = false
+    generateFuncionOnError: boolean = false,
   ): void {
     const routesFunction = this.file.getFunction(functionName);
     if (!routesFunction) {

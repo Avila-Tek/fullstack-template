@@ -28,7 +28,7 @@ export function useUsers(
   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   filters?: Partial<any>, // FIXME: Replace with the correct type for filters
   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-  options?: UseQueryOptions<any, any, any, any> // Query options like cacheTime, staleTime, etc.
+  options?: UseQueryOptions<any, any, any, any>, // Query options like cacheTime, staleTime, etc.
 ) {
   return useQuery({
     queryKey: ['users'], // Unique identifier for the query, which helps in caching and refetching.

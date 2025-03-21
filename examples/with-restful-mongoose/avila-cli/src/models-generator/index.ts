@@ -26,7 +26,7 @@ import { generateModelsPackage } from './models-package-generator';
 export async function bootstrap(
   component: string,
   project: Project,
-  overwrite?: boolean
+  overwrite?: boolean,
 ): Promise<void> {
   await generateModelsPackage();
   const modelsPath = resolvePath('packages/models/src');

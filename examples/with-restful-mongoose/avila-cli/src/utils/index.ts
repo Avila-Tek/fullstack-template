@@ -65,7 +65,7 @@ export function formatFiles(files: string[]): void {
 export function readAvilaConfig(): IAnswer {
   const root = resolvePath();
   const jsonData = JSON.parse(
-    fs.readFileSync(`${root}/avila-config.json`, 'utf-8')
+    fs.readFileSync(`${root}/avila-config.json`, 'utf-8'),
   );
   return jsonData;
 }
@@ -106,12 +106,12 @@ interface IDependency {
 
 export function installDependencies(
   workspace: string,
-  dependencies: IDependency[]
+  dependencies: IDependency[],
 ): void {
   const command = `npm install -S --workspace ${workspace} ${dependencies
     .map(
       (dep) =>
-        `${dep.name}${dep.dev ? ' -D' : ''}${dep.peer ? ' --save-peer' : ''}`
+        `${dep.name}${dep.dev ? ' -D' : ''}${dep.peer ? ' --save-peer' : ''}`,
     )
     .join(' ')}`;
   execCommand(command);
@@ -124,7 +124,7 @@ export function install(): void {
 export function addLocalDependency(
   path: string,
   dependency: string,
-  type: 'Dev' | 'Regular'
+  type: 'Dev' | 'Regular',
 ) {
   const packageJson = JSON.parse(fs.readFileSync(path, 'utf-8'));
 

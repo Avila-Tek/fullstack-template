@@ -59,7 +59,7 @@ export function docs({
       ...params.map(({ name, type, description }) => ({
         tagName: 'param',
         text: `{${type}} ${name} - ${description}`,
-      }))
+      })),
     );
 
   if (requires) tags.push({ tagName: 'requires', text: requires });

@@ -16,7 +16,7 @@ export async function start() {
       process.on(signal, () =>
         server.close().then((err) => {
           process.exit(err ? 1 : 0);
-        })
+        }),
       );
     }
     return server;

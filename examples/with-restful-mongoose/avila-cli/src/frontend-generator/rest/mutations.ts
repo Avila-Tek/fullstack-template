@@ -10,7 +10,7 @@ export function createMutationsFile(
   src: string,
   name: string,
   fileGenerator: FileGenerator,
-  hasExtraDots: boolean
+  hasExtraDots: boolean,
 ): void {
   const component = `${src}/${name}`;
 

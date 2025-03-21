@@ -2,7 +2,7 @@ import { FileGenerator } from '../../utils';
 
 export function createIndexFile(
   src: string,
-  fileGenerator: FileGenerator
+  fileGenerator: FileGenerator,
 ): void {
   const indexFile = `${src}/index.ts`;
   fileGenerator.setFile(indexFile, true);

@@ -8,7 +8,7 @@ Sentry.init({
     // Add our Profiling integration
     nodeProfilingIntegration(),
     Sentry.fastifyIntegration(),
-    Sentry.mongoIntegration()
+    Sentry.mongoIntegration(),
   ],
 
   // Add Tracing by setting tracesSampleRate

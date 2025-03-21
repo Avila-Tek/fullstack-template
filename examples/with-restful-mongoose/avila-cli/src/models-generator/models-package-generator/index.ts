@@ -44,7 +44,7 @@ export async function generateModelsPackage(): Promise<void> {
   if (!fs.existsSync(eslintFile)) {
     fileGenerator.setFile(eslintFile, true);
     fileGenerator.writeInNonTsFile(
-      "module.exports = {\n  root: true,\n  extends: ['custom'],\n  rules: {\n    '@typescript-eslint/require-await': 'off',\n    'import/no-cycle': 'off',\n  },\n};"
+      "module.exports = {\n  root: true,\n  extends: ['custom'],\n  rules: {\n    '@typescript-eslint/require-await': 'off',\n    'import/no-cycle': 'off',\n  },\n};",
     );
   }
 
@@ -54,7 +54,7 @@ export async function generateModelsPackage(): Promise<void> {
   if (!fs.existsSync(packagejson)) {
     fileGenerator.setFile(packagejson, true);
     fileGenerator.writeInNonTsFile(
-      `{\n  "name": "@${packageName}/models",\n  "version": "1.0.0",\n  "descriptions":"Models for Avila Tek projects",\n  "private": true,\n  "scripts": {\n    "lint": "eslint .",\n    "build": "tsup src/index.ts",\n    "dev": "tsup src/index.ts --format cjs --watch --dts"\n,    "format": "prettier --write ."  },\n  "files": [\n    "dist/**"\n  ],\n  "repository": {\n    "type": "git",\n    "url": "none"\n  },\n  "main": "./dist/index.js",\n  "module": "./src/index.mjs",\n  "types": "./src/index.d.ts",\n  "keywords": [],\n  "author": "Avila Tek"\n}`
+      `{\n  "name": "@${packageName}/models",\n  "version": "1.0.0",\n  "descriptions":"Models for Avila Tek projects",\n  "private": true,\n  "scripts": {\n    "lint": "eslint .",\n    "build": "tsup src/index.ts",\n    "dev": "tsup src/index.ts --format cjs --watch --dts"\n,    "format": "prettier --write ."  },\n  "files": [\n    "dist/**"\n  ],\n  "repository": {\n    "type": "git",\n    "url": "none"\n  },\n  "main": "./dist/index.js",\n  "module": "./src/index.mjs",\n  "types": "./src/index.d.ts",\n  "keywords": [],\n  "author": "Avila Tek"\n}`,
     );
   }
 
@@ -84,7 +84,7 @@ export async function generateModelsPackage(): Promise<void> {
   if (!fs.existsSync(tsconfigFile)) {
     fileGenerator.setFile(tsconfigFile, true);
     fileGenerator.writeInNonTsFile(
-      '{\n  "compilerOptions": {\n    "moduleResolution": "Node",\n    "module": "CommonJS",\n    "outDir": "./dist",\n    "baseUrl": ".",\n  },\n  "include": ["src/**/*.ts", "tests/**/*.ts", "tsup.config.ts"],\n  "exclude": ["./dist/**", "node_modules"]\n}'
+      '{\n  "compilerOptions": {\n    "moduleResolution": "Node",\n    "module": "CommonJS",\n    "outDir": "./dist",\n    "baseUrl": ".",\n  },\n  "include": ["src/**/*.ts", "tests/**/*.ts", "tsup.config.ts"],\n  "exclude": ["./dist/**", "node_modules"]\n}',
     );
   }
 

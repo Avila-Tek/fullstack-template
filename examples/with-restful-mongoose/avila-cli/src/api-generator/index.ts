@@ -31,7 +31,7 @@ export async function bootstrap(
   project: Project,
   algolia: boolean = false,
   overwrite: boolean = false,
-  serverName: string = 'app.ts'
+  serverName: string = 'app.ts',
 ): Promise<void> {
   const api = resolvePath('apps/api');
   const apiPath = `${api}/src`;
@@ -59,6 +59,6 @@ export async function bootstrap(
   addLocalDependency(
     `${api}/package.json`,
     `@${projectName}/models`,
-    'Regular'
+    'Regular',
   );
 }

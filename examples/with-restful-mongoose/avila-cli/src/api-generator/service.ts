@@ -6,7 +6,7 @@ export async function createServiceFile(
   fullPath: string,
   project: Project,
   component: string,
-  overwrite: boolean = false
+  overwrite: boolean = false,
 ): Promise<void> {
   const fileGenerator = new FileGenerator(project, component);
   fileGenerator.setFile(`${fullPath}/${component}.service.ts`, overwrite);

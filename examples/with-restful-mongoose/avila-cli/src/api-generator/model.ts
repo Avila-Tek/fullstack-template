@@ -6,7 +6,7 @@ export async function createModelFile(
   project: Project,
   component: string,
   algolia: boolean,
-  overwrite: boolean = false
+  overwrite: boolean = false,
 ): Promise<void> {
   const fileGenerator = new FileGenerator(project, component);
   fileGenerator.setFile(`${fullPath}/${component}.model.ts`, overwrite);
