@@ -9,6 +9,7 @@ export async function createInitFile() {
     jsonPath,
     JSON.stringify(
       {
+        // Add schema for the config file here host it somewhere
         ...answers,
         ui: [],
       },
