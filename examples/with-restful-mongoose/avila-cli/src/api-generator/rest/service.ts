@@ -1,6 +1,6 @@
 import { Project } from 'ts-morph';
-import { capitalize, FileGenerator, readAvilaConfig } from '../utils';
-import { docs } from '../utils/docs.template';
+import { capitalize, FileGenerator, readAvilaConfig } from '@/utils';
+import { docs } from '@/utils/docs.template';
 
 export async function createServiceFile(
   fullPath: string,

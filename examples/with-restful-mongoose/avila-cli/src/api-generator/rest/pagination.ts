@@ -1,6 +1,6 @@
 import { Project } from 'ts-morph';
-import { FileGenerator } from '../utils';
-import { docs } from '../utils/docs.template';
+import { FileGenerator } from '@/utils';
+import { docs } from '@/utils/docs.template';
 
 /**
  * @async

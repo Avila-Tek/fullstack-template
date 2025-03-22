@@ -4,13 +4,13 @@ import {
   createFolder,
   readAvilaConfig,
   resolvePath,
-} from '../utils';
-import { createModelFile } from './model';
-import { createServiceFile } from './service';
-import { createPaginationFile } from './pagination';
-import { createControllerFile } from './controller';
-import { createRoutesFile } from './routes';
-import { updateRootRoutes } from './root.routes';
+} from '@/utils';
+import { createModelFile } from '@/api-generator/rest/model';
+import { createServiceFile } from '@/api-generator/rest/service';
+import { createPaginationFile } from '@/api-generator/rest/pagination';
+import { createControllerFile } from '@/api-generator/rest/controller';
+import { createRoutesFile } from '@/api-generator/rest/routes';
+import { updateRootRoutes } from '@/api-generator/rest/root.routes';
 
 interface ApiBootstrapProps {
   component: string;

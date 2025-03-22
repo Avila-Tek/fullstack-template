@@ -1,5 +1,5 @@
 import * as fs from 'fs';
-import { createApiFile } from '../api';
+import { createApiFile } from '@/frontend-generator/api';
 import {
   addLocalDependency,
   createFolder,
@@ -8,13 +8,13 @@ import {
   readAvilaConfig,
   resolvePath,
   WebService,
-} from '../../utils';
+} from '@/utils';
 import { Project } from 'ts-morph';
-import { createQueriesFile } from './queries';
-import { createIndexFile } from './_index';
-import { createMutationsFile } from './mutations';
-import { createHooksFile } from './hooks';
-import { generateServicePackage } from '../services-package-generator';
+import { createQueriesFile } from '@/frontend-generator/rest/queries';
+import { createIndexFile } from '@/frontend-generator/rest/_index';
+import { createMutationsFile } from '@/frontend-generator/rest/mutations';
+import { createHooksFile } from '@/frontend-generator/rest/hooks';
+import { generateServicePackage } from '@/frontend-generator/services-package-generator';
 
 /**
  * @async
@@ -40,7 +40,7 @@ export async function restBootstrap(
   fileGenerator: FileGenerator,
   project: Project,
   name: string,
-  webService: WebService,
+  webService: WebService
 ): Promise<void> {
   // First, we create the lib folder to store the api wrapper for requests
   const appPath = getServicePath(webService);

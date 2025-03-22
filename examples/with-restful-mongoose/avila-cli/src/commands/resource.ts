@@ -6,10 +6,10 @@ import {
   promptApi,
   promptWebService,
   readAvilaConfig,
-} from '../utils';
-import { bootstrap as modelsBootstrap } from '../models-generator';
-import { bootstrap as apiBoostrap } from '../api-generator';
-import { bootstrap as frontendBoostrap } from '../frontend-generator';
+} from '@/utils';
+import { bootstrap as modelsBootstrap } from '@/models-generator';
+import { bootstrap as apiBoostrap } from '@/api-generator/rest';
+import { bootstrap as frontendBoostrap } from '@/frontend-generator';
 
 export async function resourceCallback(name: string, project: Project) {
   let answers: IAnswer;

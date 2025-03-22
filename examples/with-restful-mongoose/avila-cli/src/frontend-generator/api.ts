@@ -1,5 +1,5 @@
 import { Project } from 'ts-morph';
-import { FileGenerator } from '../utils';
+import { FileGenerator } from '@/utils';
 
 export async function createApiFile(path: string, project: Project) {
   const fileGenerator = new FileGenerator(project, '');

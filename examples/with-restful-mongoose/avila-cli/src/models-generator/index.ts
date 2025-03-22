@@ -1,10 +1,10 @@
 import { Project } from 'ts-morph';
-import { createFolder, resolvePath } from '../utils';
-import { createDtoFile } from './dto';
-import { createSchemaFile } from './schema';
-import { createIndexFile } from './_index';
-import { FileGenerator } from '../utils';
-import { generateModelsPackage } from './models-package-generator';
+import { createFolder, resolvePath } from '@/utils';
+import { createDtoFile } from '@/models-generator/dto';
+import { createSchemaFile } from '@/models-generator/schema';
+import { createIndexFile } from '@/models-generator/_index';
+import { FileGenerator } from '@/utils';
+import { generateModelsPackage } from '@/models-generator/models-package-generator';
 
 /**
  * @async
@@ -26,7 +26,7 @@ import { generateModelsPackage } from './models-package-generator';
 export async function bootstrap(
   component: string,
   project: Project,
-  overwrite?: boolean,
+  overwrite?: boolean
 ): Promise<void> {
   await generateModelsPackage();
   const modelsPath = resolvePath('packages/models/src');
