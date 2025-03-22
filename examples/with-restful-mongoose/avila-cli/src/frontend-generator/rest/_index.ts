@@ -1,4 +1,4 @@
-import { FileGenerator } from '@/utils';
+import { FileGenerator } from '../../utils';
 
 export function createIndexFile(
   src: string,

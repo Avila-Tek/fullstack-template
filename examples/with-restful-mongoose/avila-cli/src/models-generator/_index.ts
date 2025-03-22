@@ -1,5 +1,5 @@
 import { Project } from 'ts-morph';
-import { FileGenerator } from '@/utils';
+import { FileGenerator } from '../utils';
 
 /**
  * @async

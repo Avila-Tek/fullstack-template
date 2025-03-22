@@ -1,5 +1,5 @@
-import { FileGenerator, IBoostrap } from '@/utils';
-import { restBootstrap } from '@/frontend-generator/rest';
+import { FileGenerator, IBoostrap } from '../utils';
+import { restBootstrap } from './rest';
 
 export async function bootstrap(input: IBoostrap): Promise<void> {
   const {

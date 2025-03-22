@@ -1,6 +1,6 @@
 import { Project } from 'ts-morph';
-import { capitalize } from '@/utils';
-import { FileGenerator } from '@/utils';
+import { capitalize } from '../utils';
+import { FileGenerator } from '../utils';
 
 export async function createDtoFile(
   fullPath: string,

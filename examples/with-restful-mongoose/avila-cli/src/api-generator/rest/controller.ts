@@ -1,5 +1,5 @@
 import { Project } from 'ts-morph';
-import { capitalize, FileGenerator, readAvilaConfig } from '@/utils';
+import { capitalize, FileGenerator, readAvilaConfig } from '../../utils';
 
 export async function createControllerFile(
   fullPath: string,

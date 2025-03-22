@@ -1,4 +1,4 @@
-import { IAnswer, propmtTechStack, resolvePath } from '@/utils';
+import { IAnswer, propmtTechStack, resolvePath } from '../utils';
 import fs from 'fs';
 
 export async function createInitFile() {

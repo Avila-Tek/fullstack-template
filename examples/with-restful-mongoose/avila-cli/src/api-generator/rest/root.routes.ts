@@ -1,6 +1,6 @@
 import { Project } from 'ts-morph';
 import fs from 'fs';
-import { FileGenerator, IImports } from '@/utils';
+import { FileGenerator, IImports } from '../../utils';
 
 export async function updateRootRoutes(
   fullPath: string,

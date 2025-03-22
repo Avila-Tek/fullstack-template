@@ -6,7 +6,7 @@ import {
   installDependencies,
   readAvilaConfig,
   resolvePath,
-} from '@/utils';
+} from '../../utils';
 
 export async function generateModelsPackage(): Promise<void> {
   const servicePath = resolvePath('packages');

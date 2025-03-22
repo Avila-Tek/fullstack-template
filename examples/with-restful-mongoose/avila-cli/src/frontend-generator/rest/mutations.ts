@@ -3,8 +3,8 @@ import {
   createFolder,
   FileGenerator,
   readAvilaConfig,
-} from '@/utils';
-import { docs } from '@/utils/docs.template';
+} from '../../utils';
+import { docs } from '../../utils/docs.template';
 
 export function createMutationsFile(
   src: string,

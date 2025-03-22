@@ -1,5 +1,5 @@
 import * as fs from 'fs';
-import { createApiFile } from '@/frontend-generator/api';
+import { createApiFile } from '../api';
 import {
   addLocalDependency,
   createFolder,
@@ -8,13 +8,13 @@ import {
   readAvilaConfig,
   resolvePath,
   WebService,
-} from '@/utils';
+} from '../../utils';
 import { Project } from 'ts-morph';
-import { createQueriesFile } from '@/frontend-generator/rest/queries';
-import { createIndexFile } from '@/frontend-generator/rest/_index';
-import { createMutationsFile } from '@/frontend-generator/rest/mutations';
-import { createHooksFile } from '@/frontend-generator/rest/hooks';
-import { generateServicePackage } from '@/frontend-generator/services-package-generator';
+import { createQueriesFile } from '../rest/queries';
+import { createIndexFile } from '../rest/_index';
+import { createMutationsFile } from '../rest/mutations';
+import { createHooksFile } from '../rest/hooks';
+import { generateServicePackage } from '../services-package-generator';
 
 /**
  * @async
