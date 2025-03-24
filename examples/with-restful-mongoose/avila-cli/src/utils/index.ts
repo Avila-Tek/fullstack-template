@@ -78,10 +78,14 @@ interface IServicePath {
 }
 
 export function getServicePath(webService: WebService): IServicePath | null {
+  const {
+    apps: { admin, client },
+  } = readAvilaConfig();
+
   const roots: Record<WebService, string> = {
     Shared: 'packages/services',
-    Admin: 'apps/admin',
-    Client: 'apps/client',
+    Admin: `apps/${admin}`,
+    Client: `apps/${client}`,
   };
 
   const root = roots[webService];
