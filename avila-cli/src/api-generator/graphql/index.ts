@@ -5,25 +5,21 @@ import {
   readAvilaConfig,
   resolvePath,
 } from '../../utils';
-import { createModelFile } from '../model';
-import { createServiceFile } from './service';
 import { createPaginationFile } from '../pagination';
-import { createControllerFile } from './controller';
-import { createRoutesFile } from './routes';
-import { updateRootRoutes } from './root.routes';
+import { createModelFile } from '../model';
+import { createServiceFile } from '../rest/service';
 
-interface RestBootrapProps {
+interface GraphQLBootstrapProps {
   component: string;
   project: Project;
   algolia?: boolean;
   overwrite?: boolean;
-  isProtected?: boolean;
 }
 
 /**
  * @async
  * @function
- * @description Bootstraps the code generation of the API portion of the project.
+ * @description Bootstraps the code generation of the GraphQL portion of the project.
  * @implements {ts-morph}
  * @param {string} component - The name of the component to generate.
  * @requires ts-morph
@@ -33,14 +29,12 @@ interface RestBootrapProps {
  * @summary API Generation
  * @version 1
  */
-
-export async function restBootstrap({
+export async function graphqlBootstrap({
   component,
   project,
   algolia = false,
   overwrite = false,
-  isProtected = false,
-}: RestBootrapProps): Promise<void> {
+}: GraphQLBootstrapProps): Promise<void> {
   const { serverLocation, project: projectName } = readAvilaConfig();
   const api = resolvePath('apps/api');
   const apiPath = `${api}/src`;
@@ -48,24 +42,17 @@ export async function restBootstrap({
   // First try to create the utils folder and add the pagination portion
   createFolder(`${apiPath}/utils`);
 
-  await createPaginationFile(`${apiPath}/utils`, project);
+  await createPaginationFile(`${apiPath}/utils`, project, true);
 
   // Then Create the components folder
+
   createFolder(`${apiPath}/components`);
 
   const modelPath = `${apiPath}/components/${component}`;
 
   await Promise.all([
+    // TODO: Add to the dto file in models package generator the graphql consts
     createModelFile(modelPath, project, component, algolia, overwrite),
     createServiceFile(modelPath, project, component, overwrite),
-    createControllerFile(modelPath, project, component, overwrite),
-    createRoutesFile(modelPath, project, component, overwrite),
-    updateRootRoutes(apiPath, project, component, serverLocation, isProtected),
   ]);
-
-  addLocalDependency(
-    `${api}/package.json`,
-    `@${projectName}/models`,
-    'Regular'
-  );
 }

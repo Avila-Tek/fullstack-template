@@ -1,6 +1,6 @@
 import { Project } from 'ts-morph';
-import { FileGenerator } from '../../utils';
-import { docs } from '../../utils/docs.template';
+import { FileGenerator } from '../utils';
+import { docs } from '../utils/docs.template';
 
 /**
  * @async
@@ -9,6 +9,7 @@ import { docs } from '../../utils/docs.template';
  * @listens {FileGenerator}
  * @param {string} fullPath - The full path to the file
  * @param {Project} project - The project to create the file in
+ * @param {boolean} [graphQl] - If true, it will create the GraphQL types
  * @requires ts-morph
  * @returns {Promise<void>}
  * @see {@link https://ts-morph.com/}
@@ -20,6 +21,7 @@ import { docs } from '../../utils/docs.template';
 export async function createPaginationFile(
   fullPath: string,
   project: Project,
+  graphQl?: boolean
 ): Promise<void> {
   const fileGenerator = new FileGenerator(project, '');
 
@@ -291,6 +293,60 @@ export async function createPaginationFile(
         version: '1',
       }),
     });
+
+    // GraphQL portion
+
+    if (graphQl) {
+      fileGenerator.addFunctionDefinition({
+        isAsync: false,
+        name: 'buildPaginationType',
+        parameters: [
+          {
+            name: '_name',
+            type: 'string',
+          },
+        ],
+        returnType: 'string',
+        statements: [
+          `if (typeof _name !== 'string') {`,
+          `  throw new Error('buildPaginationType: name must be a string');`,
+          `}`,
+          `const name = $\{_name.charAt(0).toUpperCase()\}$\{_name.slice(1)\};`,
+          `return \`
+             type $\{name\}Pagination {
+             count: Int!
+             items: [$\{name\}]!
+             pageInfo: PageInfo!
+            }
+            type $\{name\}PageInfo {
+              currentPage: Int!
+              perPage: Int!
+              pageCount: Int!
+              itemCount: Int!
+              hasPreviousPage: Boolean!
+              hasNextPage: Boolean!
+            }
+          \`;`,
+        ],
+        docs: docs({
+          description: 'This function builds the pagination type for GraphQL',
+          params: [
+            {
+              name: '_name',
+              type: 'string',
+              description: 'The name of the type to build',
+            },
+          ],
+          returns: {
+            description: 'The pagination type',
+            type: 'string',
+          },
+          summary: 'Builds the pagination type for GraphQL',
+          since: '1.0.0',
+          version: '1',
+        }),
+      });
+    }
 
     await fileGenerator.save();
   }

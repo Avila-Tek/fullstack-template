@@ -3,7 +3,6 @@ import {
   formatFiles,
   IAnswer,
   install,
-  promptProtected,
   promptWebService,
   readAvilaConfig,
 } from '../utils';
@@ -31,14 +30,11 @@ export async function resourceCallback(name: string, project: Project) {
 
   // Add the params to choose the tech stack
 
-  const { isProtected } = await promptProtected();
-
   await apiBoostrap({
     name,
     project,
     overwrite: true,
     techStack: answers,
-    isProtected,
   });
 
   console.log('Generted API route');

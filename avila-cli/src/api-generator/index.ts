@@ -1,18 +1,17 @@
-import { IBoostrap } from '../utils';
+import { IBoostrap, promptProtected } from '../utils';
+import { graphqlBootstrap } from './graphql';
 import { restBootstrap } from './rest';
 
-export async function bootstrap(
-  input: IBoostrap & { isProtected: boolean }
-): Promise<void> {
+export async function bootstrap(input: IBoostrap): Promise<void> {
   const {
     project,
     techStack: { backendArchitecture },
     name,
-    isProtected,
   } = input;
 
   switch (backendArchitecture) {
     case 'RESTful':
+      const { isProtected } = await promptProtected();
       await restBootstrap({
         component: name,
         project,
@@ -20,5 +19,14 @@ export async function bootstrap(
         overwrite: true,
         isProtected,
       });
+      break;
+    case 'GraphQL':
+      await graphqlBootstrap({
+        component: name,
+        project,
+        algolia: false,
+        overwrite: true,
+      });
+      break;
   }
 }
