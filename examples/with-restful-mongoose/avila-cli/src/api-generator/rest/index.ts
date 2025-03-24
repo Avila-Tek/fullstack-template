@@ -35,14 +35,14 @@ interface ApiBootstrapProps {
  * @version 1
  */
 
-export async function bootstrap({
+export async function restBootstrap({
   component,
   project,
   algolia = false,
   overwrite = false,
-  serverName = 'app.ts',
   isProtected = false,
 }: ApiBootstrapProps): Promise<void> {
+  const { serverLocation, project: projectName } = readAvilaConfig();
   const api = resolvePath('apps/api');
   const apiPath = `${api}/src`;
 
@@ -50,8 +50,6 @@ export async function bootstrap({
   createFolder(`${apiPath}/utils`);
 
   await createPaginationFile(`${apiPath}/utils`, project);
-
-  const { project: projectName } = readAvilaConfig();
 
   // Then Create the components folder
   createFolder(`${apiPath}/components`);
@@ -63,7 +61,7 @@ export async function bootstrap({
     createServiceFile(modelPath, project, component, overwrite),
     createControllerFile(modelPath, project, component, overwrite),
     createRoutesFile(modelPath, project, component, overwrite),
-    updateRootRoutes(apiPath, project, component, serverName, isProtected),
+    updateRootRoutes(apiPath, project, component, serverLocation, isProtected),
   ]);
 
   addLocalDependency(

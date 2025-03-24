@@ -8,7 +8,7 @@ import {
   readAvilaConfig,
 } from '../utils';
 import { bootstrap as modelsBootstrap } from '../models-generator';
-import { bootstrap as apiBoostrap } from '../api-generator/rest';
+import { bootstrap as apiBoostrap } from '../api-generator';
 import { bootstrap as frontendBoostrap } from '../frontend-generator';
 
 export async function resourceCallback(name: string, project: Project) {
@@ -34,11 +34,10 @@ export async function resourceCallback(name: string, project: Project) {
   const { isProtected } = await promptApi();
 
   await apiBoostrap({
-    component: name,
+    name,
     project,
-    algolia: false,
     overwrite: true,
-    serverName: answers.serverLocation,
+    techStack: answers,
     isProtected,
   });
 
