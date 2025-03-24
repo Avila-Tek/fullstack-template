@@ -248,7 +248,7 @@ export function promptWebService() {
   ]);
 }
 
-export function promptApi() {
+export function promptProtected() {
   return inquirer.prompt([
     {
       type: 'confirm',

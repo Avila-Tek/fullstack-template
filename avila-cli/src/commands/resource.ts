@@ -3,7 +3,7 @@ import {
   formatFiles,
   IAnswer,
   install,
-  promptApi,
+  promptProtected,
   promptWebService,
   readAvilaConfig,
 } from '../utils';
@@ -31,7 +31,7 @@ export async function resourceCallback(name: string, project: Project) {
 
   // Add the params to choose the tech stack
 
-  const { isProtected } = await promptApi();
+  const { isProtected } = await promptProtected();
 
   await apiBoostrap({
     name,
@@ -45,7 +45,6 @@ export async function resourceCallback(name: string, project: Project) {
 
   console.log('Generating frontend component for:', name);
 
-  // TODO: Add the param to choose the webService
   const { webService } = await promptWebService();
 
   await frontendBoostrap({
