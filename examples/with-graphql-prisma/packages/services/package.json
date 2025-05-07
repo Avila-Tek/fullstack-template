@@ -1,0 +1,23 @@
+{
+  "name": "@repo/services",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "files": ["dist"],
+  "scripts": {
+    "dev": "tsup --watch",
+    "build": "tsup"
+  },
+  "dependencies": {
+    "@repo/schemas": "*",
+    "@repo/utils": "*"
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "*",
+    "@types/node": "22.9.1",
+    "tsup": "8.3.5",
+    "typescript": "5.6.3"
+  }
+}

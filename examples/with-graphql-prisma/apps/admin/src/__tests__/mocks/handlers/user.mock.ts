@@ -16,8 +16,8 @@
  * `@testing-library/react` to render components with mock data.
  */
 
-import { GraphQLError } from 'graphql';
 import { GET_USER } from '@/graphql/queries';
+import { GraphQLError } from 'graphql';
 import { mockUser } from '../entities';
 
 /**

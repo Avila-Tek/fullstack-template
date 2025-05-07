@@ -1,5 +1,5 @@
-import { exampleService } from '@/components/example/example.service';
+import { exampleQueries } from '@/components/example/example.controller';
 
 export const Query = Object.freeze({
-  ...exampleService,
+  ...exampleQueries,
 });

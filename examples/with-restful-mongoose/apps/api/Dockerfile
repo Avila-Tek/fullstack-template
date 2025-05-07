@@ -10,7 +10,6 @@ FROM base AS builder
 RUN apk add --no-cache git libc6-compat tzdata g++ make py3-pip
 RUN apk update
 ENV TZ=America/Caracas
-
 # Install and generate partial monorepo to have only the necessary to build ${SCOPE} app
 WORKDIR /app
 RUN npm i -g turbo 

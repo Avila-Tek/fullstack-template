@@ -1,7 +1,7 @@
-import React from 'react';
-import userEvent from '@testing-library/user-event';
-import { render, type RenderOptions } from '@testing-library/react';
 import { MockedProvider } from '@apollo/client/testing';
+import { type RenderOptions, render } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import React from 'react';
 import { handlers } from '../mocks/handlers';
 
 // mock @apollo/experimental-nextjs-app-support/rsc

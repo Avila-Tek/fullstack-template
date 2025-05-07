@@ -1,5 +1,5 @@
-import React from 'react';
 import Home from '@/app/page';
+import React from 'react';
 import { render } from '../test-utils/test-utils';
 
 // Mock the Google Font loader
