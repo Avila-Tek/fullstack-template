@@ -1,7 +1,6 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-@tailwind variants;
+@import 'tailwindcss';
+@reference './color-variables.css';
+@reference './theme.css';
 
 @layer components {
   .bg-primary {
