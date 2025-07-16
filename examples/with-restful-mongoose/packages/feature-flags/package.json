@@ -1,0 +1,25 @@
+{
+  "name": "@repo/feature-flags",
+  "version": "0.0.0",
+  "files": [
+    "dist/**"
+  ],
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "license": "MIT",
+  "scripts": {
+    "lint": "eslint",
+    "lint:fix": "eslint . --fix",
+    "build": "tsup",
+    "test": "none",
+    "dev": "tsup src/index.ts --format cjs --watch --dts"
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "*",
+    "@types/node": "22.9.1",
+    "tsup": "8.3.5",
+    "typescript": "5.6.3"
+  },
+  "dependencies": {}
+}
