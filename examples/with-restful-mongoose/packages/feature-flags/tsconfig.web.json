@@ -8,11 +8,8 @@
     "inlineSourceMap": true,
     "esModuleInterop": true,
     // "moduleResolution": "NodeNext",
-    "typeRoots": ["./src/types/*", "./node_modules/@types/*"],
+    // "typeRoots": ["./src/types/*", "./node_modules/@types/*"],
     "skipLibCheck": true,
-    "paths": {
-      "@/*": ["./*"]
-    },
     "jsx": "react-jsx",
     "isolatedModules": true,
     "module": "ESNext",

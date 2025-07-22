@@ -1,8 +1,8 @@
-import { useContext } from 'react';
+import React from 'react';
 import { FeatureFlagContext } from '../FFContext';
 
 export function useFeatureFlagPayload(name: string) {
-  const ctx = useContext(FeatureFlagContext);
+  const ctx = React.useContext(FeatureFlagContext);
   if (ctx === null || typeof ctx === 'undefined') {
     throw new TypeError(
       `useFeatureFlagPayload cannot be used outside FeatureFlagContextProvider`
@@ -11,7 +11,7 @@ export function useFeatureFlagPayload(name: string) {
   return ctx.context.useFeatureFlagPayload(name);
 }
 export function useFeatureFlagValue(name: string) {
-  const ctx = useContext(FeatureFlagContext);
+  const ctx = React.useContext(FeatureFlagContext);
   if (ctx === null || typeof ctx === 'undefined') {
     throw new TypeError(
       `useFeatureFlagValue cannot be used outside FeatureFlagContextProvider`
@@ -21,7 +21,7 @@ export function useFeatureFlagValue(name: string) {
 }
 
 export function useIdUser<TUser extends { id: string }>(user: TUser) {
-  const ctx = useContext(FeatureFlagContext);
+  const ctx = React.useContext(FeatureFlagContext);
   if (ctx === null || typeof ctx === 'undefined') {
     throw new TypeError(
       `useIdUser cannot be used outside FeatureFlagContextProvider`
@@ -31,7 +31,7 @@ export function useIdUser<TUser extends { id: string }>(user: TUser) {
 }
 
 export function useIdentifyUser() {
-  const ctx = useContext(FeatureFlagContext);
+  const ctx = React.useContext(FeatureFlagContext);
   if (ctx === null || typeof ctx === 'undefined') {
     throw new TypeError(
       `useIdUser cannot be used outside FeatureFlagContextProvider`

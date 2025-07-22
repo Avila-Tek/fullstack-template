@@ -1,5 +1,5 @@
 import { GrowthBook, Context } from '@growthbook/growthbook';
-import { IFeatureFlagProvider } from '@repo/feature-flags/api';
+import { IFeatureFlagProvider } from './interfaces';
 
 export class GrowthBookProvider implements IFeatureFlagProvider {
   private apiKey: string;
@@ -25,12 +25,12 @@ export class GrowthBookProvider implements IFeatureFlagProvider {
     };
 
     const gb = new GrowthBook(context);
-    
+
     try {
       await gb.loadFeatures();
-      
+
       const feature = gb.getFeatureValue(flagName, false);
-      
+
       return {
         flagStatus: !!feature,
         featureFlagPayload: typeof feature === 'object' ? feature : undefined,

@@ -179,7 +179,7 @@ function CustomPostHogProvider({ children, ...props }: PostHogProviderProps) {
  * Internal provider to conditionally render the correct feature flag provider.
  *
  * @param {TFeatureFlagContextProviderProps} props - Props for configuring the feature flag provider.
- * @returns {JSX.Element | null} Returns the appropriate provider based on `config.provider`.
+ * @returns {React.Element | null} Returns the appropriate provider based on `config.provider`.
  */
 function _FeatureFlagContextProvider({
   children,
@@ -219,12 +219,12 @@ export type TFeatureFlagContextProviderProps = {
  * Wraps the application with a feature flag context using the specified provider configuration.
  *
  * @param {TFeatureFlagContextProviderProps} props - The configuration and children for the context provider.
- * @returns {JSX.Element} The context provider wrapped around children components.
+ * @returns {React.Element} The context provider wrapped around children components.
  */
 export function FeatureFlagContextProvider({
   children,
   ...props
-}: TFeatureFlagContextProviderProps): JSX.Element {
+}: TFeatureFlagContextProviderProps): React.ReactElement {
   const [context, setContext] = React.useState<TFeatureFlagContext>({
     useFeatureFlagValue: (_name: string) => true,
     useFeatureFlagPayload: (_name: string) => undefined,

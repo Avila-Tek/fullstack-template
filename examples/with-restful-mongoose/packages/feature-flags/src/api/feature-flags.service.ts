@@ -1,5 +1,5 @@
 import { TFeatureFlagEnum } from '../shared';
-import { IFeatureFlagProvider } from './providers/interfaces/feature-flag-provider.interface';
+import { IFeatureFlagProvider } from './providers/interfaces';
 
 export type FeatureFlagOptions = {
   flagName: TFeatureFlagEnum;

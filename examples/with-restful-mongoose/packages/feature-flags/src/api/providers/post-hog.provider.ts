@@ -1,5 +1,5 @@
 import { PostHog } from 'posthog-node';
-import { IFeatureFlagProvider } from '@repo/feature-flags/api';
+import { IFeatureFlagProvider } from './interfaces';
 
 export class PostHogProvider implements IFeatureFlagProvider {
   private client: PostHog;
