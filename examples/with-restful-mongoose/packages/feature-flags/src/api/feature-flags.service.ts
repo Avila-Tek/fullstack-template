@@ -1,20 +1,20 @@
-import { featureFlags, TFeatureFlagEnum } from './feature-flags-config';
-import { IFeatureFlagProvider } from './interfaces/feature-flag-provider.interface';
+import { TFeatureFlagEnum } from '../shared';
+import { IFeatureFlagProvider } from './providers/interfaces/feature-flag-provider.interface';
 
-type FeatureFlagOptions = {
+export type FeatureFlagOptions = {
   flagName: TFeatureFlagEnum;
   userId?: string;
   provider: IFeatureFlagProvider;
 };
 
-export const getFeatureFlag = async ({
+export async function getFeatureFlag({
   flagName,
   userId,
   provider,
 }: FeatureFlagOptions): Promise<{
   flagStatus: boolean;
   featureFlagPayload: any | undefined;
-}> => {
+}> {
   try {
     const { flagStatus, featureFlagPayload } = await provider.getFeatureFlag(
       flagName,
@@ -26,20 +26,22 @@ export const getFeatureFlag = async ({
     console.error('Error al obtener el estado del flag:', error);
     return { flagStatus: false, featureFlagPayload: undefined };
   }
-};
+}
 
-async function featureFlagAccess(
-  options: Omit<FeatureFlagOptions, 'userId'>
-): Promise<boolean> {
+async function getFeatureFlagAccess({
+  flagName,
+  userId,
+  provider,
+}: FeatureFlagOptions): Promise<boolean> {
   const { flagStatus } = await getFeatureFlag({
-    provider: options.provider,
-    flagName: featureFlags.repo_v1,
+    flagName,
+    userId,
+    provider,
   });
-
   return flagStatus;
 }
 
 export const featureFlagsService = Object.freeze({
   getFeatureFlag,
-  featureFlagAccess,
+  getFeatureFlagAccess,
 });

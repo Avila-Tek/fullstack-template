@@ -7,6 +7,23 @@
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
+  "exports": {
+    "./shared": {
+      "types": "./dist/shared/index.d.ts",
+      "import": "./dist/shared/index.mjs",
+      "require": "./dist/shared/index.js"
+    },
+    "./api": {
+      "types": "./dist/api/index.d.ts",
+      "import": "./dist/api/index.mjs",
+      "require": "./dist/api/index.js"
+    },
+    "./web": {
+      "types": "./dist/web/index.d.ts",
+      "import": "./dist/web/index.mjs",
+      "require": "./dist/web/index.js"
+    }
+  },
   "license": "MIT",
   "scripts": {
     "lint": "eslint",
@@ -17,7 +34,12 @@
   },
   "devDependencies": {
     "@repo/typescript-config": "*",
+    "@repo/utils": "*",
     "@types/node": "22.9.1",
+    "@growthbook/growthbook": "^1.6.0",
+    "@growthbook/growthbook-react": "1.2.1",
+    "posthog-js": "1.187.2",
+    "posthog-node": "^5.5.1",
     "tsup": "8.3.5",
     "typescript": "5.6.3"
   },

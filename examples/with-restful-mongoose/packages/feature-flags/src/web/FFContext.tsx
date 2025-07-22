@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import {
   Context,
   GrowthBook,
@@ -7,25 +8,25 @@ import {
 } from '@growthbook/growthbook-react';
 import posthog from 'posthog-js';
 import { PostHogProvider } from 'posthog-js/react';
-import React from 'react';
+import { featureFlagProviders } from '../shared';
 
 /**
  * Configuration options for the feature flag provider.
- * Supports either 'posthog' or 'growthbook' providers.
+ * Supports either 'post_hog' or 'growth_book' providers.
  */
-export type TFeateFlagConfig =
+export type TFeatureFlagConfig =
   | ({
-      provider: 'posthog';
+      provider: typeof featureFlagProviders.post_hog;
       token: string;
     } & Parameters<typeof posthog.init>['1'])
   | ({
-      provider: 'growthbook';
+      provider: typeof featureFlagProviders.growth_book;
     } & Context);
 
 /**
  * Context methods for interacting with feature flags.
  */
-export type TFeateFlagContext = {
+export type TFeatureFlagContext = {
   /**
    * Checks if a feature flag is enabled.
    * @param {string} name - Name of the feature flag.
@@ -50,14 +51,14 @@ export type TFeateFlagContext = {
 /**
  * Internal context for managing feature flag state.
  */
-type TInternalFeateFlagContext = {
-  context: TFeateFlagContext;
-  setContext: React.Dispatch<React.SetStateAction<TFeateFlagContext>>;
+type TInternalFeatureFlagContext = {
+  context: TFeatureFlagContext;
+  setContext: React.Dispatch<React.SetStateAction<TFeatureFlagContext>>;
 };
 
 /** React context for managing feature flag configuration. */
 export const FeatureFlagContext =
-  React.createContext<TInternalFeateFlagContext | null>(null);
+  React.createContext<TInternalFeatureFlagContext | null>(null);
 
 /**
  * Props for the custom GrowthBook provider component.
@@ -184,14 +185,14 @@ function _FeatureFlagContextProvider({
   children,
   ...props
 }: TFeatureFlagContextProviderProps) {
-  if (props.config.provider === 'posthog') {
+  if (props.config.provider === featureFlagProviders.post_hog) {
     return (
       <CustomPostHogProvider {...props.config}>
         {children}
       </CustomPostHogProvider>
     );
   }
-  if (props.config.provider === 'growthbook') {
+  if (props.config.provider === featureFlagProviders.growth_book) {
     return (
       <CustomGrowthBookProvider {...props.config}>
         {children}
@@ -205,7 +206,7 @@ function _FeatureFlagContextProvider({
  * Main props for the `FeatureFlagContextProvider` component.
  */
 export type TFeatureFlagContextProviderProps = {
-  config: TFeateFlagConfig;
+  config: TFeatureFlagConfig;
   children: React.ReactNode;
   user?: {
     id?: string;
@@ -224,7 +225,7 @@ export function FeatureFlagContextProvider({
   children,
   ...props
 }: TFeatureFlagContextProviderProps): JSX.Element {
-  const [context, setContext] = React.useState<TFeateFlagContext>({
+  const [context, setContext] = React.useState<TFeatureFlagContext>({
     useFeatureFlagValue: (_name: string) => true,
     useFeatureFlagPayload: (_name: string) => undefined,
     useIdUser: (_user: any) => undefined,

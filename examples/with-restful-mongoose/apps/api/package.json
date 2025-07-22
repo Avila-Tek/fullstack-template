@@ -29,6 +29,7 @@
     "vitest-mongodb": "1.0.0"
   },
   "dependencies": {
+    "@repo/feature-flags": "*",
     "@aws-sdk/client-s3": "3.696.0",
     "@aws-sdk/s3-request-presigner": "3.696.0",
     "@axiomhq/pino": "1.2.0",
@@ -46,8 +47,8 @@
     "fastify-plugin": "4.5.1",
     "jsonwebtoken": "9.0.2",
     "mongoose": "8.8.2",
-    "pino-pretty": "13.0.0",
     "pino-loki": "2.4.0",
+    "pino-pretty": "13.0.0",
     "postmark": "4.0.5",
     "slug": "10.0.0",
     "zod": "3.23.8"

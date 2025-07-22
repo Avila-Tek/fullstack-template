@@ -1,7 +1,11 @@
 import { defineConfig } from 'tsup';
 
 export default defineConfig({
-  entry: ['src/index.ts'],
+  entry: {
+    'shared/index': 'src/shared/index.ts',
+    'api/index': 'src/api/index.ts',
+    'web/index': 'src/web/index.ts',
+  },
   dts: true,
   sourcemap: true,
   minify: true,

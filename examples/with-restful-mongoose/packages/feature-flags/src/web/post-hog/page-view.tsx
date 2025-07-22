@@ -7,19 +7,19 @@ import { useEffect } from 'react';
 export function PostHogPageView(): null {
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const posthog = usePostHog();
+  const postHog = usePostHog();
   useEffect(() => {
     // Track pageviews
-    if (pathname && posthog) {
+    if (pathname && postHog) {
       let url = window.origin + pathname;
       if (searchParams.toString()) {
         url = url + `?${searchParams.toString()}`;
       }
-      posthog.capture('$pageview', {
+      postHog.capture('$pageview', {
         $current_url: url,
       });
     }
-  }, [pathname, searchParams, posthog]);
+  }, [pathname, searchParams, postHog]);
 
   return null;
 }
