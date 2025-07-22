@@ -1,5 +1,5 @@
 import React from 'react';
-import { FeatureFlagContext } from '../FFContext';
+import { FeatureFlagContext } from '../context/FeatureFlagContext';
 
 export function useFeatureFlagPayload(name: string) {
   const ctx = React.useContext(FeatureFlagContext);
