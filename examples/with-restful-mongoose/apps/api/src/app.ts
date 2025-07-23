@@ -6,6 +6,11 @@ import helmet from '@fastify/helmet';
 import rateLimit from '@fastify/rate-limit';
 import * as Sentry from '@sentry/node';
 import Fastify, { FastifyHttpOptions } from 'fastify';
+import {
+  ZodTypeProvider,
+  serializerCompiler,
+  validatorCompiler,
+} from 'fastify-type-provider-zod';
 import mongoose from 'mongoose';
 
 export async function createApp() {
@@ -44,7 +49,11 @@ export async function createApp() {
     };
   }
 
-  const app = Fastify(config);
+  const app = Fastify(config).withTypeProvider<ZodTypeProvider>();
+
+  // Add schema validator and serializer
+  app.setValidatorCompiler(validatorCompiler);
+  app.setSerializerCompiler(serializerCompiler);
 
   if (process.env.NODE_ENV === 'production') {
     Sentry.setupFastifyErrorHandler(app);
