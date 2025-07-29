@@ -1,0 +1,55 @@
+kind: pipeline
+name: Grit - Verification
+type: exec
+
+steps:
+  - name: Grit - Code Check
+    environment:
+      GH_TOKEN:
+        from_secret: GITHUB_TOKEN
+    commands:
+      - grit init
+      - grit check
+trigger:
+  branch:
+    - development
+    - staging
+    - main
+  event:
+    - pull_request
+
+node:
+  kind: grit
+
+---
+kind: pipeline
+name: Grit - Fix
+type: exec
+
+steps:
+  - name: Grit - Code Check
+    environment:
+      GH_TOKEN:
+        from_secret: GH_TOKEN
+    commands:
+      - grit init
+      - grit check --fix
+      - git status
+      - git checkout -b "GRIT-REVIEW/$(shuf -i 1000-9999 -n 1)"
+      - git branch
+      - git add .
+      - git commit -m "refactor grit reviewer"
+      - echo $DRONE_BRANCH
+      - git push origin HEAD
+      - gh pr create --title "Grit Review Code Fixes" --base "$DRONE_BRANCH" --body "# Grit Review Refactor"
+
+trigger:
+  branch:
+    - development
+    - staging
+    - main
+  event:
+    - push
+
+node:
+  kind: grit
