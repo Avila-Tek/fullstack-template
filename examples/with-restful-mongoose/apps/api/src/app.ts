@@ -1,19 +1,18 @@
 // Import this first!
 import './instrument';
+import type { Server } from 'node:http';
 import cors from '@fastify/cors';
 import helmet from '@fastify/helmet';
 import rateLimit from '@fastify/rate-limit';
-import {
-  featureFlagProviders,
-  TFeatureFlagProvider,
-} from '@repo/feature-flags/shared';
 import * as Sentry from '@sentry/node';
-import Fastify, { FastifyHttpOptions } from 'fastify';
-import { Server } from 'http';
+import Fastify, { type FastifyHttpOptions } from 'fastify';
+import {
+  serializerCompiler,
+  validatorCompiler,
+  type ZodTypeProvider,
+} from 'fastify-type-provider-zod';
 import mongoose from 'mongoose';
-import featureFlagsPlugin from './plugins/feature-flags';
-
-const provider = process.env.FEATURE_FLAG_PROVIDER as TFeatureFlagProvider;
+import { swaggerPlugin } from './plugins';
 
 export async function createApp() {
   let connection: typeof mongoose | null = null;
@@ -21,13 +20,14 @@ export async function createApp() {
     connection = await mongoose
       .connect(String(process.env.DATABASE))
       .then((conn) => {
+        console.log('Connected to database');
         return conn;
       });
 
     mongoose.connection.on('error', (err) => `❌🤬❌🤬 ${err}`);
   } catch (err) {
     console.log(`ERROR: ${err}`);
-    if (connection && connection.connection) {
+    if (connection?.connection) {
       connection.connection.close();
     }
     process.exit(1);
@@ -50,7 +50,11 @@ export async function createApp() {
     };
   }
 
-  const app = Fastify(config);
+  const app = Fastify(config).withTypeProvider<ZodTypeProvider>();
+
+  // Add schema validator and serializer
+  app.setValidatorCompiler(validatorCompiler);
+  app.setSerializerCompiler(serializerCompiler);
 
   if (process.env.NODE_ENV === 'production') {
     Sentry.setupFastifyErrorHandler(app);
@@ -63,23 +67,8 @@ export async function createApp() {
     credentials: true,
   });
 
-  await app.register(featureFlagsPlugin, {
-    provider,
-    postHog:
-      provider === featureFlagProviders.post_hog
-        ? {
-            apiKey: process.env.POSTHOG_API_KEY!,
-            host: process.env.POSTHOG_HOST,
-          }
-        : undefined,
-    growthBook:
-      provider === featureFlagProviders.growth_book
-        ? {
-            apiKey: process.env.GROWTHBOOK_API_KEY!,
-            apiHost: process.env.GROWTHBOOK_API_HOST,
-          }
-        : undefined,
-  });
+  // Register the swagger plugin
+  app.register(swaggerPlugin);
 
   await app.ready();
 
