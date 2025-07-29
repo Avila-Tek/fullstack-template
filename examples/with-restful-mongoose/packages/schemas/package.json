@@ -12,11 +12,11 @@
   },
   "devDependencies": {
     "@repo/typescript-config": "*",
-    "@types/node": "24.0.14",
+    "@types/node": "24.1.0",
     "tsup": "8.5.0",
     "typescript": "5.8.3"
   },
   "dependencies": {
-    "zod": "4.0.5"
+    "zod": "4.0.13"
   }
 }
