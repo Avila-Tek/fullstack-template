@@ -74,7 +74,7 @@ const useRoutes = (__routes: IRoute[], routesHistory: Partial<IRoute>[]) => {
     // setFullRoutes([firstRoute, ...currentRoutes]);
     const newFullRoutes = [firstRoute, ...currentRoutes];
     setFullRoutes(newFullRoutes as Partial<IRoute>[]);
-  }, []);
+  }, [__routes.find, routesHistory]);
 
   return {
     fullRoutes, // Rutas completas

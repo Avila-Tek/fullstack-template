@@ -27,7 +27,7 @@ function TagsInput({ tags = [], updateTags }: TagsInputProps) {
     if (_tags?.length === 0 && tags?.length > 0) {
       setTags(tags);
     }
-  }, [tags]);
+  }, [tags, _tags?.length]);
 
   const onKeyUp = (e: React.KeyboardEvent<HTMLInputElement>) => {
     e.preventDefault();

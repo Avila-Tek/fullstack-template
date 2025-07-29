@@ -28,7 +28,7 @@ export default function useFileUploader({
 
     // TODO: Indicar que archivos no se subieron por ser mayores a 1MB
 
-    const notValidFiles = Array.from(acceptedFiles).filter(
+    const _notValidFiles = Array.from(acceptedFiles).filter(
       (file) => !filteredFiles.includes(file)
     );
 

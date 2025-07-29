@@ -8,9 +8,7 @@ function Skeleton() {
     setHeight(
       (ref?.current ? (ref?.current as HTMLElement) : null)?.clientHeight ?? 0
     );
-  }, [
-    (ref?.current ? (ref?.current as HTMLElement) : null)?.clientHeight ?? 0,
-  ]);
+  }, []);
 
   if (!height || height === 0) <div />;
 

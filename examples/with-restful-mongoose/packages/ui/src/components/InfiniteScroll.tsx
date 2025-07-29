@@ -91,7 +91,7 @@ function InfiniteScroll({
       }
       // setPages(Math.ceil(data.count / data.pageInfo.perPage));
     }
-  }, [data]);
+  }, [data, setLoadedData, updateLoadedDataOnPageChange]);
 
   React.useEffect(() => {
     // if the screen is to large and the div doesn't have scroll, load more data
@@ -106,12 +106,12 @@ function InfiniteScroll({
     ) {
       loadMoreData();
     }
-  }, [containerRef?.current?.offsetHeight]);
+  }, [data_, fixedHeight, loadMoreData, maxHeight_]);
 
   React.useEffect(() => {
     if (maxHeight === 0 && typeof window !== 'undefined' && fixedHeight)
       setMaxHeight_(window.innerHeight - 120); // screen height - (navbar height+40px)
-  }, [maxHeight]);
+  }, [maxHeight, fixedHeight]);
 
   React.useEffect(() => {
     // handle scroll for window (if fixedHeight is false)
@@ -138,7 +138,7 @@ function InfiniteScroll({
         window.removeEventListener('scroll', handleScrollWindow);
       };
     }
-  }, [data_, fixedHeight, triggerFunctionOnHit]);
+  }, [fixedHeight, triggerFunctionOnHit, loadMoreData]);
 
   return (
     <div

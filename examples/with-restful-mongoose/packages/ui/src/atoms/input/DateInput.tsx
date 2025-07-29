@@ -3,11 +3,11 @@ import dayjs from 'dayjs';
 import React from 'react';
 import { ArrowIcon } from '../../icons';
 import {
-  WEEK_DAYS,
   getNextMonth,
   getPreviousMonth,
   months,
   refactorDate,
+  WEEK_DAYS,
 } from '../../utils';
 
 interface DateInputProps {
@@ -61,7 +61,7 @@ export default function DateInput({
       ]);
       setHasPreviousMonth(today.month() !== month);
     },
-    [month]
+    [month, today.month, today?.set]
   );
 
   return (
