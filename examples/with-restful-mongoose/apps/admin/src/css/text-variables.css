@@ -1,7 +1,6 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-@tailwind variants;
+@import 'tailwindcss';
+@reference './theme.css';
+@reference './color-variables.css';
 
 @layer components {
   .text-primary-900 {
