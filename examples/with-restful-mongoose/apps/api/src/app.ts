@@ -1,17 +1,17 @@
 // Import this first!
 import './instrument';
-import { Server } from 'http';
 import cors from '@fastify/cors';
 import helmet from '@fastify/helmet';
 import rateLimit from '@fastify/rate-limit';
-import * as Sentry from '@sentry/node';
-import Fastify, { FastifyHttpOptions } from 'fastify';
-import mongoose from 'mongoose';
-import featureFlagsPlugin from './plugins/feature-flags';
 import {
   featureFlagProviders,
   TFeatureFlagProvider,
 } from '@repo/feature-flags/shared';
+import * as Sentry from '@sentry/node';
+import Fastify, { FastifyHttpOptions } from 'fastify';
+import { Server } from 'http';
+import mongoose from 'mongoose';
+import featureFlagsPlugin from './plugins/feature-flags';
 
 const provider = process.env.FEATURE_FLAG_PROVIDER as TFeatureFlagProvider;
 

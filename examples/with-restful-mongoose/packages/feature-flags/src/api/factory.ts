@@ -1,6 +1,6 @@
-import { IFeatureFlagProvider } from './providers/interfaces';
-import { PostHogProvider, GrowthBookProvider } from './providers';
 import { featureFlagProviders, TFeatureFlagProvider } from '../shared';
+import { GrowthBookProvider, PostHogProvider } from './providers';
+import { IFeatureFlagProvider } from './providers/interfaces';
 
 export interface FeatureFlagConfig {
   provider: TFeatureFlagProvider;

@@ -1,3 +1,16 @@
+import {
+  ArcElement,
+  BarElement,
+  CategoryScale,
+  ChartData,
+  Chart as ChartJS,
+  Legend,
+  LinearScale,
+  registerables,
+  Title,
+  Tooltip,
+  // ChartOptions,
+} from 'chart.js';
 import React from 'react';
 import {
   Bar,
@@ -9,20 +22,6 @@ import {
   Radar,
   Scatter,
 } from 'react-chartjs-2';
-
-import {
-  ArcElement,
-  BarElement,
-  CategoryScale,
-  ChartData,
-  Chart as ChartJS,
-  Legend,
-  LinearScale,
-  Title,
-  Tooltip,
-  registerables,
-  // ChartOptions,
-} from 'chart.js';
 
 ChartJS.register(
   ...registerables,

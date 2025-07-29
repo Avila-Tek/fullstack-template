@@ -1,6 +1,5 @@
-import React from 'react';
-
 import { Disclosure } from '@headlessui/react';
+import React from 'react';
 import { twMerge } from 'tailwind-merge';
 import { ChevronDownIcon, ChevronUpIcon } from '../../icons';
 

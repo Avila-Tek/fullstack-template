@@ -1,18 +1,13 @@
 import type { Metadata } from 'next';
 import localFont from 'next/font/local';
-import '../css/color-variables.css';
 import './globals.css';
-import '../css/bg-variables.css';
-import '../css/border-variables.css';
-import '../css/text-variables.css';
-import '../css/fg-variables.css';
-import { ReactQueryProvider } from '@/context/react-query';
-import { type TAnalyticsOption } from '@repo/ui/analytics';
-import {
-  type TFeatureFlagConfig,
-  PostHogPageView,
-} from '@repo/feature-flags/web';
 import { featureFlagProviders } from '@repo/feature-flags/shared';
+import {
+  PostHogPageView,
+  type TFeatureFlagConfig,
+} from '@repo/feature-flags/web';
+import type { TAnalyticsOption } from '@repo/ui/analytics';
+import { ReactQueryProvider } from '@/context/react-query';
 import { ClientProviders } from './client-providers';
 
 const geistSans = localFont({

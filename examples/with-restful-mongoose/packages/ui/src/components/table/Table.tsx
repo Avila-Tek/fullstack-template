@@ -1,14 +1,14 @@
 import {
+  compareItems,
+  RankingInfo,
+  rankItem,
+} from '@tanstack/match-sorter-utils';
+import {
   Column,
   ColumnDef,
   ColumnFiltersState,
   FilterFn,
   FilterFns,
-  OnChangeFn,
-  PaginationState,
-  RowData,
-  SortingFn,
-  Table,
   flexRender,
   getCoreRowModel,
   getFacetedMinMaxValues,
@@ -17,16 +17,15 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
+  OnChangeFn,
+  PaginationState,
+  RowData,
+  SortingFn,
   sortingFns,
+  Table,
   useReactTable,
 } from '@tanstack/react-table';
 import React, { useContext } from 'react';
-
-import {
-  RankingInfo,
-  compareItems,
-  rankItem,
-} from '@tanstack/match-sorter-utils';
 import Alert from '../alert/Alert';
 
 declare module '@tanstack/table-core' {
@@ -37,6 +36,7 @@ declare module '@tanstack/table-core' {
   interface FilterMeta {
     itemRank: RankingInfo;
   }
+  // biome-ignore lint/correctness/noUnusedVariables: fixing issue with data types
   interface TableMeta<TData extends RowData> {
     lengthOfData: number;
   }

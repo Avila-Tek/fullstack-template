@@ -1,4 +1,4 @@
-import { GrowthBook, Context } from '@growthbook/growthbook';
+import { Context, GrowthBook } from '@growthbook/growthbook';
 import { IFeatureFlagProvider } from './interfaces';
 
 export class GrowthBookProvider implements IFeatureFlagProvider {

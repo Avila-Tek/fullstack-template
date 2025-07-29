@@ -1,12 +1,12 @@
 'use client';
 
-import React from 'react';
 import { Context } from '@growthbook/growthbook-react';
 import posthog from 'posthog-js';
+import React from 'react';
 import { featureFlagProviders } from '../../shared';
-import { CustomPostHogProvider } from './providers/PostHogCustomProvider';
-import { CustomGrowthBookProvider } from './providers/GrowthBookCustomProvider';
 import { FeatureFlagContext, TFeatureFlagContext } from './FeatureFlagContext';
+import { CustomGrowthBookProvider } from './providers/GrowthBookCustomProvider';
+import { CustomPostHogProvider } from './providers/PostHogCustomProvider';
 
 /**
  * Configuration options for the feature flag provider.

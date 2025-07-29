@@ -1,14 +1,14 @@
 'use client';
 
-import dynamic from 'next/dynamic';
-import {
-  type TAnalyticsOption,
-  type TAnalyticsProviderProps,
-} from '@repo/ui/analytics';
 import {
   type TFeatureFlagConfig,
   type TFeatureFlagContextProviderProps,
 } from '@repo/feature-flags/web';
+import {
+  type TAnalyticsOption,
+  type TAnalyticsProviderProps,
+} from '@repo/ui/analytics';
+import dynamic from 'next/dynamic';
 import { ThemeProvider } from 'next-themes';
 
 const FeatureFlagContextProvider = dynamic<TFeatureFlagContextProviderProps>(

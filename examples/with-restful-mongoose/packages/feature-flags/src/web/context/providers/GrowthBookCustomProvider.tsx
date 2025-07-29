@@ -1,11 +1,11 @@
 'use client';
 
-import React from 'react';
 import {
   Context,
   GrowthBook,
   GrowthBookProvider,
 } from '@growthbook/growthbook-react';
+import React from 'react';
 import { FeatureFlagContext } from '../FeatureFlagContext';
 
 /**

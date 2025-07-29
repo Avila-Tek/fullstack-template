@@ -1,7 +1,6 @@
+import * as mongoose from 'mongoose';
 import { afterAll, beforeAll } from 'vitest';
 import { setup, teardown } from 'vitest-mongodb';
-import * as mongoose from 'mongoose';
-
 
 beforeAll(async () => {
   await setup();

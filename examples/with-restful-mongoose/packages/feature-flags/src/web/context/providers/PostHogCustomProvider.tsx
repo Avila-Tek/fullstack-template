@@ -1,8 +1,8 @@
 'use client';
 
-import React from 'react';
 import posthog from 'posthog-js';
 import { PostHogProvider } from 'posthog-js/react';
+import React from 'react';
 import { FeatureFlagContext } from '../FeatureFlagContext';
 
 /**
@@ -56,7 +56,7 @@ export function CustomPostHogProvider({
         },
       });
     }
-  }, [JSON.stringify(props)]);
+  }, [ctx.setContext, props]);
 
   return <PostHogProvider client={posthog}>{children}</PostHogProvider>;
 }

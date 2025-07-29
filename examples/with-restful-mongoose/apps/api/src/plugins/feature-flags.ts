@@ -1,12 +1,12 @@
-import fp from 'fastify-plugin';
-import { FastifyPluginAsync } from 'fastify';
 import {
-  IFeatureFlagProvider,
-  featureFlagsService,
   createFeatureFlagProvider,
   FeatureFlagConfig,
+  featureFlagsService,
+  IFeatureFlagProvider,
 } from '@repo/feature-flags/api';
 import { TFeatureFlagEnum } from '@repo/feature-flags/shared';
+import { FastifyPluginAsync } from 'fastify';
+import fp from 'fastify-plugin';
 
 declare module 'fastify' {
   interface FastifyInstance {
