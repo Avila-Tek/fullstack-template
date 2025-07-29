@@ -1,19 +1,19 @@
 'use client';
 
-import dynamic from 'next/dynamic';
+import {
+  type TFeatureFlagConfig,
+  type TFeatureFlagContextProviderProps,
+} from '@repo/feature-flags/web';
 import {
   type TAnalyticsOption,
   type TAnalyticsProviderProps,
 } from '@repo/ui/analytics';
-import {
-  type TFeateFlagConfig,
-  type TFeatureFlagContextProviderProps,
-} from '@repo/ui/feature-flags';
+import dynamic from 'next/dynamic';
 import { ThemeProvider } from 'next-themes';
 
 const FeatureFlagContextProvider = dynamic<TFeatureFlagContextProviderProps>(
   () =>
-    import('@repo/ui/feature-flags').then(
+    import('@repo/feature-flags/web').then(
       (mod) => mod.FeatureFlagContextProvider
     ),
   {
@@ -30,11 +30,15 @@ const AnalyticsProvider = dynamic<TAnalyticsProviderProps>(
 
 interface ClientProvidersProps {
   children: React.ReactNode;
-  config: TFeateFlagConfig;
+  config: TFeatureFlagConfig;
   analyticsOptions: Array<TAnalyticsOption>;
 }
 
-export function ClientProviders({ children, config, analyticsOptions }: ClientProvidersProps) {
+export function ClientProviders({
+  children,
+  config,
+  analyticsOptions,
+}: ClientProvidersProps) {
   return (
     <FeatureFlagContextProvider config={config}>
       <AnalyticsProvider

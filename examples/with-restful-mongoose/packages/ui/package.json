@@ -22,6 +22,7 @@
     "@types/react-dom": "19.1.7",
     "@types/react-syntax-highlighter": "15.5.13",
     "@types/react-table": "7.7.20",
+    "autoprefixer": "10.4.21",
     "cross-env": "10.0.0",
     "postcss": "8.5.6",
     "raw-loader": "4.0.2",
@@ -39,7 +40,6 @@
     "@repo/schemas": "*",
     "@tanstack/match-sorter-utils": "8.19.4",
     "@tanstack/react-table": "8.21.3",
-    "@tailwindcss/postcss": "^4.1.11",
     "analytics": "0.8.16",
     "avilatek-utils": "0.1.0",
     "chart.js": "4.5.0",
@@ -64,7 +64,6 @@
     "./analytics": "./src/analytics/index.ts",
     "./atoms": "./src/atoms/index.ts",
     "./components": "./src/components/index.ts",
-    "./feature-flags": "./src/feature-flags/index.ts",
     "./hooks": "./src/hooks/index.ts",
     "./icons": "./src/icons/index.ts",
     "./utils": "./src/utils/index.ts"

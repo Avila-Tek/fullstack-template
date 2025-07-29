@@ -59,7 +59,7 @@ export default function Calendars({
     }
     fetchFirstMonth();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [fetchDateRecords, firstMonth, firstYear, getDayjsDate]);
 
   React.useEffect(() => {
     if (firstMonthFetched) {
@@ -68,7 +68,13 @@ export default function Calendars({
       fetchDateRecords?.(start.toDate(), end.toDate());
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [secondMonth, secondYear, firstMonthFetched]);
+  }, [
+    secondMonth,
+    secondYear,
+    firstMonthFetched,
+    fetchDateRecords,
+    getDayjsDate,
+  ]);
 
   // start and end date selection handler
   const handleSelectDate = (date: dayjs.Dayjs) => {
@@ -110,7 +116,7 @@ export default function Calendars({
       }
       setSelectedDates(_dates);
     }
-  }, [dates]);
+  }, [dates, setSelectedDates]);
 
   return (
     <div className="grid grid-cols-2 gap-3">

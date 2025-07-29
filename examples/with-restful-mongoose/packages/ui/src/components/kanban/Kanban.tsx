@@ -3,8 +3,8 @@
 import {
   DragDropContext,
   Draggable,
-  DropResult,
   Droppable,
+  DropResult,
 } from '@hello-pangea/dnd';
 import React from 'react';
 

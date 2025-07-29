@@ -3,7 +3,7 @@
 import { type DocumentModel } from '@repo/schemas/src/index';
 import React from 'react';
 // import useS3Signature from 'client/src/hooks/use-s3-signature';
-import { PDFIcon, PageIcon, TrashIcon } from '../../icons';
+import { PageIcon, PDFIcon, TrashIcon } from '../../icons';
 
 interface FileItemProps {
   item: DocumentModel;
