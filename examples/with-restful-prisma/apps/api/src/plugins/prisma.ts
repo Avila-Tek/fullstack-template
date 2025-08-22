@@ -12,7 +12,6 @@ export const prismaPlugin: FastifyPluginAsync = fp(async (server, _options) => {
   const prisma = new PrismaClient();
 
   await prisma.$connect();
-  console.log(`Database connected`);
 
   // Make Prisma Client available through the fastify server instance: server.prisma
   server.decorate('prisma', prisma);

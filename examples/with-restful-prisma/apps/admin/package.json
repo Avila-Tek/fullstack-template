@@ -6,7 +6,8 @@
     "dev": "next dev --turbo -p 3003",
     "build": "next build",
     "start": "next start",
-    "test": "jest"
+    "test": "jest",
+    "cypress:open": "cypress open"
   },
   "dependencies": {
     "@headlessui/react": "2.2.4",

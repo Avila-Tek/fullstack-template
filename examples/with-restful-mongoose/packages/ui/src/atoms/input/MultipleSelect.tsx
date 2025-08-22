@@ -71,18 +71,18 @@ export default function MultipleSelect({
       setSelectedOptions(defaultSelect);
       setDefaultOptions(defaultSelect);
     }
-  }, [defaultSelect]);
+  }, [defaultSelect, defaultOptions.length, selectedOptions.length]);
 
   React.useEffect(() => {
     if (resetSelection && setResetSelection) {
       setSelectedOptions([]);
       setResetSelection(false);
     }
-  }, [resetSelection]);
+  }, [resetSelection, setResetSelection]);
 
   React.useEffect(() => {
     onChangeSelect(selectedOptions, actionName);
-  }, [selectedOptions]);
+  }, [selectedOptions, actionName, onChangeSelect]);
 
   return (
     <div className="flex items-center justify-center w-full h-full">

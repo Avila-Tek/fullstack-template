@@ -1,8 +1,8 @@
-export { default as Text } from './Text';
 export type {
   TextProps,
+  TextVariantsAllowedTags,
   TextVariantsFontFamily,
   TextVariantsFontSize,
   TextVariantsFontWeight,
-  TextVariantsAllowedTags,
 } from './Text';
+export { default as Text } from './Text';

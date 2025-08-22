@@ -24,7 +24,7 @@ export default function Avatar({ alt, src, classNames }: AvatarProps) {
 
   const initials = React.useMemo(
     () => getInitials(alt).split('', 2).join(''),
-    [alt]
+    [alt, getInitials]
   );
 
   return (

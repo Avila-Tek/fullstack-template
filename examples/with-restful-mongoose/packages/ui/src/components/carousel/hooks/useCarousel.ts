@@ -139,12 +139,7 @@ export function useCarousel({ ...rest }: CarouselState) {
     );
 
     return () => clearInterval(slideIntervalId);
-  }, [
-    carouselState.direction,
-    carouselState.isPlaying,
-    carouselState.slideInterval,
-    playCarousel,
-  ]);
+  }, [carouselState.isPlaying, carouselState.slideInterval, playCarousel]);
 
   const setInitialValues = React.useCallback(() => {
     const carouselContainerEl = carouselState?.carouselContainerRef ?? null;
@@ -187,13 +182,7 @@ export function useCarousel({ ...rest }: CarouselState) {
     return () => {
       window.removeEventListener('resize', setInitialValues);
     };
-  }, [
-    carouselState.carouselContainerRef,
-    firstSlideDOMRect,
-    firstSlideDOMRect?.height,
-    firstSlideDOMRect?.width,
-    setInitialValues,
-  ]);
+  }, [setInitialValues]);
 
   React.useEffect(() => {
     if (!carouselState?.slideWidth) setInitialValues();
