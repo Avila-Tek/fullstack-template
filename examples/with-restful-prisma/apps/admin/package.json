@@ -13,6 +13,7 @@
     "@headlessui/react": "2.2.4",
     "@heroicons/react": "2.2.0",
     "@hookform/resolvers": "5.1.1",
+    "@repo/feature-flags": "*",
     "@repo/schemas": "*",
     "@repo/ui": "*",
     "@repo/utils": "*",

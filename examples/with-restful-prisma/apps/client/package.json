@@ -13,6 +13,7 @@
     "@headlessui/react": "2.2.4",
     "@heroicons/react": "2.2.0",
     "@hookform/resolvers": "5.1.1",
+    "@repo/feature-flags": "*",
     "@repo/ui": "*",
     "@sentry/nextjs": "9.38.0",
     "@t3-oss/env-nextjs": "0.13.8",

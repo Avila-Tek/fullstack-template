@@ -1,12 +1,6 @@
 import type { Metadata } from 'next';
 import localFont from 'next/font/local';
-// import '../css/color-variables.css';
 import './globals.css';
-// import '../css/bg-variables.css';
-// import '../css/border-variables.css';
-// import '../css/text-variables.css';
-// import '../css/fg-variables.css';
-
 import { ApolloWrapper } from '@/lib/graphql/apollo-wrapper';
 import { featureFlagProviders } from '@repo/feature-flags/shared';
 import { type TFeatureFlagConfig } from '@repo/feature-flags/web';

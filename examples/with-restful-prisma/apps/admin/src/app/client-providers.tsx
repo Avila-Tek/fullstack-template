@@ -1,39 +1,44 @@
 'use client';
 
-import { ReactQueryProvider } from '@/context/react-query';
+import {
+  type TFeatureFlagConfig,
+  type TFeatureFlagContextProviderProps,
+} from '@repo/feature-flags/web';
 import {
   type TAnalyticsOption,
-  AnalyticsProvider,
+  type TAnalyticsProviderProps,
 } from '@repo/ui/analytics';
-import {
-  type TFeateFlagConfig,
-  FeatureFlagContextProvider,
-} from '@repo/ui/feature-flags';
+import dynamic from 'next/dynamic';
 import { ThemeProvider } from 'next-themes';
+
+const FeatureFlagContextProvider = dynamic<TFeatureFlagContextProviderProps>(
+  () =>
+    import('@repo/feature-flags/web').then(
+      (mod) => mod.FeatureFlagContextProvider
+    ),
+  {
+    ssr: false,
+  }
+);
+
+const AnalyticsProvider = dynamic<TAnalyticsProviderProps>(
+  () => import('@repo/ui/analytics').then((mod) => mod.AnalyticsProvider),
+  {
+    ssr: false,
+  }
+);
 
 interface ClientProvidersProps {
   children: React.ReactNode;
+  config: TFeatureFlagConfig;
+  analyticsOptions: Array<TAnalyticsOption>;
 }
 
-export function ClientProviders({ children }: ClientProvidersProps) {
-  // const config: TFeateFlagConfig = {
-  //   provider: 'posthog',
-  //   token: process.env.NEXT_PUBLIC_POSTHOG_KEY!,
-  //   api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST!,
-  // };
-  const config: TFeateFlagConfig = {
-    provider: 'growthbook',
-    apiHost: process.env.NEXT_PUBLIC_API_HOST,
-    clientKey: process.env.NEXT_PUBLIC_CLIENT_KEY,
-  };
-
-  const analyticsOptions: Array<TAnalyticsOption> = [
-    {
-      name: 'google-analytics',
-      id: '',
-    },
-  ];
-
+export function ClientProviders({
+  children,
+  config,
+  analyticsOptions,
+}: ClientProvidersProps) {
   return (
     <FeatureFlagContextProvider config={config}>
       <AnalyticsProvider
@@ -41,8 +46,7 @@ export function ClientProviders({ children }: ClientProvidersProps) {
         analyticsOptions={analyticsOptions}
       >
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
-          {/* <PostHogPageView /> */}
-          <ReactQueryProvider>{children}</ReactQueryProvider>
+          {children}
         </ThemeProvider>
       </AnalyticsProvider>
     </FeatureFlagContextProvider>

@@ -49,6 +49,7 @@
     "pino-pretty": "13.0.0",
     "pino-loki": "2.6.0",
     "postmark": "4.0.5",
+    "@repo/feature-flags": "*",
     "slug": "11.0.0",
     "zod": "4.0.5"
   }
