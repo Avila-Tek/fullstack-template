@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/1.8.3/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.1.3/schema.json",
   "vcs": {
     "clientKind": "git",
     "enabled": true
@@ -11,20 +11,27 @@
     "indentWidth": 2,
     "lineEnding": "lf",
     "lineWidth": 80,
-    "attributePosition": "auto"
+    "attributePosition": "auto",
+    "includes": ["**", "!**/*.js", "!dist/**", "!.next/**", "!**/node_modules/"]
   },
-  "organizeImports": {
-    "enabled": true
+  "assist": {
+    "actions": {
+      "source": {
+        "organizeImports": "on"
+      }
+    }
   },
   "linter": {
+    "domains": {
+      "test": "recommended"
+    },
     "enabled": true,
     "rules": {
       "recommended": false,
       "complexity": {
         "noExtraBooleanCast": "error",
-        "noMultipleSpacesInRegularExpressionLiterals": "error",
         "noUselessCatch": "error",
-        "noWith": "error"
+        "noAdjacentSpacesInRegex": "error"
       },
       "correctness": {
         "noConstAssign": "error",
@@ -34,7 +41,6 @@
         "noGlobalObjectCalls": "error",
         "noInnerDeclarations": "error",
         "noInvalidConstructorSuper": "error",
-        "noNewSymbol": "error",
         "noNonoctalDecimalEscape": "error",
         "noPrecisionLoss": "error",
         "noSelfAssign": "error",
@@ -53,7 +59,9 @@
         "noChildrenProp": "error",
         "useExhaustiveDependencies": "warn",
         "useHookAtTopLevel": "error",
-        "useJsxKeyInIterable": "error"
+        "useJsxKeyInIterable": "error",
+        "noInvalidBuiltinInstantiation": "error",
+        "useValidTypeof": "error"
       },
       "style": {
         "useBlockStatements": "off"
@@ -81,23 +89,23 @@
         "noShadowRestrictedNames": "error",
         "noUnsafeNegation": "error",
         "useGetterReturn": "error",
-        "useValidTypeof": "error",
         "noCommentText": "error",
-        "noDuplicateJsxProps": "error"
+        "noDuplicateJsxProps": "error",
+        "noWith": "error"
       },
       "a11y": {
         "noAriaUnsupportedElements": "warn",
-        "noBlankTarget": "off",
         "useAltText": "warn",
         "useAriaPropsForRole": "warn",
         "useValidAriaProps": "warn",
         "useValidAriaValues": "warn"
       },
       "security": {
-        "noDangerouslySetInnerHtmlWithChildren": "error"
+        "noDangerouslySetInnerHtmlWithChildren": "error",
+        "noBlankTarget": "off"
       }
     },
-    "ignore": ["**/.*.js", "**/node_modules/"]
+    "includes": ["**", "!**/*.js", "!**/node_modules/"]
   },
   "javascript": {
     "formatter": {
@@ -111,14 +119,6 @@
       "quoteStyle": "single",
       "attributePosition": "auto"
     },
-    "globals": ["React", "JSX", "jest"]
-  },
-  "overrides": [
-    {
-      "include": ["*.js?(x)", "*.ts?(x)"]
-    },
-    {
-      "include": ["*.js?(x)", "*.mjs"]
-    }
-  ]
+    "globals": ["React", "JSX", "jest", "cy"]
+  }
 }

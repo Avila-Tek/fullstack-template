@@ -1,40 +1,14 @@
 import type { Metadata } from 'next';
-import dynamic from 'next/dynamic';
 import localFont from 'next/font/local';
-import '../css/color-variables.css';
 import './globals.css';
-import '../css/bg-variables.css';
-import '../css/border-variables.css';
-import '../css/text-variables.css';
-import '../css/fg-variables.css';
-
+import { featureFlagProviders } from '@repo/feature-flags/shared';
+import {
+  PostHogPageView,
+  type TFeatureFlagConfig,
+} from '@repo/feature-flags/web';
+import type { TAnalyticsOption } from '@repo/ui/analytics';
 import { ReactQueryProvider } from '@/context/react-query';
-import {
-  type TAnalyticsOption,
-  type TAnalyticsProviderProps,
-} from '@repo/ui/analytics';
-import {
-  type TFeateFlagConfig,
-  type TFeatureFlagContextProviderProps,
-} from '@repo/ui/feature-flags';
-import { ThemeProvider } from 'next-themes';
-
-const FeatureFlagContextProvider = dynamic<TFeatureFlagContextProviderProps>(
-  () =>
-    import('@repo/ui/feature-flags').then(
-      (mod) => mod.FeatureFlagContextProvider
-    ),
-  {
-    ssr: false,
-  }
-);
-
-const AnalyticsProvider = dynamic<TAnalyticsProviderProps>(
-  () => import('@repo/ui/analytics').then((mod) => mod.AnalyticsProvider),
-  {
-    ssr: false,
-  }
-);
+import { ClientProviders } from './client-providers';
 
 const geistSans = localFont({
   src: './fonts/GeistVF.woff',
@@ -55,16 +29,16 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // const config: TFeateFlagConfig = {
-  //   provider: 'posthog',
-  //   token: process.env.NEXT_PUBLIC_POSTHOG_KEY!,
-  //   api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST!,
-  // };
-  const config: TFeateFlagConfig = {
-    provider: 'growthbook',
-    apiHost: process.env.NEXT_PUBLIC_API_HOST,
-    clientKey: process.env.NEXT_PUBLIC_CLIENT_KEY,
+  const config: TFeatureFlagConfig = {
+    provider: featureFlagProviders.post_hog,
+    token: process.env.NEXT_PUBLIC_POSTHOG_KEY!,
+    api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST!,
   };
+  // const config: TFeatureFlagConfig = {
+  //   provider: featureFlagProviders.growth_book,
+  //   apiHost: process.env.NEXT_PUBLIC_API_HOST,
+  //   clientKey: process.env.NEXT_PUBLIC_CLIENT_KEY,
+  // };
 
   const analyticsOptions: Array<TAnalyticsOption> = [
     {
@@ -72,21 +46,13 @@ export default function RootLayout({
       id: '',
     },
   ];
-
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        <FeatureFlagContextProvider config={config}>
-          <AnalyticsProvider
-            analyticsAppName="avila-tek-project"
-            analyticsOptions={analyticsOptions}
-          >
-            <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
-              {/* <PostHogPageView /> */}
-              <ReactQueryProvider>{children}</ReactQueryProvider>
-            </ThemeProvider>
-          </AnalyticsProvider>
-        </FeatureFlagContextProvider>
+        <ClientProviders config={config} analyticsOptions={analyticsOptions}>
+          <PostHogPageView />
+          <ReactQueryProvider>{children}</ReactQueryProvider>
+        </ClientProviders>
       </body>
     </html>
   );
