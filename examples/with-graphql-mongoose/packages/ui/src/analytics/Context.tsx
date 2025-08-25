@@ -99,13 +99,13 @@ export function useAnalytics() {
  * for Google Analytics, Google Tag Manager, or Facebook Pixel based on provided options.
  *
  * @param {TAnalyticsProviderProps} props - Configuration options for analytics and child components.
- * @returns {JSX.Element} Returns a context provider component with analytics instance.
+ * @returns {React.ReactElement} Returns a context provider component with analytics instance.
  */
 export function AnalyticsProvider({
   children,
   analyticsAppName,
   analyticsOptions,
-}: Props): JSX.Element {
+}: Props): React.ReactElement {
   // Use provided app name or default to 'avila-tek' if not specified
   const appName = React.useMemo(
     () => analyticsAppName ?? defaultAnalyticsAppName,

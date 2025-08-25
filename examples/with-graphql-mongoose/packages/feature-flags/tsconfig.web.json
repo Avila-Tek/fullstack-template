@@ -1,0 +1,21 @@
+{
+  "extends": "@repo/typescript-config/base.json",
+  "include": ["."],
+  "exclude": ["node_modules"],
+  "compilerOptions": {
+    "lib": ["ESNext", "dom"],
+    "sourceRoot": "/",
+    "inlineSourceMap": true,
+    "esModuleInterop": true,
+    // "moduleResolution": "NodeNext",
+    // "typeRoots": ["./src/types/*", "./node_modules/@types/*"],
+    "skipLibCheck": true,
+    "jsx": "react-jsx",
+    "isolatedModules": true,
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "preserveWatchOutput": true,
+    "noEmit": true,
+    "strict": true
+  }
+}
