@@ -1,0 +1,1 @@
+export { swaggerPlugin } from "./swagger";
