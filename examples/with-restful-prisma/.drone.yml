@@ -1,0 +1,37 @@
+kind: pipeline
+name: CI - Build
+
+environment:
+  TURBO_TOKEN:
+    from_secret: TURBO_TOKEN
+  TURBO_TEAM:
+    from_secret: TURBO_TEAM
+
+steps:
+  - name: CI - Build [node:22]
+    image: node:22-alpine
+    commands:
+      - npm ci --legacy-peer-deps
+      - npm run lint
+      - npm run build
+      - npm run test
+    when:
+      branch:
+        - development
+        - staging
+        - main
+  - name: CI - Build [node:20]
+    image: node:20-alpine
+    commands:
+      - npm ci --legacy-peer-deps
+      - npm run lint
+      - npm run build
+      - npm run test
+    when:
+      branch:
+        - development
+        - staging
+        - main
+trigger:
+  event:
+    - pull_request
