@@ -7,17 +7,158 @@
       "cache": false
     },
     "build": {
-      "dependsOn": ["^build"],
-      "inputs": ["$TURBO_DEFAULT$", ".env*"],
-      "outputs": [".next/**", "!.next/cache/**", "dist/**"]
+      "dependsOn": [
+        "^build"
+      ],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        ".env*"
+      ],
+      "outputs": [
+        ".next/**",
+        "!.next/cache/**",
+        "dist/**"
+      ]
+    },
+    "build#@repo/utils": {
+      "dependsOn": [],
+      "outputs": [
+        "dist/**"
+      ]
+    },
+    "build#@repo/schemas": {
+      "dependsOn": [],
+      "outputs": [
+        "dist/**"
+      ]
+    },
+    "build#@repo/services": {
+      "dependsOn": [
+        "@repo/schemas#build",
+        "@repo/utils#build"
+      ],
+      "outputs": [
+        "dist/**"
+      ]
+    },
+    "build#@repo/ui": {
+      "dependsOn": [],
+      "outputs": []
+    },
+    "build#@repo/feature-flags": {
+      "dependsOn": [
+        "@repo/utils#build"
+      ],
+      "outputs": []
+    },
+    "build#@repo/api": {
+      "dependsOn": [
+        "@repo/schemas#build",
+        "@repo/utils#build"
+      ],
+      "outputs": [
+        "dist/**"
+      ]
+    },
+    "build#@repo/admin": {
+      "dependsOn": [
+        "@repo/feature-flags#build",
+        "@repo/schemas#build",
+        "@repo/ui#build",
+        "@repo/utils#build"
+      ],
+      "outputs": [
+        ".next/**",
+        "!.next/cache/**"
+      ]
+    },
+    "build#@repo/client": {
+      "dependsOn": [
+        "@repo/feature-flags#build",
+        "@repo/services#build",
+        "@repo/schemas#build",
+        "@repo/ui#build",
+        "@repo/utils#build"
+      ],
+      "outputs": [
+        ".next/**",
+        "!.next/cache/**"
+      ]
     },
     "test": {
-      "dependsOn": ["^build"],
+      "dependsOn": [
+        "^build"
+      ],
       "outputs": []
     },
     "dev": {
       "cache": false,
       "persistent": true
+    },
+    "dev#@repo/utils": {
+      "cache": false,
+      "persistent": true
+    },
+    "dev#@repo/schemas": {
+      "cache": false,
+      "persistent": true
+    },
+    "dev#@repo/services": {
+      "dependsOn": [
+        "@repo/schemas#dev",
+        "@repo/utils#dev"
+      ],
+      "cache": false,
+      "persistent": true
+    },
+    "dev#@repo/ui": {
+      "cache": false,
+      "persistent": true
+    },
+    "dev#@repo/feature-flags": {
+      "dependsOn": [
+        "@repo/utils#dev"
+      ],
+      "cache": false,
+      "persistent": true
+    },
+    "dev#@repo/api": {
+      "dependsOn": [
+        "@repo/schemas#dev",
+        "@repo/utils#dev"
+      ],
+      "cache": false,
+      "persistent": true
+    },
+    "dev#@repo/admin": {
+      "dependsOn": [
+        "@repo/feature-flags#dev",
+        "@repo/schemas#dev",
+        "@repo/ui#dev",
+        "@repo/utils#dev"
+      ],
+      "cache": false,
+      "persistent": true
+    },
+    "dev#@repo/client": {
+      "dependsOn": [
+        "@repo/feature-flags#dev",
+        "@repo/services#dev",
+        "@repo/schemas#dev",
+        "@repo/ui#dev",
+        "@repo/utils#dev"
+      ],
+      "cache": false,
+      "persistent": true
+    },
+    "lint": {
+      "dependsOn": []
+    },
+    "typecheck": {
+      "dependsOn": [
+        "^build"
+      ],
+      "outputs": []
     }
   }
 }
