@@ -6,7 +6,11 @@ interface AvatarProps {
   letter?: string;
 }
 
-export default function Avatar({ src, alt, letter }: AvatarProps): JSX.Element {
+export default function Avatar({
+  src,
+  alt,
+  letter,
+}: AvatarProps): React.ReactElement {
   const firstLetter = letter ? letter[0] : '';
 
   if (src) {

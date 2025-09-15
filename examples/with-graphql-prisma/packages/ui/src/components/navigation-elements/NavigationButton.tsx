@@ -31,7 +31,7 @@ export default function NavigationButton({
   subRoutesClassName = '',
   mobile = false,
 }: NavigationButtonProps) {
-  const getIcon = (icon: JSX.Element) => (
+  const getIcon = (icon: React.ReactElement) => (
     <div className={`size-6 min-w-6 ${variant !== 'icon' ? 'mr-[10px]' : ''}`}>
       {icon}
     </div>

@@ -34,7 +34,11 @@ export async function createApp() {
     };
   }
 
-  const app = Fastify(config);
+  const app = Fastify(config).withTypeProvider<ZodTypeProvider>();
+
+  // Add schema validator and serializer
+  app.setValidatorCompiler(validatorCompiler);
+  app.setSerializerCompiler(serializerCompiler);
 
   app.setValidatorCompiler(validatorCompiler);
   app.setSerializerCompiler(serializerCompiler);

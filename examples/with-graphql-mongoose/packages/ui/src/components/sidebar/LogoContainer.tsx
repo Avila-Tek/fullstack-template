@@ -1,3 +1,5 @@
+'use client';
+
 import { AnimatePresence, motion } from 'framer-motion';
 import React from 'react';
 import { cn } from '../../utils/cn';
@@ -5,8 +7,8 @@ import { cn } from '../../utils/cn';
 interface LogoContainerProps {
   isOpen: boolean;
   className?: string;
-  logoText: JSX.Element;
-  logoIcon: JSX.Element;
+  logoText: React.ReactElement;
+  logoIcon: React.ReactElement;
 }
 
 export default function LogoContainer({

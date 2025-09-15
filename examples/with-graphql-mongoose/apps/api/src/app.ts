@@ -15,6 +15,13 @@ import rateLimit from '@fastify/rate-limit';
 import * as Sentry from '@sentry/node';
 import Fastify, { FastifyHttpOptions } from 'fastify';
 import mongoose from 'mongoose';
+import featureFlagsPlugin from './plugins/feature-flags';
+import {
+  TFeatureFlagProvider,
+  featureFlagProviders,
+} from '@repo/feature-flags/shared';
+
+const provider = process.env.FEATURE_FLAG_PROVIDER as TFeatureFlagProvider;
 
 export async function createApp() {
   let connection: typeof mongoose | null = null;
@@ -82,6 +89,24 @@ export async function createApp() {
     handler: fastifyApolloHandler(apollo, {
       context: async (request, reply) => ({ req: request, res: reply }),
     }),
+  });
+
+  await app.register(featureFlagsPlugin, {
+    provider,
+    postHog:
+      provider === featureFlagProviders.post_hog
+        ? {
+            apiKey: process.env.POSTHOG_API_KEY!,
+            host: process.env.POSTHOG_HOST,
+          }
+        : undefined,
+    growthBook:
+      provider === featureFlagProviders.growth_book
+        ? {
+            apiKey: process.env.GROWTHBOOK_API_KEY!,
+            apiHost: process.env.GROWTHBOOK_API_HOST,
+          }
+        : undefined,
   });
 
   await app.ready();

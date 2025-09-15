@@ -1,0 +1,31 @@
+{
+  "name": "@repo/feature-flags",
+  "version": "0.0.0",
+  "files": [
+    "src/**"
+  ],
+  "exports": {
+    "./shared": "./src/shared/index.ts",
+    "./api": "./src/api/index.ts",
+    "./web": "./src/web/index.ts"
+  },
+  "license": "MIT",
+  "scripts": {
+    "build": ""
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "*",
+    "@types/node": "24.1.0",
+    "tsup": "8.5.0",
+    "typescript": "5.8.3"
+  },
+  "dependencies": {
+    "posthog-js": "1.258.2",
+    "posthog-node": "^5.6.0",
+    "@repo/utils": "*",
+    "@growthbook/growthbook": "^1.6.0",
+    "@growthbook/growthbook-react": "1.6.0",
+    "react": "19.1.1",
+    "next": "15.4.4"
+  }
+}
