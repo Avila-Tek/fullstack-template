@@ -1,3 +1,5 @@
+'use client';
+
 import { motion } from 'framer-motion';
 /* eslint-disable no-nested-ternary */
 import React from 'react';

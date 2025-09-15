@@ -5,7 +5,7 @@ import {
   useFeatureFlagPayload,
   useFeatureFlagValue,
   useIdUser,
-} from '@repo/ui/feature-flags';
+} from '@repo/feature-flags/web';
 
 export default function FFExamplePage() {
   const user = { id: 'jose', name: 'Jose Roberto', email: 'jose@avilatek.com' };

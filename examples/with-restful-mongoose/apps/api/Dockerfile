@@ -1,4 +1,4 @@
-FROM node:22-alpine AS base
+FROM node:24-alpine AS base
 
 ENV SCOPE=@repo/api
 ARG APP_PATH
@@ -12,7 +12,7 @@ RUN apk update
 ENV TZ=America/Caracas
 # Install and generate partial monorepo to have only the necessary to build ${SCOPE} app
 WORKDIR /app
-RUN npm i -g turbo 
+RUN npm i -g turbo
 COPY . .
 RUN turbo prune --scope=${SCOPE} --docker
 

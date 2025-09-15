@@ -11,7 +11,7 @@ interface MobileNavigationContainerProps
   children: React.ReactNode;
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  fullLogo: JSX.Element;
+  fullLogo: React.ReactElement;
   headerClassName?: string;
   containerClassName?: string;
   setSubRoutes?: React.Dispatch<React.SetStateAction<any[]>>;

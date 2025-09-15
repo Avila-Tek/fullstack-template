@@ -1,49 +1,33 @@
-// Import this first!
-import './instrument';
-import type { Server } from 'node:http';
-import cors from '@fastify/cors';
-import helmet from '@fastify/helmet';
-import rateLimit from '@fastify/rate-limit';
-import * as Sentry from '@sentry/node';
-import Fastify, { type FastifyHttpOptions } from 'fastify';
+import path from 'node:path';
+import autoload from '@fastify/autoload';
+import Fastify, { FastifyHttpOptions } from 'fastify';
 import {
   serializerCompiler,
   validatorCompiler,
-  type ZodTypeProvider,
 } from 'fastify-type-provider-zod';
-import mongoose from 'mongoose';
-import { swaggerPlugin } from './plugins';
+import { Server } from 'http';
+import { envs } from './config';
 
 export async function createApp() {
-  let connection: typeof mongoose | null = null;
-  try {
-    connection = await mongoose
-      .connect(String(process.env.DATABASE))
-      .then((conn) => {
-        console.log('Connected to database');
-        return conn;
-      });
-
-    mongoose.connection.on('error', (err) => `❌🤬❌🤬 ${err}`);
-  } catch (err) {
-    console.log(`ERROR: ${err}`);
-    if (connection?.connection) {
-      connection.connection.close();
-    }
-    process.exit(1);
-  }
-
   let config: FastifyHttpOptions<Server> = {};
 
-  if (process.env.NODE_ENV === 'production') {
+  if (envs.stage === 'production') {
     config = {
       logger: {
-        level: 'info',
+        level: envs.loki.level || 'info',
         transport: {
-          target: '@axiomhq/pino',
+          target: 'pino-loki',
           options: {
-            dataset: process.env.AXIOM_DATASET,
-            token: process.env.AXIOM_TOKEN,
+            batching: true,
+            interval: 5,
+            labels: {
+              app: envs.loki.appName,
+            },
+            host: envs.loki.host,
+            basicAuth: {
+              username: envs.loki.username,
+              password: envs.loki.password,
+            },
           },
         },
       },
@@ -56,21 +40,29 @@ export async function createApp() {
   app.setValidatorCompiler(validatorCompiler);
   app.setSerializerCompiler(serializerCompiler);
 
-  if (process.env.NODE_ENV === 'production') {
-    Sentry.setupFastifyErrorHandler(app);
-    await app.register(helmet);
-    await app.register(rateLimit);
-  }
+  app.setValidatorCompiler(validatorCompiler);
+  app.setSerializerCompiler(serializerCompiler);
 
-  await app.register(cors, {
-    origin: JSON.parse(process.env.CORS_ORIGINS ?? '["*"]'),
-    credentials: true,
+  // Register error handlers first
+  await app.register(autoload, {
+    dir: path.join(__dirname, 'plugins/errors'),
   });
 
-  // Register the swagger plugin
-  app.register(swaggerPlugin);
+  // Register plugins
+  await app.register(autoload, {
+    dir: path.join(__dirname, 'plugins/middlewares'),
+  });
+  await app.register(autoload, {
+    dir: path.join(__dirname, 'plugins/integrations'),
+  });
+
+  // Register Routes and Websockets
+  await app.register(autoload, {
+    dir: path.join(__dirname, 'plugins/routes'),
+  });
 
   await app.ready();
+  app.swagger();
 
   return app;
 }

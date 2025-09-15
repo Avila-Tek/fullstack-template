@@ -12,7 +12,7 @@ interface IRoute {
   href: string;
   as: string;
   privilieges: string[];
-  icon: JSX.Element;
+  icon: React.ReactElement;
   isCollapsible?: boolean;
   subLinks?: Array<Partial<IRoute>>;
 }
