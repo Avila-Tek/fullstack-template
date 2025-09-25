@@ -97,10 +97,8 @@ class UserService {
 
 export default fp(
   async (fastify) => {
-    const userService = new UserService(
-      fastify.thrower,
-      fastify.userRepository
-    );
+    const userRepository = new UserRepository(fastify.prisma);
+    const userService = new UserService(fastify.thrower, userRepository);
     fastify.decorate('userService', userService);
   },
   {

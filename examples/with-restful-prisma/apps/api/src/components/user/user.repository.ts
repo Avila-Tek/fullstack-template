@@ -1,7 +1,5 @@
 import { Prisma, PrismaClient } from '@prisma/client';
 import { TCreateUserInput, TUpdateUserInput } from '@repo/schemas';
-import { FastifyInstance } from 'fastify';
-import fp from 'fastify-plugin';
 import { GenericPrismaRepository } from '../../lib/orm/generic-repository';
 
 declare module 'fastify' {
@@ -29,14 +27,3 @@ export class UserRepository extends GenericPrismaRepository<
     super(prisma, prisma.user);
   }
 }
-
-export default fp(
-  async (fastify: FastifyInstance) => {
-    const userRepository = new UserRepository(fastify.prisma);
-    fastify.decorate('userRepository', userRepository);
-  },
-  {
-    name: 'user-repository',
-    dependencies: ['prisma'],
-  }
-);
