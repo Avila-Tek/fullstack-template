@@ -2,12 +2,6 @@ import { Prisma, PrismaClient } from '@prisma/client';
 import { TCreateUserInput, TUpdateUserInput } from '@repo/schemas';
 import { GenericPrismaRepository } from '../../lib/orm/generic-repository';
 
-declare module 'fastify' {
-  interface FastifyInstance {
-    userRepository: UserRepository;
-  }
-}
-
 export type UserWhereInput = Prisma.UserWhereInput;
 export type UserSelect = Prisma.UserSelect;
 export type UserOrderBy = Prisma.UserOrderByWithRelationInput;
