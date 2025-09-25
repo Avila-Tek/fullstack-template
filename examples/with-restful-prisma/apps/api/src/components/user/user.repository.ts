@@ -6,7 +6,7 @@ import { GenericPrismaRepository } from '../../lib/orm/generic-repository';
 
 declare module 'fastify' {
   interface FastifyInstance {
-    userRepository: PrismaUserRepository;
+    userRepository: UserRepository;
   }
 }
 
@@ -15,7 +15,7 @@ export type UserSelect = Prisma.UserSelect;
 export type UserOrderBy = Prisma.UserOrderByWithRelationInput;
 export type UserInclude = Prisma.UserInclude;
 
-export class PrismaUserRepository extends GenericPrismaRepository<
+export class UserRepository extends GenericPrismaRepository<
   Prisma.UserDelegate,
   UserWhereInput,
   Prisma.UserWhereUniqueInput,
@@ -32,7 +32,7 @@ export class PrismaUserRepository extends GenericPrismaRepository<
 
 export default fp(
   async (fastify: FastifyInstance) => {
-    const userRepository = new PrismaUserRepository(fastify.prisma);
+    const userRepository = new UserRepository(fastify.prisma);
     fastify.decorate('userRepository', userRepository);
   },
   {

@@ -7,11 +7,7 @@ import {
 import { FastifyInstance } from 'fastify';
 import fp from 'fastify-plugin';
 import { UserMapper } from './user.mapper';
-import {
-  PrismaUserRepository,
-  UserOrderBy,
-  UserWhereInput,
-} from './user.repository';
+import { UserOrderBy, UserRepository, UserWhereInput } from './user.repository';
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -22,7 +18,7 @@ declare module 'fastify' {
 class UserService {
   constructor(
     private thrower: FastifyInstance['thrower'],
-    private readonly userRepository: PrismaUserRepository
+    private readonly userRepository: UserRepository
   ) {
     this.findMany = this.findMany.bind(this);
     this.findOne = this.findOne.bind(this);
