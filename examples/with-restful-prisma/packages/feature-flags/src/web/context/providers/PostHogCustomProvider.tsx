@@ -32,6 +32,7 @@ export function CustomPostHogProvider({
     );
   }
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: This is need for init posthog
   React.useEffect(() => {
     if (typeof window !== 'undefined') {
       posthog.init(props.token, {
@@ -56,7 +57,7 @@ export function CustomPostHogProvider({
         },
       });
     }
-  }, [ctx.setContext, props]);
+  }, [ctx.setContext, props.token]);
 
   return <PostHogProvider client={posthog}>{children}</PostHogProvider>;
 }

@@ -9,5 +9,5 @@ export default defineConfig({
   clean: true,
   format: ['cjs', 'esm'],
   outDir: 'dist',
-  target: ['node20', 'deno2'],
+  target: ['node24'],
 });
