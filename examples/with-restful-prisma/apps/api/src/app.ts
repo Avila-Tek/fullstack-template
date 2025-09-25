@@ -4,6 +4,7 @@ import Fastify, { FastifyHttpOptions } from 'fastify';
 import {
   serializerCompiler,
   validatorCompiler,
+  ZodTypeProvider,
 } from 'fastify-type-provider-zod';
 import { Server } from 'http';
 import { envs } from './config';

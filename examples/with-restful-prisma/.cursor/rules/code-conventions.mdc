@@ -13,7 +13,7 @@ alwaysApply: false
 - **Biome** - Code quality tools configured and ready to use
 - **Renovate** - Automated dependency updates
 - **Auth** - We use better-auth
-- **DB** - We use MongoDB and mongoose as the client / ODM.
+- **DB** - We use PostgreSQL and prisma as the client / ODM.
 
 # Code Conventions
 

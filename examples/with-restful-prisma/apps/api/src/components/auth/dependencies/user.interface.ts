@@ -1,11 +1,15 @@
 import { TCreateUserInput, TUser } from '@repo/schemas';
-import { FilterQuery, ProjectionType, QueryOptions } from 'mongoose';
+import {
+  UserInclude,
+  UserSelect,
+  UserWhereInput,
+} from '@/components/user/user.repository';
 
 export interface IUserService {
   findOne(
-    filter: FilterQuery<TUser>,
-    projection?: ProjectionType<TUser>,
-    options?: QueryOptions<TUser>
+    where: UserWhereInput,
+    select?: UserSelect,
+    include?: UserInclude
   ): Promise<TUser | null>;
   createOne(record: TCreateUserInput): Promise<TUser | null>;
 }

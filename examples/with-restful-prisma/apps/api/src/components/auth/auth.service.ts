@@ -88,8 +88,7 @@ export class AuthService {
       return;
     }
     const user = await this.userService.findOne(
-      { _id: payload._id },
-      '-password'
+      { id: payload.id }
     );
     if (!user) {
       return this.thrower.silentException('user', 'invalid-token');

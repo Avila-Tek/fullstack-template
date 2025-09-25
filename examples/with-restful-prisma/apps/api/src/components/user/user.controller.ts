@@ -1,7 +1,10 @@
-import { TCreateUserInput, TUpdateUserInput } from '@repo/schemas';
+import {
+  TCreateUserInput,
+  TPaginationInput,
+  TUpdateUserInput,
+} from '@repo/schemas';
 import { type FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import fp from 'fastify-plugin';
-import { TPaginationInput } from '@/utils/paginate';
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -45,7 +48,7 @@ class UserController {
     reply: FastifyReply
   ) {
     const data = await this.fastify.userService.findOne({
-      _id: request.params.id,
+      id: request.params.id,
     });
     if (!data) {
       reply.status(404).send({ success: false, error: 'Not found' });

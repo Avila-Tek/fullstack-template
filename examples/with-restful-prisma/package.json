@@ -1,5 +1,5 @@
 {
-  "name": "with-restful-mongoose",
+  "name": "with-restful-prisma",
   "private": true,
   "scripts": {
     "build": "turbo build",

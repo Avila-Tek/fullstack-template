@@ -21,7 +21,7 @@ export type TSignInResponse = z.infer<typeof signInResponse>;
 
 // JWT User Payload
 const jwtUserPayload = z.object({
-  _id: z.string(),
+  id: z.string(),
 });
 
 export type JwtUserPayload = z.infer<typeof jwtUserPayload>;

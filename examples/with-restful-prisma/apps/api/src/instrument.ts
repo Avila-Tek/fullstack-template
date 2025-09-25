@@ -11,7 +11,6 @@ Sentry.init({
     Sentry.rewriteFramesIntegration({ root: process.cwd() || __dirname }),
     Sentry.fastifyIntegration(),
     Sentry.httpIntegration(),
-    Sentry.mongooseIntegration(),
   ],
 
   // Add Tracing by setting tracesSampleRate

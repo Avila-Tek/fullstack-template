@@ -1,64 +1,21 @@
-import { FastifyInstance } from 'fastify';
+import { PrismaClient } from '@prisma/client';
 import fp from 'fastify-plugin';
-import mongoose, { Mongoose } from 'mongoose';
 
 declare module 'fastify' {
-  // eslint-disable-next-line @typescript-eslint/no-shadow
   interface FastifyInstance {
-    db: {
-      connection: Mongoose | null;
-      disconnect: () => Promise<void>;
-    };
+    prisma: PrismaClient;
   }
 }
 
-export async function connectToDatabase() {
-  let connection: typeof mongoose | null = null;
-  try {
-    connection = await mongoose
-      .connect(String(process.env.DATABASE))
-      .then((conn) => {
-        console.log('🍃 Connected to Mongo database');
-        return conn;
-      });
+export default fp(async (server, _options) => {
+  const prisma = new PrismaClient();
 
-    mongoose.connection.on('error', (err) => `❌❌ ${err}`);
-  } catch (err) {
-    console.log(`ERROR CONNECTING TO MONGO DATABASE: ${err}`);
+  await prisma.$connect();
 
-    if (connection?.connection) {
-      connection.connection.close();
-    }
+  // Make Prisma Client available through the fastify server instance: server.prisma
+  server.decorate('prisma', prisma);
 
-    process.exit(1);
-  }
-
-  return connection;
-}
-
-export async function disconnectFromDatabase(fastify: FastifyInstance) {
-  try {
-    if (fastify.db.connection) {
-      await fastify.db.connection.connection.close();
-      console.log('🍃 Disconnected from Mongo database');
-    }
-  } catch (err) {
-    console.error(`ERROR DISCONNECTING FROM MONGO DATABASE: ${err}`);
-  }
-}
-
-export default fp(
-  async (fastify) => {
-    const connection = await connectToDatabase();
-
-    fastify.decorate('db', {
-      connection,
-      disconnect: async () => {
-        await disconnectFromDatabase(fastify);
-      },
-    });
-  },
-  {
-    name: 'database',
-  }
-);
+  server.addHook('onClose', async (server) => {
+    await server.prisma.$disconnect();
+  });
+});

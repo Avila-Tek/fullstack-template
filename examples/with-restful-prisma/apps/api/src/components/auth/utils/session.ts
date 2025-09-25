@@ -10,7 +10,7 @@ export async function generateSession(
 ) {
   const ipLocation = await getGeoLocationFromIP(ip);
 
-  const tokenPayload: JwtUserPayload = { _id: String(user._id) };
+  const tokenPayload: JwtUserPayload = { id: String(user.id) };
   const token = jwt.sign(tokenPayload, process.env.SECRET!);
 
   const session: ISession = {

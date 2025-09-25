@@ -1,12 +1,11 @@
-import { Document, Types } from 'mongoose';
 
-export function createSlug(_id: Types.ObjectId): string {
+export function createSlug(id: string): string {
   // Head
   const timestamp = Date.now() * 10000;
   const head = String(Date.now()).slice(0, 4);
   // Body
   const timestampBody = Number(String(timestamp).slice(3));
-  const numericId = processCollectionId(_id);
+  const numericId = processStringId(id);
   const random = getRandomInt(0, 5e15);
   const body = String(numericId + random + timestampBody).slice(0, 14);
   // Tail
@@ -17,20 +16,27 @@ export function createSlug(_id: Types.ObjectId): string {
 }
 
 export async function createUniqueSlug(
-  _id: Types.ObjectId,
-  model: any
+  id: string,
+  prismaModel: any
 ): Promise<string> {
-  const slugs = Array.from({ length: 10 }, () => createSlug(_id));
-  const docs = (await model.find({ slug: { $in: slugs } })) as (Document & {
-    slug: string;
-  })[];
-  const slug = slugs.find((s) => !docs.find((m) => m.slug === s)) as string;
+  const slugs = Array.from({ length: 10 }, () => createSlug(id));
+  const docs = await prismaModel.findMany({
+    where: {
+      slug: {
+        in: slugs,
+      },
+    },
+    select: {
+      slug: true,
+    },
+  });
+  const slug = slugs.find((s) => !docs.find((m: any) => m.slug === s)) as string;
   return slug;
 }
 
-function processCollectionId(_id: Types.ObjectId): number {
-  const numericId = String(_id).replace(/\D/g, '').slice(0, 14);
-  return Number(numericId);
+function processStringId(id: string): number {
+  const numericId = String(id).replace(/\D/g, '').slice(0, 14);
+  return Number(numericId) || Date.now();
 }
 
 function getRandomInt(min: number, max: number): number {

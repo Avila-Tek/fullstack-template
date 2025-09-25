@@ -20,7 +20,7 @@ export const registerUserRouter: FastifyPluginAsyncZod =
     });
     fastify.route({
       method: 'POST',
-      url: '/create',
+      url: '/',
       schema: {
         body: createUserInput,
         tags: ['users'],
@@ -32,7 +32,7 @@ export const registerUserRouter: FastifyPluginAsyncZod =
       url: '/:id',
       schema: {
         params: z.object({
-          id: z.string().min(20).max(25),
+          id: z.uuid(),
         }),
         body: updateUserInput,
         tags: ['users'],
@@ -44,7 +44,7 @@ export const registerUserRouter: FastifyPluginAsyncZod =
       url: '/:id',
       schema: {
         params: z.object({
-          id: z.string().min(20).max(25),
+          id: z.uuid(),
         }),
         body: updateUserInput,
         tags: ['users'],
@@ -56,11 +56,11 @@ export const registerUserRouter: FastifyPluginAsyncZod =
       url: '/:id',
       schema: {
         params: z.object({
-          id: z.string().min(20).max(25),
+          id: z.uuid(),
         }),
         tags: ['users'],
       },
-      handler: fastify.userController.deleteOne,
+      handler: fastify.userController.findOne,
     });
   };
 
