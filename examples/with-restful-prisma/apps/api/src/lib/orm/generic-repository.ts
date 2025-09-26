@@ -1,142 +1,57 @@
-import { Prisma, PrismaClient } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 
-export abstract class GenericPrismaRepository<
-  TModel extends Record<string, any>,
-  TWhereInput,
-  TWhereUniqueInput,
-  TSelect,
-  TInclude,
-  TOrderBy,
-  TCreateInput,
-  TUpdateInput,
-> {
-  constructor(
-    protected readonly prisma: PrismaClient,
-    protected readonly model: TModel
-  ) {}
+type DelegateLike = {
+  findMany: (...a: any[]) => any;
+  findFirst: (...a: any[]) => any;
+  findUnique: (...a: any[]) => any;
+  create: (...a: any[]) => any;
+  update: (...a: any[]) => any;
+  delete: (...a: any[]) => any;
+  count: (...a: any[]) => any;
+};
 
-  async findMany<
-    W extends TWhereInput,
-    S extends TSelect,
-    I extends TInclude,
-    O extends TOrderBy,
-  >(params: {
-    where?: TWhereInput;
-    select?: TSelect;
-    include?: TInclude;
-    orderBy?: TOrderBy;
-    skip?: number;
-    take?: number;
-  }): Promise<
-    Prisma.Result<
-      TModel,
-      {
-        select: S;
-        include: I;
-        where: W;
-        orderBy: O;
-      },
-      'findMany'
-    >
-  > {
-    return this.model.findMany(params);
+export abstract class GenericPrismaRepository<D extends DelegateLike> {
+  constructor(protected readonly model: D) {}
+
+  findMany<T extends Prisma.Args<D, 'findMany'>>(
+    args: Prisma.SelectSubset<T, Prisma.Args<D, 'findMany'>>
+  ): Prisma.PrismaPromise<Prisma.Result<D, T, 'findMany'>> {
+    return this.model.findMany(args);
   }
 
-  async findFirst<
-    W extends TWhereInput,
-    S extends TSelect,
-    I extends TInclude,
-  >(params: {
-    where: TWhereInput;
-    select?: TSelect;
-    include?: TInclude;
-  }): Promise<Prisma.Result<
-    TModel,
-    {
-      select: S;
-      include: I;
-      where: W;
-    },
-    'findFirst'
-  > | null> {
-    return this.model.findFirst(params);
+  findFirst<T extends Prisma.Args<D, 'findFirst'>>(
+    args: Prisma.SelectSubset<T, Prisma.Args<D, 'findFirst'>>
+  ): Prisma.PrismaPromise<Prisma.Result<D, T, 'findFirst'> | null> {
+    return this.model.findFirst(args);
   }
 
-  async findUnique<
-    W extends TWhereInput,
-    S extends TSelect,
-    I extends TInclude,
-  >(params: {
-    where: TWhereUniqueInput;
-    select?: TSelect;
-    include?: TInclude;
-  }): Promise<Prisma.Result<
-    TModel,
-    {
-      select: S;
-      include: I;
-      where: W;
-    },
-    'findUnique'
-  > | null> {
-    return this.model.findUnique(params);
+  findUnique<T extends Prisma.Args<D, 'findUnique'>>(
+    args: Prisma.SelectSubset<T, Prisma.Args<D, 'findUnique'>>
+  ): Prisma.PrismaPromise<Prisma.Result<D, T, 'findUnique'> | null> {
+    return this.model.findUnique(args);
   }
 
-  async create<S extends TSelect, I extends TInclude>(params: {
-    data: TCreateInput;
-    select?: TSelect;
-    include?: TInclude;
-  }): Promise<
-    Prisma.Result<
-      TModel,
-      {
-        select: S;
-        include: I;
-      },
-      'create'
-    >
-  > {
-    return this.model.create(params);
+  create<T extends Prisma.Args<D, 'create'>>(
+    args: Prisma.SelectSubset<T, Prisma.Args<D, 'create'>>
+  ): Prisma.PrismaPromise<Prisma.Result<D, T, 'create'>> {
+    return this.model.create(args);
   }
 
-  async update<
-    W extends TWhereUniqueInput,
-    S extends TSelect,
-    I extends TInclude,
-  >(params: {
-    where: TWhereUniqueInput;
-    data: TUpdateInput;
-    select?: TSelect;
-    include?: TInclude;
-  }): Promise<
-    Prisma.Result<
-      TModel,
-      {
-        select: S;
-        include: I;
-        where: W;
-      },
-      'update'
-    >
-  > {
-    return this.model.update(params);
+  update<T extends Prisma.Args<D, 'update'>>(
+    args: Prisma.SelectSubset<T, Prisma.Args<D, 'update'>>
+  ): Prisma.PrismaPromise<Prisma.Result<D, T, 'update'>> {
+    return this.model.update(args);
   }
 
-  async delete<W extends TWhereUniqueInput>(params: {
-    where: TWhereUniqueInput;
-  }): Promise<
-    Prisma.Result<
-      TModel,
-      {
-        where: W;
-      },
-      'delete'
-    >
-  > {
-    return this.model.delete(params);
+  delete<T extends Prisma.Args<D, 'delete'>>(
+    args: Prisma.SelectSubset<T, Prisma.Args<D, 'delete'>>
+  ): Prisma.PrismaPromise<Prisma.Result<D, T, 'delete'>> {
+    return this.model.delete(args);
   }
 
-  async count(params?: { where?: TWhereInput }): Promise<number> {
-    return this.model.count(params);
+  count<T extends Prisma.Args<D, 'count'>>(
+    args: T
+  ): Prisma.PrismaPromise<Prisma.Result<D, T, 'count'>> {
+    return this.model.count(args);
   }
 }

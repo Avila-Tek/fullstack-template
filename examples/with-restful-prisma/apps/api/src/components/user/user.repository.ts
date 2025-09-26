@@ -1,5 +1,4 @@
 import { Prisma, PrismaClient } from '@prisma/client';
-import { TCreateUserInput, TUpdateUserInput } from '@repo/schemas';
 import { GenericPrismaRepository } from '../../lib/orm/generic-repository';
 
 export type UserWhereInput = Prisma.UserWhereInput;
@@ -8,16 +7,9 @@ export type UserOrderBy = Prisma.UserOrderByWithRelationInput;
 export type UserInclude = Prisma.UserInclude;
 
 export class UserRepository extends GenericPrismaRepository<
-  Prisma.UserDelegate,
-  UserWhereInput,
-  Prisma.UserWhereUniqueInput,
-  UserSelect,
-  UserInclude,
-  UserOrderBy,
-  TCreateUserInput,
-  TUpdateUserInput
+  PrismaClient['user']
 > {
   constructor(prisma: PrismaClient) {
-    super(prisma, prisma.user);
+    super(prisma.user);
   }
 }
