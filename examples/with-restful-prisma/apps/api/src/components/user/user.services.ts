@@ -3,11 +3,12 @@ import {
   TPagination,
   TUpdateUserInput,
   TUser,
+  userSchema,
+  usersSchema,
 } from '@repo/schemas';
 import { FastifyInstance } from 'fastify';
 import fp from 'fastify-plugin';
-import { UserMapper } from './user.mapper';
-import { UserOrderBy, UserRepository, UserWhereInput } from './user.repository';
+import { UserRepository, UserWhereInput } from './user.repository';
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -31,24 +32,21 @@ class UserService {
     page = 1,
     perPage = 10,
     where,
-    orderBy,
   }: {
     page?: number;
     perPage?: number;
     where?: UserWhereInput;
-    orderBy?: UserOrderBy;
   } = {}): Promise<TPagination<TUser>> {
     const skip = (page - 1) * perPage;
 
     const [users, count] = await Promise.all([
       this.userRepository.findMany({
-        where: { active: true, ...where },
-        orderBy,
+        where,
         skip,
         take: perPage,
       }),
       this.userRepository.count({
-        where: { active: true, ...where },
+        ...where,
       }),
     ]);
 
@@ -56,7 +54,7 @@ class UserService {
 
     return {
       count,
-      items: UserMapper.toServiceArray(users),
+      items: usersSchema.parse(users),
       pageInfo: {
         currentPage: page,
         perPage,
@@ -69,35 +67,28 @@ class UserService {
   }
 
   async findOne(where: UserWhereInput): Promise<TUser | null> {
-    const user = await this.userRepository.findFirst({
-      where: { active: true, ...where },
-    });
-    return UserMapper.toServiceNullable(user);
+    const user = await this.userRepository.findOne(where);
+    return user ? userSchema.parse(user) : null;
   }
 
   async createOne(record: TCreateUserInput): Promise<TUser | null> {
-    const user = await this.userRepository.create({
-      data: record,
-    });
-    return UserMapper.toServiceNullable(user);
+    const user = await this.userRepository.create(record);
+    return userSchema.parse(user);
   }
 
   async updateOne(id: string, record: TUpdateUserInput): Promise<TUser | null> {
-    const user = await this.userRepository.update({
-      where: { id },
-      data: record,
-    });
-    return UserMapper.toServiceNullable(user);
+    const user = await this.userRepository.update(id, record);
+    return userSchema.parse(user);
   }
 
-  async deleteOne(id: string): Promise<TUser | null> {
-    return this.updateOne(id, { active: false });
+  async deleteOne(id: string): Promise<void> {
+    return this.userRepository.delete(id);
   }
 }
 
 export default fp(
   async (fastify) => {
-    const userRepository = new UserRepository(fastify.prisma);
+    const userRepository = new UserRepository(fastify.prisma.user);
     const userService = new UserService(fastify.thrower, userRepository);
     fastify.decorate('userService', userService);
   },
