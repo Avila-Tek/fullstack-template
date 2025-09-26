@@ -38,15 +38,19 @@ export class AuthService {
     browser: BrowserDetectInfo,
     ip: string
   ): Promise<{ user: TUser; token: string }> {
-    let _user = await this.userService.findOneWithPassword({
+    let userWithPassword = await this.userService.findOneWithPassword({
       email: data.email,
     });
-    if (!_user) return this.thrower.exception('auth', 'invalid-credentials');
-    if (typeof _user?.password === 'undefined')
+    if (!userWithPassword)
+      return this.thrower.exception('auth', 'invalid-credentials');
+    if (typeof userWithPassword?.password === 'undefined')
       return this.thrower.exception('auth', 'invalid-credentials');
 
     // Validate password
-    const isValidPassword = await compareHash(_user.password, data.password);
+    const isValidPassword = await compareHash(
+      userWithPassword.password,
+      data.password
+    );
     if (!isValidPassword) {
       return this.thrower.exception('auth', 'invalid-credentials');
     }
@@ -55,7 +59,7 @@ export class AuthService {
     if (!process.env.SECRET) {
       return this.thrower.exception('auth', 'internal-server-error');
     }
-    const user = userSchema.parse(_user);
+    const user = userSchema.parse(userWithPassword);
 
     const session = await generateSession(user, browser, ip);
 
