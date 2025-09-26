@@ -14,13 +14,6 @@ export type UserWhereInput = Prisma.UserWhereInput;
 export class UserRepository {
   constructor(private readonly userModel: PrismaClient['user']) {}
 
-  async findById(id: string): Promise<UserPublic | null> {
-    return this.userModel.findFirst({
-      where: { id, deleted: false },
-      omit: userOmit,
-    });
-  }
-
   async findOne(where: Prisma.UserWhereInput): Promise<UserPublic | null> {
     return this.userModel.findFirst({
       where: { ...where, deleted: false },
@@ -39,13 +32,6 @@ export class UserRepository {
       where: { ...where, deleted: false },
       omit: userOmit,
       ...rest,
-    });
-  }
-
-  async findByEmail(email: string): Promise<UserPublic | null> {
-    return this.userModel.findFirst({
-      where: { email, deleted: false },
-      omit: userOmit,
     });
   }
 
