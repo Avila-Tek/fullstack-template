@@ -1,10 +1,10 @@
-import { ISession, JwtUserPayload, UserDocument } from '@repo/schemas';
+import { JwtUserPayload, TUser } from '@repo/schemas';
 import jwt from 'jsonwebtoken';
 import { BrowserDetectInfo } from '@/types/browser';
 import { getGeoLocationFromIP } from '@/utils/ip-location';
 
 export async function generateSession(
-  user: UserDocument,
+  user: TUser,
   browser: BrowserDetectInfo,
   ip: string
 ) {
@@ -13,7 +13,8 @@ export async function generateSession(
   const tokenPayload: JwtUserPayload = { id: String(user.id) };
   const token = jwt.sign(tokenPayload, process.env.SECRET!);
 
-  const session: ISession = {
+  // TODO: define session type
+  const session: any = {
     token,
     device: {
       os: browser.os || 'unknown',

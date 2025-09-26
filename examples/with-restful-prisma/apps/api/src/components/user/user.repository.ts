@@ -6,6 +6,9 @@ export const userOmit = {
   deletedAt: true,
 } as const;
 export type UserPublic = Prisma.UserGetPayload<{ omit: typeof userOmit }>;
+export type UserPrivate = Prisma.UserGetPayload<{
+  omit: { deleted: true; deletedAt: true };
+}>;
 export type UserWhereInput = Prisma.UserWhereInput;
 
 export class UserRepository {
@@ -70,5 +73,15 @@ export class UserRepository {
 
   async count(where?: Prisma.UserWhereInput): Promise<number> {
     return this.userModel.count({ where: { ...where, deleted: false } });
+  }
+
+  async findOneWithPassword(
+    where: UserWhereInput
+  ): Promise<UserPrivate | null> {
+    const user = await this.userModel.findFirst({
+      where: { ...where, deleted: false },
+      omit: { ...userOmit, password: false },
+    });
+    return user;
   }
 }

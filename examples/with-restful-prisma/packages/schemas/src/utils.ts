@@ -14,3 +14,7 @@ export function buildSafeResponseSchema<T extends SomeType>(schema: T) {
   ]);
   return safeSchema;
 }
+
+export const zDateToIsoNullableOpt = z
+  .union([z.date(), z.null(), z.undefined()])
+  .transform((v) => (v instanceof Date ? v.toISOString() : v));

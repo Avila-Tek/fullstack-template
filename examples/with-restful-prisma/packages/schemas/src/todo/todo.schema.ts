@@ -1,14 +1,14 @@
 import { z } from 'zod';
+import { zDateToIsoNullableOpt } from '../utils';
 
 export const todoSchema = z.object({
-  id: z.string().regex(/^[0-9a-fA-F]{24}$/),
+  id: z.uuid(),
   title: z.string().min(1),
   description: z.string().default(''),
   status: z.enum(['todo', 'doing', 'done']),
-  active: z.boolean().default(true),
-  owner: z.string().regex(/^[0-9a-fA-F]{24}$/),
-  createdAt: z.iso.datetime().nullable().optional(),
-  updatedAt: z.iso.datetime().nullable().optional(),
+  owner: z.uuid(),
+  createdAt: zDateToIsoNullableOpt,
+  updatedAt: zDateToIsoNullableOpt,
 });
 
 export type TTodo = z.infer<typeof todoSchema>;

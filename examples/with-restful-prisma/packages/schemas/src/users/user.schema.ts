@@ -1,8 +1,5 @@
 import { z } from 'zod';
-
-const zDateToIsoNullableOpt = z
-  .union([z.date(), z.null(), z.undefined()])
-  .transform((v) => (v instanceof Date ? v.toISOString() : v));
+import { zDateToIsoNullableOpt } from '../utils';
 
 export const userSchema = z.object({
   id: z.uuid(),
@@ -11,6 +8,10 @@ export const userSchema = z.object({
   email: z.email().min(5),
   createdAt: zDateToIsoNullableOpt,
   updatedAt: zDateToIsoNullableOpt,
+});
+
+export const userPrivateSchema = userSchema.extend({
+  password: z.string().min(6).max(255),
 });
 
 export type TUser = z.output<typeof userSchema>;

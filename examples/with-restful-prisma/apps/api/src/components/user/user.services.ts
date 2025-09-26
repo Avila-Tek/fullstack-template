@@ -3,6 +3,7 @@ import {
   TPagination,
   TUpdateUserInput,
   TUser,
+  userPrivateSchema,
   userSchema,
   usersSchema,
 } from '@repo/schemas';
@@ -83,6 +84,14 @@ class UserService {
 
   async deleteOne(id: string): Promise<void> {
     return this.userRepository.delete(id);
+  }
+
+  async findOneWithPassword(
+    where: UserWhereInput
+  ): Promise<(TUser & { password: string }) | null> {
+    const user = await this.userRepository.findOneWithPassword(where);
+    if (!user) this.thrower.silentException('user', 'not-found');
+    return userPrivateSchema.parse(user);
   }
 }
 

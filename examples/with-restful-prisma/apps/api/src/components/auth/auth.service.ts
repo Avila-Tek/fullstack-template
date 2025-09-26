@@ -3,6 +3,7 @@ import {
   type TSignInInput,
   type TSignUpInput,
   type TUser,
+  userSchema,
 } from '@repo/schemas';
 import { FastifyInstance } from 'fastify';
 import fp from 'fastify-plugin';
@@ -37,13 +38,15 @@ export class AuthService {
     browser: BrowserDetectInfo,
     ip: string
   ): Promise<{ user: TUser; token: string }> {
-    const user = await this.userService.findOne({ email: data.email });
-    if (!user) return this.thrower.exception('auth', 'invalid-credentials');
-    if (typeof user?.password === 'undefined')
+    let _user = await this.userService.findOneWithPassword({
+      email: data.email,
+    });
+    if (!_user) return this.thrower.exception('auth', 'invalid-credentials');
+    if (typeof _user?.password === 'undefined')
       return this.thrower.exception('auth', 'invalid-credentials');
 
     // Validate password
-    const isValidPassword = await compareHash(user.password, data.password);
+    const isValidPassword = await compareHash(_user.password, data.password);
     if (!isValidPassword) {
       return this.thrower.exception('auth', 'invalid-credentials');
     }
@@ -52,6 +55,7 @@ export class AuthService {
     if (!process.env.SECRET) {
       return this.thrower.exception('auth', 'internal-server-error');
     }
+    const user = userSchema.parse(_user);
 
     const session = await generateSession(user, browser, ip);
 
@@ -87,9 +91,7 @@ export class AuthService {
       this.thrower.silentException('internal', 'not-found');
       return;
     }
-    const user = await this.userService.findOne(
-      { id: payload.id }
-    );
+    const user = await this.userService.findOne({ id: payload.id });
     if (!user) {
       return this.thrower.silentException('user', 'invalid-token');
     }
