@@ -9,14 +9,20 @@ function processLanguages(acceptLanguageHeader: string) {
 }
 
 function negotiate(requestedLanguages: string[]): AvailableLanguages {
-  const negotiationResult = requestedLanguages.reduce(
+  type NegotiationResult = { language: string; selected: boolean };
+  const negotiationResult = requestedLanguages.reduce<NegotiationResult>(
     (acc, lang: string) => {
       // If already selected, skip further checks
       if (acc.selected) return acc;
 
       // Check if the language is available
-      const language = lang.split(';')[0].trim();
-      if (!availableLanguages.includes(language as any)) return acc;
+      const language =
+        typeof lang === 'string' ? lang.split(';')?.[0]?.trim() : '';
+      if (
+        !language ||
+        !availableLanguages.includes(language as AvailableLanguages)
+      )
+        return acc;
       return { language, selected: true };
     },
     { language: availableLanguages[0], selected: false }
@@ -31,5 +37,5 @@ export function languageNegotiation(
   const acceptLanguages = request?.headers['accept-language'] || 'en';
   const requestedLanguages = processLanguages(acceptLanguages);
   const finalLanguage = negotiate(requestedLanguages);
-  return finalLanguage as AvailableLanguages;
+  return finalLanguage;
 }

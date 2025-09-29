@@ -14,7 +14,7 @@ export function validateUser(fastify: FastifyInstance) {
     const { headers } = req;
 
     if (headers.authorization) {
-      const { user } = await fastify.authService.currentUser(
+      const user = await fastify.authService.currentUser(
         Array.isArray(headers.authorization)
           ? headers.authorization[0]
           : headers.authorization
@@ -25,8 +25,6 @@ export function validateUser(fastify: FastifyInstance) {
       }
 
       (req as any).user = user; // Assign the object directly
-    } else {
-      throw new Error('401-token');
     }
   };
 }

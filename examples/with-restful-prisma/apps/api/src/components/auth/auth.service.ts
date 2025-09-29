@@ -21,11 +21,11 @@ declare module 'fastify' {
 
 export class AuthService {
   constructor(
-    private readonly emailService: FastifyInstance['email'],
     private readonly thrower: FastifyInstance['thrower'],
     private readonly userService: IUserService
+    // private readonly emailService: FastifyInstance['email'],
   ) {
-    this.emailService = emailService;
+    // this.emailService = emailService;
     this.thrower = thrower;
 
     this.signIn = this.signIn.bind(this);
@@ -57,7 +57,7 @@ export class AuthService {
 
     // Create sessions
     if (!process.env.SECRET) {
-      return this.thrower.exception('auth', 'internal-server-error');
+      return this.thrower.silentException('auth', 'secret-missing');
     }
     const user = userSchema.parse(userWithPassword);
 
@@ -75,7 +75,7 @@ export class AuthService {
 
     const user = await this.userService.createOne(data);
     if (!user) {
-      this.thrower.exception('user', '500-default');
+      this.thrower.silentException('user', 'not-found');
     }
     return this.signIn(
       { email: data.email, password: data.password },
@@ -87,12 +87,12 @@ export class AuthService {
   async currentUser(token: string) {
     const parsedPayload = authDTO.jwtUserPayload.safeParse(jwt.decode(token));
     if (!parsedPayload.success) {
-      this.thrower.silentException('internal', 'not-found');
+      this.thrower.silentException('auth', 'jwt-error');
       return;
     }
     const payload = parsedPayload.data;
     if (typeof payload === 'undefined') {
-      this.thrower.silentException('internal', 'not-found');
+      this.thrower.silentException('auth', 'jwt-error');
       return;
     }
     const user = await this.userService.findOne({ id: payload.id });
@@ -106,9 +106,9 @@ export class AuthService {
 export default fp(
   async (fastify) => {
     const authService = new AuthService(
-      fastify.email,
       fastify.thrower,
       fastify.userService
+      // fastify.email,
     );
     fastify.decorate('authService', authService);
   },

@@ -22,7 +22,7 @@ declare module 'fastify' {
         userId?: string
       ) => Promise<{
         flagStatus: boolean;
-        featureFlagPayload: any | undefined;
+        featureFlagPayload: any;
       }>;
     };
   }
@@ -71,7 +71,7 @@ const featureFlagsPlugin: FastifyPluginAsync<
         await provider.shutdown();
       }
     });
-  } catch (error) {
+  } catch (error: any) {
     fastify.log.error('Failed to register feature flags plugin:', error);
     throw error;
   }
@@ -80,7 +80,7 @@ const featureFlagsPlugin: FastifyPluginAsync<
 export const autoConfig: FeatureFlagsPluginOptions = {
   provider: 'post_hog',
   postHog: {
-    apiKey: envs.posthog.apiKey,
+    apiKey: envs.posthog.apiKey!,
     host: envs.posthog.host,
   },
 };
