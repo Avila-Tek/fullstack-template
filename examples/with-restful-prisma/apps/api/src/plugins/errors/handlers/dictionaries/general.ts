@@ -3,7 +3,7 @@ import { internalErrors } from './modules/internal';
 import { postErrors } from './modules/posts';
 import { userErrors } from './modules/users';
 
-export const EntitiesObject = Object.freeze({
+export const entitiesObject = Object.freeze({
   auth: 'auth',
   user: 'user',
   internal: 'internal',
@@ -17,7 +17,7 @@ export const errorsDictionary = Object.freeze({
   internal: internalErrors,
 });
 
-export type EntityType = keyof typeof EntitiesObject;
+export type EntityType = keyof typeof entitiesObject;
 
 export type ErrorCodes<T extends EntityType> =
   keyof (typeof errorsDictionary)[T];
