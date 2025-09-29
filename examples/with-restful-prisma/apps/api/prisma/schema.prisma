@@ -14,7 +14,7 @@ model User {
   id        String   @id @default(uuid())
   firstName String
   lastName  String
-  email     String   @unique
+  email     String
   password  String
   deleted    Boolean  @default(false)
   deletedAt DateTime?
