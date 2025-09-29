@@ -62,10 +62,7 @@ export class UserRepository {
   }
 
   async exists(where: Prisma.UserWhereInput): Promise<boolean> {
-    const count = await this.count({
-      ...where,
-      deleted: false,
-    });
+    const count = await this.count(where);
     return count > 0;
   }
 
