@@ -66,7 +66,7 @@ class UserService {
   }
 
   async deleteOne(id: string): Promise<void> {
-    return this.userRepository.delete(id);
+    await this.userRepository.delete(id);
   }
 
   async findOneWithPassword(
