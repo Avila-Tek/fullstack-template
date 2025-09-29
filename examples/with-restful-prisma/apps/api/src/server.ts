@@ -13,6 +13,9 @@ export async function start() {
 
     await server.listen({ host, port });
 
+    const address = `http://${host ?? '0.0.0.0'}:${port}`;
+    console.log(`Server running at: ${address}`);
+
     for (const signal of ['SIGINT', 'SIGTERM']) {
       process.on(signal, () =>
         server.close().then((err) => {
