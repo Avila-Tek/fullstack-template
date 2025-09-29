@@ -11,7 +11,7 @@ declare module 'fastify' {
 }
 
 class AuthController {
-  private fastify: FastifyInstance;
+  private readonly fastify: FastifyInstance;
 
   constructor(fastify: FastifyInstance) {
     this.fastify = fastify;
@@ -33,7 +33,6 @@ class AuthController {
       ip
     );
     reply.status(200).send(resp);
-    return;
   }
 
   async signUp(
@@ -48,14 +47,12 @@ class AuthController {
       ip
     );
     reply.status(200).send(resp);
-    return;
   }
 
   async currentUser(request: FastifyRequest, reply: FastifyReply) {
     const token = getAuthorizationToken(request);
     const resp = await this.fastify.authService.currentUser(token);
     reply.status(200).send(resp);
-    return;
   }
 }
 

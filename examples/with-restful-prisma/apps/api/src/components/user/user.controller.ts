@@ -13,7 +13,7 @@ declare module 'fastify' {
 }
 
 class UserController {
-  constructor(private fastify: FastifyInstance) {
+  constructor(private readonly fastify: FastifyInstance) {
     this.fastify = fastify;
 
     this.findMany = this.findMany.bind(this);
@@ -92,12 +92,7 @@ class UserController {
     request: FastifyRequest<{ Params: { id: string } }>,
     reply: FastifyReply
   ) {
-    const data = await this.fastify.userService.deleteOne(request.id);
-    if (!data) {
-      reply
-        .status(500)
-        .send({ success: false, error: 'Internal server error' });
-    }
+    await this.fastify.userService.deleteOne(request.id);
     reply.status(200).send({ success: true, data: {} });
   }
 }

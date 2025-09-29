@@ -21,9 +21,9 @@ declare module 'fastify' {
 
 export class AuthService {
   constructor(
-    private emailService: FastifyInstance['email'],
-    private thrower: FastifyInstance['thrower'],
-    private userService: IUserService
+    private readonly emailService: FastifyInstance['email'],
+    private readonly thrower: FastifyInstance['thrower'],
+    private readonly userService: IUserService
   ) {
     this.emailService = emailService;
     this.thrower = thrower;

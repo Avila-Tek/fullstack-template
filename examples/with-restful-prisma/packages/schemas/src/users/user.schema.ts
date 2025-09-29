@@ -15,5 +15,6 @@ export const userPrivateSchema = userSchema.extend({
 });
 
 export type TUser = z.output<typeof userSchema>;
+export type TUserPrivate = z.output<typeof userPrivateSchema>;
 export const usersSchema = z.array(userSchema);
 export type TUserList = z.output<typeof usersSchema>;
