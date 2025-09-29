@@ -61,6 +61,14 @@ export class UserRepository {
     return this.userModel.count({ where: { ...where, deleted: false } });
   }
 
+  async exists(where: Prisma.UserWhereInput): Promise<boolean> {
+    const count = await this.count({
+      ...where,
+      deleted: false,
+    });
+    return count > 0;
+  }
+
   async findOneWithPassword(
     where: UserWhereInput
   ): Promise<UserPrivate | null> {

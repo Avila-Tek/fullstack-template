@@ -49,6 +49,13 @@ class UserService {
   }
 
   async createOne(record: TCreateUserInput): Promise<TUser | null> {
+    const exists = await this.userRepository.exists({
+      email: record.email,
+    });
+    if (exists)
+      this.thrower.exception('user', 'already-exists', {
+        email: record.email,
+      });
     const user = await this.userRepository.create(record);
     return userSchema.parse(user);
   }

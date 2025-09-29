@@ -1,7 +1,17 @@
-import { ErrorTypes } from '../../types';
+import { ErrorTypes, StandardError } from '../../types';
 
-export const userErrors = {
-  'not-found': {
+export const userExceptionKeysObject = Object.freeze({
+  not_found: 'not-found',
+  invalid_token: 'invalid-token',
+  invalid_credentials: 'invalid-credentials',
+  already_exists: 'already-exists',
+});
+
+export type UserExceptionKey =
+  (typeof userExceptionKeysObject)[keyof typeof userExceptionKeysObject];
+
+export const userErrors: Record<UserExceptionKey, StandardError> = {
+  [userExceptionKeysObject.not_found]: {
     type: ErrorTypes.NOT_FOUND_ERROR,
     code: 'USER_NOT_FOUND',
     status: 404,
@@ -11,7 +21,7 @@ export const userErrors = {
       en: 'User could not be found',
     },
   },
-  'invalid-token': {
+  [userExceptionKeysObject.invalid_token]: {
     type: ErrorTypes.AUTHENTICATION_ERROR,
     code: 'INVALID_TOKEN',
     status: 401,
@@ -21,7 +31,7 @@ export const userErrors = {
       en: 'Submitted token is invalid',
     },
   },
-  'invalid-credentials': {
+  [userExceptionKeysObject.invalid_credentials]: {
     type: ErrorTypes.AUTHENTICATION_ERROR,
     code: 'INVALID_CREDENTIALS',
     status: 401,
@@ -29,6 +39,16 @@ export const userErrors = {
     message: {
       es: 'Las credenciales no son válidas',
       en: 'Submitted credentials are invalid',
+    },
+  },
+  [userExceptionKeysObject.already_exists]: {
+    type: ErrorTypes.VALIDATION_ERROR,
+    code: 'USER_ALREADY_EXISTS',
+    status: 400,
+    title: { es: 'El usuario ya existe', en: 'User already exists' },
+    message: {
+      es: 'El usuario con el email <email> ya existe',
+      en: 'User with email <email> already exists',
     },
   },
 };
