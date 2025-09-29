@@ -2,13 +2,16 @@ import { StandardError } from '../types';
 import { EntityType, ErrorCodes, errorsDictionary } from './general';
 
 export class ErrorRegistry {
-  private errors: typeof errorsDictionary;
+  private readonly errors: Record<EntityType, Record<string, StandardError>>;
 
   constructor() {
     this.errors = errorsDictionary;
   }
 
-  getError<T extends EntityType>(entity: T, type: ErrorCodes<T>) {
+  getError<T extends EntityType>(
+    entity: T,
+    type: ErrorCodes<T>
+  ): StandardError {
     if (!this.errors[entity]) {
       throw new Error(`Entity ${entity} does not exist in error registry.`);
     }
@@ -18,7 +21,7 @@ export class ErrorRegistry {
       );
     }
 
-    return this.errors[entity][type] as StandardError;
+    return this.errors[entity][type];
   }
 }
 

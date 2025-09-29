@@ -1,7 +1,14 @@
-import { ErrorTypes } from '../../types';
+import { ErrorTypes, StandardError } from '../../types';
 
-export const authErrors = {
-  'invalid-credentials': {
+export const authExceptionKeysObject = Object.freeze({
+  invalid_credentials: 'invalid-credentials',
+});
+
+export type AuthExceptionKey =
+  (typeof authExceptionKeysObject)[keyof typeof authExceptionKeysObject];
+
+export const authErrors: Record<AuthExceptionKey, StandardError> = {
+  [authExceptionKeysObject.invalid_credentials]: {
     type: ErrorTypes.AUTHENTICATION_ERROR,
     code: 'INVALID_CREDENTIALS',
     status: 401,
