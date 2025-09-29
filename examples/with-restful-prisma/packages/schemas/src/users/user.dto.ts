@@ -4,7 +4,6 @@ import { userSchema } from './user.schema';
 export const createUserInput = userSchema
   .omit({
     id: true,
-    active: true,
     createdAt: true,
     updatedAt: true,
   })

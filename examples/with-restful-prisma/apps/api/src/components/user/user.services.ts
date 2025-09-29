@@ -79,6 +79,5 @@ export default fp(
   },
   {
     name: 'user-service',
-    dependencies: ['user-repository'],
   }
 );
