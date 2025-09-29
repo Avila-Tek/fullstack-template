@@ -3,12 +3,14 @@ import {
   TPagination,
   TUpdateUserInput,
   TUser,
+  TUserPrivate,
   userPrivateSchema,
   userSchema,
   usersSchema,
 } from '@repo/schemas';
 import { FastifyInstance } from 'fastify';
 import fp from 'fastify-plugin';
+import { paginate } from '../../utils/pagination';
 import { UserRepository, UserWhereInput } from './user.repository';
 
 declare module 'fastify' {
@@ -19,7 +21,7 @@ declare module 'fastify' {
 
 class UserService {
   constructor(
-    private thrower: FastifyInstance['thrower'],
+    private readonly thrower: FastifyInstance['thrower'],
     private readonly userRepository: UserRepository
   ) {
     this.findMany = this.findMany.bind(this);
@@ -38,33 +40,7 @@ class UserService {
     perPage?: number;
     where?: UserWhereInput;
   } = {}): Promise<TPagination<TUser>> {
-    const skip = (page - 1) * perPage;
-
-    const [users, count] = await Promise.all([
-      this.userRepository.findMany({
-        where,
-        skip,
-        take: perPage,
-      }),
-      this.userRepository.count({
-        ...where,
-      }),
-    ]);
-
-    const pageCount = Math.ceil(count / perPage);
-
-    return {
-      count,
-      items: usersSchema.parse(users),
-      pageInfo: {
-        currentPage: page,
-        perPage,
-        pageCount,
-        itemCount: count,
-        hasPreviousPage: page > 1,
-        hasNextPage: page < pageCount,
-      },
-    };
+    return paginate(this.userRepository, usersSchema, { page, perPage, where });
   }
 
   async findOne(where: UserWhereInput): Promise<TUser | null> {
@@ -88,7 +64,7 @@ class UserService {
 
   async findOneWithPassword(
     where: UserWhereInput
-  ): Promise<(TUser & { password: string }) | null> {
+  ): Promise<TUserPrivate | null> {
     const user = await this.userRepository.findOneWithPassword(where);
     if (!user) this.thrower.silentException('user', 'not-found');
     return userPrivateSchema.parse(user);
