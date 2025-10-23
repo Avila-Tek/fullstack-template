@@ -23,13 +23,6 @@ export async function createApp() {
     config = {
       logger: {
         level: 'info',
-        transport: {
-          target: '@axiomhq/pino',
-          options: {
-            dataset: process.env.AXIOM_DATASET,
-            token: process.env.AXIOM_TOKEN,
-          },
-        },
       },
     };
   }
