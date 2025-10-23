@@ -8,6 +8,7 @@ import rateLimit from '@fastify/rate-limit';
 import * as Sentry from '@sentry/node';
 import Fastify, { FastifyHttpOptions } from 'fastify';
 import featureFlagsPlugin from './plugins/feature-flags';
+import metricsPlugin from './plugins/metrics';
 import {
   TFeatureFlagProvider,
   featureFlagProviders,
@@ -48,7 +49,10 @@ export async function createApp() {
     credentials: true,
   });
 
-  await app.register(featureFlagsPlugin, {
+  await app.register(metricsPlugin);
+
+  if (process.env.FEATURE_FLAG_PROVIDER) {
+    await app.register(featureFlagsPlugin, {
     provider,
     postHog:
       provider === featureFlagProviders.post_hog
@@ -64,7 +68,8 @@ export async function createApp() {
             apiHost: process.env.GROWTHBOOK_API_HOST,
           }
         : undefined,
-  });
+    });
+  }
 
   await app.ready();
 

@@ -13,6 +13,7 @@ export default defineConfig([
     splitting: false,
     clean: true,
     sourcemap: true,
+    dts: true,
     target: 'node20',
     shims: true,
     bundle: true,
