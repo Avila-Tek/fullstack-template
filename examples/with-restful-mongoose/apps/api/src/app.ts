@@ -15,21 +15,6 @@ export async function createApp() {
     config = {
       logger: {
         level: envs.loki.level || 'info',
-        transport: {
-          target: 'pino-loki',
-          options: {
-            batching: true,
-            interval: 5,
-            labels: {
-              app: envs.loki.appName,
-            },
-            host: envs.loki.host,
-            basicAuth: {
-              username: envs.loki.username,
-              password: envs.loki.password,
-            },
-          },
-        },
       },
     };
   }
@@ -52,9 +37,13 @@ export async function createApp() {
   await app.register(autoload, {
     dir: path.join(__dirname, 'plugins/middlewares'),
   });
+  
+  // Load integrations plugins
   await app.register(autoload, {
     dir: path.join(__dirname, 'plugins/integrations'),
   });
+
+  app.log.info('All plugins registered successfully');
 
   // Register Routes and Websockets
   await app.register(autoload, {

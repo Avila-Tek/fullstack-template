@@ -1,5 +1,5 @@
 import { TUser } from '@repo/schemas';
-import { Document, model, Schema, Types } from 'mongoose';
+import { Document, model, models, Schema, Types } from 'mongoose';
 
 export type TUserDocument = Document<
   Types.ObjectId,
@@ -35,4 +35,5 @@ const userSchema = new Schema<TUser>(
   { timestamps: true }
 );
 
-export const User = model<typeof userSchema>('User', userSchema);
+// Check if model already exists to avoid OverwriteModelError
+export const User = models.User || model<typeof userSchema>('User', userSchema);

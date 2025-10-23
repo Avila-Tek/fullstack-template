@@ -16,9 +16,9 @@ const httpRequestDuration = new Histogram({
   buckets: [0.1, 0.5, 1, 2, 5, 10],
 });
 
-const graphqlRequestCounter = new Counter({
-  name: 'graphql_requests_total',
-  help: 'Total number of GraphQL requests',
+const restApiRequestCounter = new Counter({
+  name: 'rest_api_requests_total',
+  help: 'Total number of REST API requests',
   labelNames: ['operation_name', 'operation_type'],
 });
 
@@ -80,4 +80,4 @@ export default fp(metricsPlugin, {
   name: 'metrics',
 });
 
-export { httpRequestCounter, httpRequestDuration, graphqlRequestCounter, register };
+export { httpRequestCounter, httpRequestDuration, restApiRequestCounter, register };

@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import { sentryEsbuildPlugin } from '@sentry/esbuild-plugin';
+// import { sentryEsbuildPlugin } from '@sentry/esbuild-plugin';
 import { defineConfig } from 'tsup';
 
 export default defineConfig({
@@ -15,11 +15,13 @@ export default defineConfig({
   bundle: true,
   dts: false,
   skipNodeModulesBundle: true,
-  esbuildPlugins: [
-    sentryEsbuildPlugin({
-      org: 'avilatek',
-      project: '',
-      authToken: process.env.SENTRY_AUTH_TOKEN,
-    }),
-  ],
+  // Temporarily disabled Sentry esbuild plugin to avoid module resolution issues in Docker
+  // The plugin injects code that requires modules not available in the container
+  // esbuildPlugins: [
+  //   sentryEsbuildPlugin({
+  //     org: 'avilatek',
+  //     project: '',
+  //     authToken: process.env.SENTRY_AUTH_TOKEN,
+  //   }),
+  // ],
 });
