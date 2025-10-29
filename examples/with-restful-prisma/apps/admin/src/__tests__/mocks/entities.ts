@@ -1,4 +1,4 @@
-// import { IPhone, IUser } from '@avila-tek/models';
+// import { IPhone, TUser } from '@avila-tek/models';
 /**
  * Mock data generators for various models.
  *
@@ -6,13 +6,13 @@
  */
 
 /**
- * Generates a mock `IUser` object.
+ * Generates a mock `TUser` object.
  *
  * This function returns a user object with predefined default values. You can
- * override any of these values by passing a partial `IUser` object as the argument.
+ * override any of these values by passing a partial `TUser` object as the argument.
  *
- * @param {Partial<IUser>} initialValue - Optional partial object to override the default values.
- * @returns {IUser} A mock `IUser` object with default or customized properties.
+ * @param {Partial<TUser>} initialValue - Optional partial object to override the default values.
+ * @returns {TUser} A mock `TUser` object with default or customized properties.
  *
  * @example
  * Generate a user with default values

@@ -1,4 +1,4 @@
-FROM node:22-alpine AS base
+FROM node:24-alpine AS base
 
 ENV SCOPE=@repo/api
 ARG APP_PATH
@@ -10,10 +10,9 @@ FROM base AS builder
 RUN apk add --no-cache git libc6-compat tzdata g++ make py3-pip
 RUN apk update
 ENV TZ=America/Caracas
-
 # Install and generate partial monorepo to have only the necessary to build ${SCOPE} app
 WORKDIR /app
-RUN npm i -g turbo 
+RUN npm i -g turbo
 COPY . .
 RUN turbo prune --scope=${SCOPE} --docker
 
@@ -34,17 +33,12 @@ RUN npm install
 # Build project
 COPY --from=builder /app/out/full/ .
 COPY --from=builder /app/out/full/turbo.json turbo.json
+
 # Build arguments
 ARG TURBO_TEAM
 ARG TURBO_TOKEN
 ENV TURBO_TEAM=$TURBO_TEAM
 ENV TURBO_TOKEN=$TURBO_TOKEN
-
-# Prisma
-COPY --from=builder /app/${APP_PATH}/prisma/ ./${APP_PATH}/prisma/
-WORKDIR /app/${APP_PATH}
-RUN npx prisma generate
-WORKDIR /app
 
 RUN npx turbo build --filter=${SCOPE}
 ## Runner
@@ -67,9 +61,6 @@ COPY --from=installer /app/${APP_PATH}/dist ./${APP_PATH}/dist
 COPY --from=installer /app/${APP_PATH}/src/*.env* ./${APP_PATH}/src/*.env*
 
 COPY --from=installer /app/${APP_PATH}/package.json ./${APP_PATH}/package.json
-# Prisma
-COPY --from=installer /app/${APP_PATH}/prisma ./${APP_PATH}/prisma
-
 
 ARG PORT
 ENV PORT=$PORT

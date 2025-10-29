@@ -1,72 +1,69 @@
-// Import this first!
-import './instrument';
-import { Server } from 'http';
-import { prismaPlugin } from '@/plugins/prisma';
-import cors from '@fastify/cors';
-import helmet from '@fastify/helmet';
-import rateLimit from '@fastify/rate-limit';
-import * as Sentry from '@sentry/node';
+import path from 'node:path';
+import autoload from '@fastify/autoload';
 import Fastify, { FastifyHttpOptions } from 'fastify';
-import featureFlagsPlugin from './plugins/feature-flags';
 import {
-  TFeatureFlagProvider,
-  featureFlagProviders,
-} from '@repo/feature-flags/shared';
-
-const provider = process.env.FEATURE_FLAG_PROVIDER as TFeatureFlagProvider;
+  serializerCompiler,
+  validatorCompiler,
+  ZodTypeProvider,
+} from 'fastify-type-provider-zod';
+import { Server } from 'http';
+import { envs } from './config';
 
 export async function createApp() {
   let config: FastifyHttpOptions<Server> = {};
 
-  if (process.env.NODE_ENV === 'production') {
+  if (envs.stage === 'production') {
     config = {
       logger: {
-        level: 'info',
+        level: envs.loki.level || 'info',
         transport: {
-          target: '@axiomhq/pino',
+          target: 'pino-loki',
           options: {
-            dataset: process.env.AXIOM_DATASET,
-            token: process.env.AXIOM_TOKEN,
+            batching: true,
+            interval: 5,
+            labels: {
+              app: envs.loki.appName,
+            },
+            host: envs.loki.host,
+            basicAuth: {
+              username: envs.loki.username,
+              password: envs.loki.password,
+            },
           },
         },
       },
     };
   }
 
-  const app = Fastify(config);
+  const app = Fastify(config).withTypeProvider<ZodTypeProvider>();
 
-  await app.register(prismaPlugin);
+  // Add schema validator and serializer
+  app.setValidatorCompiler(validatorCompiler);
+  app.setSerializerCompiler(serializerCompiler);
 
-  if (process.env.NODE_ENV === 'production') {
-    Sentry.setupFastifyErrorHandler(app);
-    await app.register(helmet);
-    await app.register(rateLimit);
-  }
+  app.setValidatorCompiler(validatorCompiler);
+  app.setSerializerCompiler(serializerCompiler);
 
-  await app.register(cors, {
-    origin: JSON.parse(process.env.CORS_ORIGINS ?? '["*"]'),
-    credentials: true,
+  // Register error handlers first
+  await app.register(autoload, {
+    dir: path.join(__dirname, 'plugins/errors'),
   });
 
-  await app.register(featureFlagsPlugin, {
-    provider,
-    postHog:
-      provider === featureFlagProviders.post_hog
-        ? {
-            apiKey: process.env.POSTHOG_API_KEY!,
-            host: process.env.POSTHOG_HOST,
-          }
-        : undefined,
-    growthBook:
-      provider === featureFlagProviders.growth_book
-        ? {
-            apiKey: process.env.GROWTHBOOK_API_KEY!,
-            apiHost: process.env.GROWTHBOOK_API_HOST,
-          }
-        : undefined,
+  // Register plugins
+  await app.register(autoload, {
+    dir: path.join(__dirname, 'plugins/middlewares'),
+  });
+  await app.register(autoload, {
+    dir: path.join(__dirname, 'plugins/integrations'),
+  });
+
+  // Register Routes and Websockets
+  await app.register(autoload, {
+    dir: path.join(__dirname, 'plugins/routes'),
   });
 
   await app.ready();
+  app.swagger();
 
   return app;
 }
