@@ -1,20 +1,25 @@
+import { envs } from '@/config';
 import { createApp } from './app';
 
 export async function start() {
   try {
     const server = await createApp();
     process.on('unhandledRejection', (err) => {
-      console.error(err);
+      server.log.fatal(err, 'Error unhandledRejection');
       process.exit(1);
     });
 
-    const port = parseInt(String(process.env.PORT || '3000'), 10);
-    const host = process.env.HOST || '0.0.0.0';
+    const { port, host } = envs;
+
     await server.listen({ host, port });
+
+    const address = `http://${host ?? '0.0.0.0'}:${port}`;
+    console.log(`Server running at: ${address}`);
 
     for (const signal of ['SIGINT', 'SIGTERM']) {
       process.on(signal, () =>
         server.close().then((err) => {
+          console.error(err);
           process.exit(err ? 1 : 0);
         })
       );

@@ -7,7 +7,7 @@ export default defineConfig({
   minify: true,
   splitting: false,
   clean: true,
-  format: ['cjs', 'esm'],
+  format: ['esm', 'cjs'],
   outDir: 'dist',
-  target: ['node20', 'deno2'],
+  target: ['node24'],
 });
