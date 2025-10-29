@@ -10,6 +10,7 @@ export async function start() {
 
     const port = parseInt(String(process.env.PORT || '3000'), 10);
     const host = process.env.HOST || '0.0.0.0';
+    console.log(`Server running on ${host}:${port}`);
     await server.listen({ host, port });
 
     for (const signal of ['SIGINT', 'SIGTERM']) {

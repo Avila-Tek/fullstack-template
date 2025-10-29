@@ -3,6 +3,7 @@ import './instrument';
 import { Server } from 'http';
 import { schema } from '@/graphql/schema';
 import { prismaPlugin } from '@/plugins/prisma';
+import metricsPlugin from '@/plugins/metrics';
 import { ApolloServer } from '@apollo/server';
 import { ApolloServerPluginLandingPageDisabled } from '@apollo/server/plugin/disabled';
 import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
@@ -24,24 +25,16 @@ import {
 const provider = process.env.FEATURE_FLAG_PROVIDER as TFeatureFlagProvider;
 
 export async function createApp() {
-  let config: FastifyHttpOptions<Server> = {};
-
-  if (process.env.NODE_ENV === 'production') {
-    config = {
-      logger: {
-        level: 'info',
-        transport: {
-          target: '@axiomhq/pino',
-          options: {
-            dataset: process.env.AXIOM_DATASET,
-            token: process.env.AXIOM_TOKEN,
-          },
-        },
-      },
-    };
-  }
+  let config: FastifyHttpOptions<Server> = {
+    logger: {
+      level: process.env.LOG_LEVEL || 'info',
+    },
+  };
 
   const app = Fastify(config);
+
+  // Register metrics plugin first to track all requests
+  await app.register(metricsPlugin);
 
   await app.register(prismaPlugin);
 
@@ -76,23 +69,28 @@ export async function createApp() {
     }),
   });
 
-  await app.register(featureFlagsPlugin, {
-    provider,
-    postHog:
-      provider === featureFlagProviders.post_hog
-        ? {
-            apiKey: process.env.POSTHOG_API_KEY!,
-            host: process.env.POSTHOG_HOST,
-          }
-        : undefined,
-    growthBook:
-      provider === featureFlagProviders.growth_book
-        ? {
-            apiKey: process.env.GROWTHBOOK_API_KEY!,
-            apiHost: process.env.GROWTHBOOK_API_HOST,
-          }
-        : undefined,
-  });
+  // Register feature flags plugin only if provider is configured
+  if (provider && Object.values(featureFlagProviders).includes(provider)) {
+    await app.register(featureFlagsPlugin, {
+      provider,
+      postHog:
+        provider === featureFlagProviders.post_hog
+          ? {
+              apiKey: process.env.POSTHOG_API_KEY!,
+              host: process.env.POSTHOG_HOST,
+            }
+          : undefined,
+      growthBook:
+        provider === featureFlagProviders.growth_book
+          ? {
+              apiKey: process.env.GROWTHBOOK_API_KEY!,
+              apiHost: process.env.GROWTHBOOK_API_HOST,
+            }
+          : undefined,
+    });
+  } else {
+    app.log.warn('Feature flags provider not configured. Skipping feature flags plugin.');
+  }
 
   await app.ready();
 

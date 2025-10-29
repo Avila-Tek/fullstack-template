@@ -16,6 +16,7 @@ import * as Sentry from '@sentry/node';
 import Fastify, { FastifyHttpOptions } from 'fastify';
 import mongoose from 'mongoose';
 import featureFlagsPlugin from './plugins/feature-flags';
+import metricsPlugin from './plugins/metrics';
 import {
   TFeatureFlagProvider,
   featureFlagProviders,
@@ -47,13 +48,7 @@ export async function createApp() {
     config = {
       logger: {
         level: 'info',
-        transport: {
-          target: '@axiomhq/pino',
-          options: {
-            dataset: process.env.AXIOM_DATASET,
-            token: process.env.AXIOM_TOKEN,
-          },
-        },
+        
       },
     };
   }
@@ -91,23 +86,26 @@ export async function createApp() {
     }),
   });
 
-  await app.register(featureFlagsPlugin, {
-    provider,
-    postHog:
-      provider === featureFlagProviders.post_hog
-        ? {
-            apiKey: process.env.POSTHOG_API_KEY!,
-            host: process.env.POSTHOG_HOST,
-          }
-        : undefined,
-    growthBook:
-      provider === featureFlagProviders.growth_book
-        ? {
-            apiKey: process.env.GROWTHBOOK_API_KEY!,
-            apiHost: process.env.GROWTHBOOK_API_HOST,
-          }
-        : undefined,
-  });
+  await app.register(metricsPlugin);
+  if (process.env.FEATURE_FLAG_PROVIDER) {
+    await app.register(featureFlagsPlugin, {
+      provider,
+      postHog:
+        provider === featureFlagProviders.post_hog
+          ? {
+              apiKey: process.env.POSTHOG_API_KEY!,
+              host: process.env.POSTHOG_HOST,
+            }
+          : undefined,
+      growthBook:
+        provider === featureFlagProviders.growth_book
+          ? {
+              apiKey: process.env.GROWTHBOOK_API_KEY!,
+              apiHost: process.env.GROWTHBOOK_API_HOST,
+            }
+          : undefined,
+    });
+  }
 
   await app.ready();
 

@@ -34,6 +34,12 @@ const featureFlagsPlugin: FastifyPluginAsync<
   FeatureFlagsPluginOptions
 > = async (fastify, options) => {
   try {
+    // Only initialize feature flags if PostHog API key is provided
+    if (!envs.posthog.apiKey) {
+      fastify.log.info('PostHog API key not provided, skipping feature flags plugin');
+      return;
+    }
+
     const config: FeatureFlagConfig = {
       provider: options.provider,
       postHog: options.postHog,

@@ -5,8 +5,8 @@ import { safe } from './safe-functions';
  * @description Wraps the `fetch` function with error handling using the `safe` utility.
  *              Returns a `Safe` type object containing the JSON response or an error message.
  *
- * @param {RequestInfo | URL} input - The input to fetch, similar to the `fetch` API.
- * @param {RequestInit} [init] - Optional settings to apply to the request.
+ * @param {string | URL} input - The input to fetch, similar to the `fetch` API.
+ * @param {any} [init] - Optional settings to apply to the request.
  *
  * @returns {Promise<Safe<unknown>>} - A `Safe` object containing the JSON-parsed data if successful,
  *                                     or an error message if an error occurs.
@@ -23,7 +23,7 @@ import { safe } from './safe-functions';
  * };
  * ```
  */
-export async function safeFetch(input: RequestInfo | URL, init?: RequestInit) {
+export async function safeFetch(input: string | URL, init?: any) {
   const response = await safe(fetch(input, init));
   if (response.success) {
     const jsonResponse = await safe<unknown>(response.data.json());

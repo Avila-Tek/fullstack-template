@@ -1,0 +1,58 @@
+services:
+  # ============================================================================
+  # API Application with Alloy
+  # ============================================================================
+  api:
+    # platform: linux/amd64  # Use linux/arm64 for Apple Silicon
+    build:
+      context: .
+      dockerfile: ./apps/api/Dockerfile
+      args:
+        APP_PATH: apps/api
+        PORT: 4000
+    ports:
+      - "4000:4000"    # API port
+      - "12345:12345"  # Alloy UI port
+    environment:
+      # Application
+      PORT: 4000
+      NODE_ENV: production
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+      CORS_ORIGINS: ${CORS_ORIGINS:-["*"]}
+      
+      # Alloy - Application Info
+      APP_NAME: graphql-prisma-api
+      ENVIRONMENT: ${ENVIRONMENT:-development}
+      HOSTNAME: ${HOSTNAME:-api-container}
+      CLUSTER_NAME: ${CLUSTER_NAME:-local-dev}
+      APP_PORT: 4000
+      
+      # Alloy - Grafana Cloud Loki Configuration
+      # Get these from: https://grafana.com/docs/grafana-cloud/send-data/logs/logs-loki/
+      LOKI_URL: ${LOKI_URL}
+      LOKI_USERNAME: ${LOKI_USERNAME}
+      LOKI_PASSWORD: ${LOKI_PASSWORD}
+      
+      # Alloy - Grafana Cloud Prometheus Configuration
+      # Get these from: https://grafana.com/docs/grafana-cloud/send-data/metrics/metrics-prometheus/
+      PROMETHEUS_REMOTE_WRITE_URL: ${PROMETHEUS_REMOTE_WRITE_URL}
+      PROMETHEUS_USERNAME: ${PROMETHEUS_USERNAME}
+      PROMETHEUS_PASSWORD: ${PROMETHEUS_PASSWORD}
+      
+      # Database - SQLite (archivo local)
+      DATABASE_URL: ${DATABASE_URL:-file:/app/apps/api/prisma/dev.db}
+      
+      # Feature Flags (Optional - leave empty to disable)
+      FEATURE_FLAG_PROVIDER: ${FEATURE_FLAG_PROVIDER:-}
+      POSTHOG_API_KEY: ${POSTHOG_API_KEY:-}
+      POSTHOG_HOST: ${POSTHOG_HOST:-}
+      GROWTHBOOK_API_KEY: ${GROWTHBOOK_API_KEY:-}
+      GROWTHBOOK_API_HOST: ${GROWTHBOOK_API_HOST:-}
+    volumes:
+      # Persistir la base de datos SQLite
+      - sqlite_data:/app/apps/api/prisma
+    restart: unless-stopped
+
+volumes:
+  sqlite_data:
+

@@ -2,20 +2,32 @@
   "name": "@repo/feature-flags",
   "version": "0.0.0",
   "files": [
-    "src/**"
+    "src/**",
+    "dist/**"
   ],
   "exports": {
-    "./shared": "./src/shared/index.ts",
-    "./api": "./src/api/index.ts",
-    "./web": "./src/web/index.ts"
+    "./shared": {
+      "types": "./src/shared/index.ts",
+      "default": "./dist/shared/index.js"
+    },
+    "./api": {
+      "types": "./src/api/index.ts",
+      "default": "./dist/api/index.js"
+    },
+    "./web": {
+      "types": "./src/web/index.ts",
+      "import": "./dist/web/index.mjs",
+      "require": "./dist/web/index.js"
+    }
   },
   "license": "MIT",
   "scripts": {
-    "build": ""
+    "build": "tsup"
   },
   "devDependencies": {
     "@repo/typescript-config": "*",
     "@types/node": "24.1.0",
+    "@types/react": "^18.3.12",
     "tsup": "8.5.0",
     "typescript": "5.8.3"
   },
