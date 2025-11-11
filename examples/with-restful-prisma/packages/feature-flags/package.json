@@ -22,6 +22,7 @@
   "dependencies": {
     "posthog-js": "1.260.2",
     "posthog-node": "5.7.0",
+    "@repo/ui": "*",
     "@repo/utils": "*",
     "@growthbook/growthbook": "1.6.1",
     "@growthbook/growthbook-react": "1.6.1",
