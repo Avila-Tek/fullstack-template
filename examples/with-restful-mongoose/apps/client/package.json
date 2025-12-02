@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbo -p 3002",
+    "dev": "next dev -p 3002",
     "build": "next build",
     "start": "next start",
     "test": "jest",
@@ -13,11 +13,11 @@
   "dependencies": {
     "@hookform/resolvers": "5.2.1",
     "@repo/feature-flags": "*",
-    "@repo/services": "*",
     "@repo/schemas": "*",
+    "@repo/services": "*",
     "@repo/ui": "*",
     "@repo/utils": "*",
-    "@sentry/nextjs": "10.27.0",
+    "@sentry/nextjs": "10.28.0",
     "@t3-oss/env-nextjs": "0.13.8",
     "@tanstack/match-sorter-utils": "8.19.4",
     "@tanstack/react-query": "5.85.5",
