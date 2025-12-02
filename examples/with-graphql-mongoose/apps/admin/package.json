@@ -19,7 +19,7 @@
     "@repo/schemas": "*",
     "@repo/ui": "*",
     "@repo/utils": "*",
-    "@sentry/nextjs": "^10.27.0",
+    "@sentry/nextjs": "10.27.0",
     "@t3-oss/env-nextjs": "0.13.8",
     "@tailwindcss/postcss": "^4.1.11",
     "@tanstack/match-sorter-utils": "8.19.4",

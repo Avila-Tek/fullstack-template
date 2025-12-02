@@ -3,6 +3,8 @@
 import * as Sentry from '@sentry/nextjs';
 import React from 'react';
 
+type Primitive = string | number | boolean | null | undefined;
+
 /**
  * SentryWrapper
  * A client-side wrapper that applies Sentry metadata (tags, context, extras, user, fingerprint)
@@ -30,8 +32,6 @@ import React from 'react';
  * - Effect updates whenever metadata changes.
  * - Use for consistent observability across pages/layouts.
  */
-
-type Primitive = string | number | boolean | null | undefined;
 
 export type SentryAttrs = {
   user?: { id?: string; email?: string; username?: string };

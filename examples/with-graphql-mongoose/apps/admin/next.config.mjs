@@ -12,13 +12,13 @@ const sentryWebpackPluginOptions = {
   // https://www.npmjs.com/package/@sentry/webpack-plugin#options
 
   org: 'avilatek',
-
+  // TODO: Replace with your actual project name in Sentry
   project: 'YOUR_PROJECT_NAME_IN_SENTRY',
 
   // Only print logs for uploading source maps in CI
   silent: !process.env.CI,
-  tracesSampleRate: 0.3,
-  profilesSampleRate: 0.3,
+  tracesSampleRate: 0.2,
+  profilesSampleRate: 0.2,
   authToken: process.env.SENTRY_AUTH_TOKEN,
 
   // For all available options, see:
@@ -26,6 +26,12 @@ const sentryWebpackPluginOptions = {
 
   // Upload a larger set of source maps for prettier stack traces (increases build time)
   widenClientFileUpload: true,
+
+  hideSourceMaps: true,
+
+  reactComponentAnnotation: {
+    enabled: true,
+  },
 
   // Uncomment to route browser requests to Sentry through a Next.js rewrite to circumvent ad-blockers.
   // This can increase your server load as well as your hosting bill.
@@ -48,4 +54,4 @@ const config =
     ? withSentryConfig(nextConfig, sentryWebpackPluginOptions)
     : nextConfig;
 
-export default config
+export default config;
