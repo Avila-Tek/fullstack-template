@@ -1,10 +1,11 @@
-import { Prisma, PrismaClient } from '@prisma/client';
+import { Prisma, PrismaClient } from '@/generated/prisma/client';
 
 export const userOmit = {
   password: true,
   deleted: true,
   deletedAt: true,
 } as const;
+
 export type UserPublic = Prisma.UserGetPayload<{ omit: typeof userOmit }>;
 export type UserPrivate = Prisma.UserGetPayload<{
   omit: { deleted: true; deletedAt: true };

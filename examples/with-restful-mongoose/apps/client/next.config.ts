@@ -2,9 +2,6 @@ import { withSentryConfig } from '@sentry/nextjs';
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   transpilePackages: ['@repo/ui'],
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
 };
 
 const sentryWebpackPluginOptions = {
