@@ -5,7 +5,7 @@ alwaysApply: false
 ---
 ## Technologies used
 
-- **React & Next.js (v15)** - Build interactive UIs with React components in Next.js v15 using appRouter
+- **React & Next.js (v16)** - Build interactive UIs with React components in Next.js v15 using appRouter
 - **Tailwind CSS** - Utility-first CSS framework for rapid UI development
 - **TypeScript** - Full type safety across all packages
 - **Turborepo** - High-performance build system for JavaScript/TypeScript monorepos

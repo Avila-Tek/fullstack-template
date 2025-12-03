@@ -49,7 +49,10 @@ export async function disconnectFromDatabase(fastify: FastifyInstance) {
 
 export default fp(
   async (fastify) => {
-    const connection = await connectToDatabase();
+    const connection = await connectToDatabase().catch((err) => {
+      fastify.log.error(err);
+      process.exit(1);
+    });
 
     fastify.decorate('db', {
       connection,
