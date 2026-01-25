@@ -1,9 +1,14 @@
-import {
-  type ApolloClient,
-  ApolloError,
-  type OperationVariables,
-  type QueryOptions,
+import type {
+  ApolloClient,
+  OperationVariables,
+  QueryOptions,
 } from '@apollo/client';
+import {
+  CombinedGraphQLErrors,
+  ServerError,
+  ServerParseError,
+  UnconventionalError,
+} from '@apollo/client/errors';
 import { getClient } from './graphql-client';
 
 /**
@@ -44,35 +49,32 @@ export async function queryGraphql<TData>({
   client,
   ...opts
 }: QueryOptions<OperationVariables, TData> & {
-  client?: ApolloClient<unknown>;
+  client?: ApolloClient;
 }): Promise<TData> {
   try {
-    const { data, error, errors } = client
-      ? await client.query({
-          ...opts,
-        })
-      : await getClient().query({
-          ...opts,
-        });
+    const apollo = client ?? getClient();
 
-    if (typeof error !== 'undefined') {
-      throw new Error(error.message);
-    }
+    const result = await apollo.query({
+      ...opts,
+      errorPolicy: 'none',
+    });
 
-    if (
-      typeof errors !== 'undefined' &&
-      Array.isArray(errors) &&
-      errors.length > 0
-    ) {
-      console.debug(errors);
-      throw new Error('GraphQL errors occurred');
+    const data = (result as any).data as TData | null | undefined;
+
+    if (data == null) {
+      throw new Error('No data returned from GraphQL query');
     }
 
     return data;
   } catch (err) {
-    if (err instanceof ApolloError) {
-      // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-      console.log(err.name, JSON.stringify((err.networkError as any)?.result));
+    if (CombinedGraphQLErrors.is(err)) {
+      console.log('CombinedGraphQLErrors', err.message);
+    } else if (ServerError.is(err)) {
+      console.log('ServerError', err.statusCode, err.message);
+    } else if (ServerParseError.is(err)) {
+      console.log('ServerParseError', err.message);
+    } else if (UnconventionalError.is(err)) {
+      console.log('UnconventionalError', err.message);
     } else {
       console.debug(err);
     }

@@ -18,8 +18,8 @@
   },
   "devDependencies": {
     "@repo/typescript-config": "*",
-    "@types/node": "24.9.2",
-    "tsup": "8.5.0",
+    "@types/node": "25.0.10",
+    "tsup": "8.5.1",
     "typescript": "5.9.3"
   }
 }
