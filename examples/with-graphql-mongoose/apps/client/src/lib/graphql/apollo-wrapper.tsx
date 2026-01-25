@@ -7,7 +7,7 @@ import {
   ApolloNextAppProvider,
   InMemoryCache,
   SSRMultipartLink,
-} from '@apollo/experimental-nextjs-app-support';
+} from '@apollo/client-integration-nextjs';
 import { setVerbosity } from 'ts-invariant';
 
 if (process.env.NODE_ENV === 'development') {

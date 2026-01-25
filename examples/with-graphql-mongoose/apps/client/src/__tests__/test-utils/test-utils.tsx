@@ -4,8 +4,8 @@ import userEvent from '@testing-library/user-event';
 import React from 'react';
 import { handlers } from '../mocks/handlers';
 
-// mock @apollo/experimental-nextjs-app-support/rsc
-jest.mock('@apollo/experimental-nextjs-app-support/rsc', () => ({
+// mock @apollo/client-integration-nextjs/rsc
+jest.mock('@apollo/client-integration-nextjs/rsc', () => ({
   registerApolloClient: jest.fn(() => ({
     getClient: jest.fn(() => ({
       query: jest.fn(),

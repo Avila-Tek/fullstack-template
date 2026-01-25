@@ -1,10 +1,54 @@
-import type { NextConfig } from 'next';
-
-const nextConfig: NextConfig = {
+import { withSentryConfig } from '@sentry/nextjs';
+/** @type {import('next').NextConfig} */
+const nextConfig = {
   transpilePackages: ['@repo/ui'],
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
 };
 
-export default nextConfig;
+const sentryWebpackPluginOptions = {
+  // For all available options, see:
+  // https://www.npmjs.com/package/@sentry/webpack-plugin#options
+
+  org: 'avilatek',
+  // TODO: Replace with your actual project name in Sentry
+  project: 'YOUR_PROJECT_NAME_IN_SENTRY',
+
+  // Only print logs for uploading source maps in CI
+  silent: !process.env.CI,
+  tracesSampleRate: 0.2,
+  profilesSampleRate: 0.2,
+  authToken: process.env.SENTRY_AUTH_TOKEN,
+
+  // For all available options, see:
+  // https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/
+
+  // Upload a larger set of source maps for prettier stack traces (increases build time)
+  widenClientFileUpload: true,
+
+  hideSourceMaps: true,
+
+  reactComponentAnnotation: {
+    enabled: true,
+  },
+
+  // Uncomment to route browser requests to Sentry through a Next.js rewrite to circumvent ad-blockers.
+  // This can increase your server load as well as your hosting bill.
+  // Note: Check that the configured route will not match with your Next.js middleware, otherwise reporting of client-
+  // side errors will fail.
+  // tunnelRoute: "/monitoring",
+
+  // Automatically tree-shake Sentry logger statements to reduce bundle size
+  disableLogger: true,
+
+  // Enables automatic instrumentation of Vercel Cron Monitors. (Does not yet work with App Router route handlers.)
+  // See the following for more information:
+  // https://docs.sentry.io/product/crons/
+  // https://vercel.com/docs/cron-jobs
+  automaticVercelMonitors: true,
+};
+
+const config =
+  process.env.NODE_ENV === 'production'
+    ? withSentryConfig(nextConfig, sentryWebpackPluginOptions)
+    : nextConfig;
+
+export default config;

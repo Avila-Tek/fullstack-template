@@ -7,58 +7,34 @@
       "cache": false
     },
     "build": {
-      "dependsOn": [
-        "^build"
-      ],
-      "inputs": [
-        "$TURBO_DEFAULT$",
-        ".env*"
-      ],
-      "outputs": [
-        ".next/**",
-        "!.next/cache/**",
-        "dist/**"
-      ]
+      "dependsOn": ["^build"],
+      "inputs": ["$TURBO_DEFAULT$", ".env*"],
+      "outputs": [".next/**", "!.next/cache/**", "dist/**"],
+      "env": ["SENTRY_AUTH_TOKEN"]
     },
     "build#@repo/utils": {
       "dependsOn": [],
-      "outputs": [
-        "dist/**"
-      ]
+      "outputs": ["dist/**"]
     },
     "build#@repo/schemas": {
       "dependsOn": [],
-      "outputs": [
-        "dist/**"
-      ]
+      "outputs": ["dist/**"]
     },
     "build#@repo/services": {
-      "dependsOn": [
-        "@repo/schemas#build",
-        "@repo/utils#build"
-      ],
-      "outputs": [
-        "dist/**"
-      ]
+      "dependsOn": ["@repo/schemas#build", "@repo/utils#build"],
+      "outputs": ["dist/**"]
     },
     "build#@repo/ui": {
       "dependsOn": [],
       "outputs": []
     },
     "build#@repo/feature-flags": {
-      "dependsOn": [
-        "@repo/utils#build"
-      ],
+      "dependsOn": ["@repo/utils#build"],
       "outputs": []
     },
     "build#@repo/api": {
-      "dependsOn": [
-        "@repo/schemas#build",
-        "@repo/utils#build"
-      ],
-      "outputs": [
-        "dist/**"
-      ]
+      "dependsOn": ["@repo/schemas#build", "@repo/utils#build"],
+      "outputs": ["dist/**"]
     },
     "build#@repo/admin": {
       "dependsOn": [
@@ -67,10 +43,7 @@
         "@repo/ui#build",
         "@repo/utils#build"
       ],
-      "outputs": [
-        ".next/**",
-        "!.next/cache/**"
-      ]
+      "outputs": [".next/**", "!.next/cache/**"]
     },
     "build#@repo/client": {
       "dependsOn": [
@@ -80,15 +53,10 @@
         "@repo/ui#build",
         "@repo/utils#build"
       ],
-      "outputs": [
-        ".next/**",
-        "!.next/cache/**"
-      ]
+      "outputs": [".next/**", "!.next/cache/**"]
     },
     "test": {
-      "dependsOn": [
-        "^build"
-      ],
+      "dependsOn": ["^build"],
       "outputs": []
     },
     "dev": {
@@ -104,10 +72,7 @@
       "persistent": true
     },
     "dev#@repo/services": {
-      "dependsOn": [
-        "@repo/schemas#dev",
-        "@repo/utils#dev"
-      ],
+      "dependsOn": ["@repo/schemas#dev", "@repo/utils#dev"],
       "cache": false,
       "persistent": true
     },
@@ -116,17 +81,12 @@
       "persistent": true
     },
     "dev#@repo/feature-flags": {
-      "dependsOn": [
-        "@repo/utils#dev"
-      ],
+      "dependsOn": ["@repo/utils#dev"],
       "cache": false,
       "persistent": true
     },
     "dev#@repo/api": {
-      "dependsOn": [
-        "@repo/schemas#dev",
-        "@repo/utils#dev"
-      ],
+      "dependsOn": ["@repo/schemas#dev", "@repo/utils#dev"],
       "cache": false,
       "persistent": true
     },
@@ -155,9 +115,7 @@
       "dependsOn": []
     },
     "typecheck": {
-      "dependsOn": [
-        "^build"
-      ],
+      "dependsOn": ["^build"],
       "outputs": []
     }
   }
