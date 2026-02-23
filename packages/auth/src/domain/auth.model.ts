@@ -5,11 +5,11 @@ import { getEnumObjectFromArray } from '@repo/utils';
  * Aligned with backend schema (Better Auth + Supabase)
  */
 
-export const userStatus = ['Active', 'Disabled'] as const;
+export const userStatus = ['active', 'inactive'] as const;
 export type TUserStatusEnum = (typeof userStatus)[number];
 export const userStatusEnumObject = getEnumObjectFromArray(userStatus);
 
-export const roleCodes = ['USER', 'ADMIN'] as const;
+export const roleCodes = ['user', 'admin'] as const;
 export type TRoleCode = (typeof roleCodes)[number];
 
 export interface Role {
@@ -79,5 +79,5 @@ export function hasRole(
 }
 
 export function isAdmin(user: User | null | undefined): boolean {
-  return hasRole(user, 'ADMIN');
+  return hasRole(user, 'admin');
 }

@@ -1,63 +1,52 @@
 import type { Email } from './value-objects/Email';
 import type { UserId } from './value-objects/UserId';
-
-export type UserStatus = 'active' | 'disabled';
+import type { UserStatus } from './value-objects/UserStatus';
 
 export interface UserProps {
-	id: UserId;
-	email: Email;
-	password: string | null;
-	firstName: string | null;
-	lastName: string | null;
-	timezone: string;
-	status: UserStatus;
-	roleId: string | null;
+  id: UserId;
+  email: Email;
+  passwordHash: string | null;
+  firstName: string | null;
+  lastName: string | null;
+  status: UserStatus;
 }
 
 export class User {
-	private constructor(private readonly props: UserProps) {}
+  private constructor(private readonly props: UserProps) {}
 
-	static create(props: UserProps): User {
-		return new User(props);
-	}
+  static create(props: UserProps): User {
+    return new User(props);
+  }
 
-	static restore(props: UserProps): User {
-		return new User(props);
-	}
+  static restore(props: UserProps): User {
+    return new User(props);
+  }
 
-	get id(): UserId {
-		return this.props.id;
-	}
+  get id(): UserId {
+    return this.props.id;
+  }
 
-	get email(): Email {
-		return this.props.email;
-	}
+  get email(): Email {
+    return this.props.email;
+  }
 
-	get firstName(): string | null {
-		return this.props.firstName;
-	}
+  get firstName(): string | null {
+    return this.props.firstName;
+  }
 
-	get lastName(): string | null {
-		return this.props.lastName;
-	}
+  get lastName(): string | null {
+    return this.props.lastName;
+  }
 
-	get timezone(): string {
-		return this.props.timezone;
-	}
+  get status(): UserStatus {
+    return this.props.status;
+  }
 
-	get status(): UserStatus {
-		return this.props.status;
-	}
+  get passwordHash(): string | null {
+    return this.props.passwordHash;
+  }
 
-	get roleId(): string | null {
-		return this.props.roleId;
-	}
-
-	get password(): string | null {
-		return this.props.password;
-	}
-
-	isActive(): boolean {
-		return this.props.status === 'active';
-	}
+  isActive(): boolean {
+    return this.props.status === 'active';
+  }
 }

@@ -34,7 +34,7 @@ export const updateUserInput = userSchema
 export type TUpdateUserInput = z.infer<typeof updateUserInput>;
 
 export const assignRoleInput = z.object({
-  roleCode: z.enum(['USER', 'ADMIN']),
+  roleCode: z.enum(['user', 'admin']),
 });
 
 export type TAssignRoleInput = z.infer<typeof assignRoleInput>;

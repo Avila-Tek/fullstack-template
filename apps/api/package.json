@@ -17,6 +17,8 @@
 		"test:e2e": "jest --config ./test/jest-e2e.json"
 	},
 	"dependencies": {
+		"@repo/schemas": "*",
+		"zod": "^4.3.6",
 		"@nestjs/common": "^11.0.1",
 		"@nestjs/core": "^11.0.1",
 		"@nestjs/cqrs": "^11.0.3",
