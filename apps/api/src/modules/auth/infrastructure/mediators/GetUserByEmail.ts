@@ -5,7 +5,7 @@ import type {
   GetUserByEmailPort,
 } from '../../application/ports/out/GetUserByEmail';
 import { AuthUser } from '../../domain/entities/AuthUser';
-import type { UserStatusEnum } from '../../domain/value-objects/Status';
+import type { UserStatusEnum } from '../../domain/value-objects/UserStatus';
 
 export class GetUserByEmailAdapter
   implements ICommandHandler<GetUserByEmailPort>

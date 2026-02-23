@@ -1,6 +1,7 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 import type { User } from '../../domain/User';
 import { Email } from '../../domain/value-objects/Email';
+import { UserStatus } from '../../domain/value-objects/UserStatus';
 import { NewUser } from '../../domain/NewUser';
 import type { CreateUserDto, CreateUserPort } from '../ports/in/CreateUserPort';
 import type { UserRepository } from '../ports/out/UserRepository';
@@ -20,7 +21,7 @@ export class CreateUserUseCase implements CreateUserPort {
       passwordHash: dto.password,
       firstName: dto.firstName,
       lastName: dto.lastName,
-      status: 'active',
+      status: UserStatus.active(),
     });
     return this.userRepository.create(newUser);
   }

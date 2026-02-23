@@ -1,5 +1,5 @@
 import { Password } from '../value-objects/Password';
-import { Status, UserStatusEnum } from '../value-objects/Status';
+import { UserStatus, UserStatusEnum } from '../value-objects/UserStatus';
 
 interface AuthUserProps {
   id: string;
@@ -12,13 +12,13 @@ export class AuthUser {
   public readonly id: string;
   public readonly email: string;
   public readonly passwordHash: Password;
-  public readonly status: Status;
+  public readonly status: UserStatus;
 
   private constructor(props: AuthUserProps) {
     this.id = props.id;
     this.email = props.email;
     this.passwordHash = Password.restore(props.passwordHash || '');
-    this.status = Status.restore(props.status);
+    this.status = UserStatus.restore(props.status);
   }
 
   static restore(props: AuthUserProps): AuthUser {

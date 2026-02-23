@@ -1,6 +1,6 @@
 import type { Email } from './value-objects/Email';
 import type { UserId } from './value-objects/UserId';
-import type { UserStatus } from './value-objects/UserStatus';
+import { UserStatusEnum, type UserStatus } from './value-objects/UserStatus';
 
 export interface UserProps {
   id: UserId;
@@ -47,6 +47,6 @@ export class User {
   }
 
   isActive(): boolean {
-    return this.props.status === 'active';
+    return this.props.status.equals(UserStatusEnum.ACTIVE);
   }
 }

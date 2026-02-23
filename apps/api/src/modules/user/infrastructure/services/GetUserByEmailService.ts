@@ -19,7 +19,7 @@ export class GetUserByEmailService
       id: user.id.value,
       email: user.email.value,
       passwordHash: user.passwordHash,
-      status: user.status,
+      status: user.status.getValue(),
     };
   }
 }

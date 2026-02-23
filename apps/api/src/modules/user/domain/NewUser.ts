@@ -1,5 +1,5 @@
 import type { Email } from './value-objects/Email';
-import { UserStatus } from './value-objects/UserStatus';
+import { UserStatus, UserStatusEnum } from './value-objects/UserStatus';
 
 export interface UserProps {
   email: Email;
@@ -41,6 +41,6 @@ export class NewUser {
   }
 
   isActive(): boolean {
-    return this.props.status.getValue() === 'active';
+    return this.props.status.getValue() === UserStatusEnum.ACTIVE;
   }
 }
