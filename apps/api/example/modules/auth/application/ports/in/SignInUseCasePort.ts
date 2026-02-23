@@ -10,7 +10,7 @@ export interface LoginUserData {
   email: string;
   firstName: string | null;
   lastName: string | null;
-  status: 'ACTIVE' | 'INACTIVE';
+  status: 'active' | 'inactive';
   createdAt: string | null | undefined;
   updatedAt: string | null | undefined;
 }
