@@ -1,8 +1,8 @@
 import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { CommandBus } from '@nestjs/cqrs';
+import type { CommandBus } from '@nestjs/cqrs';
 import { SignInUseCasePort } from '../../application/ports/in/SignInUseCasePort';
-import { SignInRequest } from './dto/SignInRequest';
+import type { SignInRequest } from './dto/SignInRequest';
 import { SignInResponse } from './dto/SignInResponse';
 
 @ApiTags('auth')

@@ -1,12 +1,12 @@
-import { User } from '../../../domain/User';
+import type { User } from '../../../domain/User';
 
 export interface CreateUserDto {
-  email: string;
-  firstName: string;
-  lastName: string;
-  password: string;
+	email: string;
+	firstName: string;
+	lastName: string;
+	password: string;
 }
 
 export abstract class CreateUserPort {
-  abstract execute(dto: CreateUserDto): Promise<User>;
+	abstract execute(dto: CreateUserDto): Promise<User>;
 }

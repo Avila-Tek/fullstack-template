@@ -9,13 +9,13 @@ import { PasswordHasherAdapter } from './infrastructure/security/PasswordHasher'
 import { GetUserByEmailAdapter } from './infrastructure/mediators/GetUserByEmail';
 
 @Module({
-  imports: [],
-  providers: [
-    SignInUseCase,
-    { provide: GetUserByEmailPort, useClass: GetUserByEmailAdapter },
-    { provide: TokenGenerator, useClass: JwtTokenGenerator },
-    { provide: PasswordHasher, useClass: PasswordHasherAdapter },
-  ],
-  controllers: [AuthController],
+	imports: [],
+	providers: [
+		SignInUseCase,
+		{ provide: GetUserByEmailPort, useClass: GetUserByEmailAdapter },
+		{ provide: TokenGenerator, useClass: JwtTokenGenerator },
+		{ provide: PasswordHasher, useClass: PasswordHasherAdapter },
+	],
+	controllers: [AuthController],
 })
 export class AuthModule {}

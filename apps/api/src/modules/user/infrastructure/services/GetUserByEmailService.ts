@@ -1,24 +1,24 @@
-import { IQueryHandler, QueryHandler } from "@nestjs/cqrs";
-import { GetUserByEmailQuery } from "../../../shared/user/GetUserByEmail";
-import { GetUserByEmailPort } from "../../application/ports/in/GetUserByEmailPort";
+import { type IQueryHandler, QueryHandler } from '@nestjs/cqrs';
+import { GetUserByEmailQuery } from '../../../shared/user/GetUserByEmail';
+import type { GetUserByEmailPort } from '../../application/ports/in/GetUserByEmailPort';
 
 @QueryHandler(GetUserByEmailQuery)
 export class GetUserByEmailService
-  implements IQueryHandler<GetUserByEmailQuery>
+	implements IQueryHandler<GetUserByEmailQuery>
 {
-  constructor(private readonly getUserByEmail: GetUserByEmailPort) {}
+	constructor(private readonly getUserByEmail: GetUserByEmailPort) {}
 
-  async execute(query: GetUserByEmailQuery) {
-    const user = await this.getUserByEmail.execute(query.email);
+	async execute(query: GetUserByEmailQuery) {
+		const user = await this.getUserByEmail.execute(query.email);
 
-    if (!user) return null;
+		if (!user) return null;
 
-    return {
-      id: user.id.value,
-      email: user.email.value,
-      passwordHash: user.password!,
-      status: user.status,
-      roleId: "",
-    };
-  }
+		return {
+			id: user.id.value,
+			email: user.email.value,
+			passwordHash: user.password!,
+			status: user.status,
+			roleId: '',
+		};
+	}
 }

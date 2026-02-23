@@ -9,13 +9,13 @@ import { GetUserByEmailPort } from './application/ports/in/GetUserByEmailPort';
 import { GetUserByEmailService } from './infrastructure/services/GetUserByEmailService';
 
 @Module({
-  providers: [
-    GetUserByEmailService,
-    { provide: CreateUserPort, useClass: CreateUserUseCase },
-    { provide: UserRepository, useClass: UserRepositoryAdapter },
-    { provide: GetUserByEmailPort, useClass: GetUserByEmailUseCase },
-  ],
-  controllers: [UserController],
-  exports: [CreateUserPort, GetUserByEmailPort],
+	providers: [
+		GetUserByEmailService,
+		{ provide: CreateUserPort, useClass: CreateUserUseCase },
+		{ provide: UserRepository, useClass: UserRepositoryAdapter },
+		{ provide: GetUserByEmailPort, useClass: GetUserByEmailUseCase },
+	],
+	controllers: [UserController],
+	exports: [CreateUserPort, GetUserByEmailPort],
 })
 export class UsersModule {}
