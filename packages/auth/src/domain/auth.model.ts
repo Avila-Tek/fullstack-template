@@ -5,7 +5,7 @@ import { getEnumObjectFromArray } from '@repo/utils';
  * Aligned with backend schema (Better Auth + Supabase)
  */
 
-export const userStatus = ['ACTIVE', 'INACTIVE'] as const;
+export const userStatus = ['active', 'inactive'] as const;
 export type TUserStatusEnum = (typeof userStatus)[number];
 export const userStatusEnumObject = getEnumObjectFromArray(userStatus);
 
@@ -24,7 +24,7 @@ export interface User {
   email: string;
   firstName: string | null;
   lastName: string | null;
-  timezone: string;
+  timezone?: string;
   status: TUserStatusEnum;
   role: Role | null;
   createdAt: Date;

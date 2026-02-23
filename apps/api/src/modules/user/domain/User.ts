@@ -8,6 +8,7 @@ export interface UserProps {
   passwordHash: string | null;
   firstName: string | null;
   lastName: string | null;
+  timezone?: string;
   status: UserStatus;
 }
 
@@ -36,6 +37,10 @@ export class User {
 
   get lastName(): string | null {
     return this.props.lastName;
+  }
+
+  get timezone(): string | undefined {
+    return this.props.timezone;
   }
 
   get status(): UserStatus {

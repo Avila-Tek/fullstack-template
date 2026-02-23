@@ -8,7 +8,7 @@ import { User } from '../../domain/User';
 import { Email } from '../../domain/value-objects/Email';
 import { UserId } from '../../domain/value-objects/UserId';
 import { users } from './user.schema';
-import { UserStatus, UserStatusEnum } from '../../domain/value-objects/UserStatus';
+import { UserStatus, type UserStatusEnum } from '../../domain/value-objects/UserStatus';
 
 @Injectable()
 export class UserRepositoryAdapter implements UserRepository {

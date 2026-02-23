@@ -9,6 +9,7 @@ export function userFromDomain(user: User): TUser {
 		email: user.email.value,
 		firstName: user.firstName,
 		lastName: user.lastName,
+		timezone: user.timezone,
 		status,
 		createdAt: undefined,
 		updatedAt: undefined,

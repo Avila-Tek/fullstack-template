@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { zDateToIsoNullableOpt } from '../utils';
 
-export const userStatusSchema = z.enum(['ACTIVE', 'INACTIVE']);
+export const userStatusSchema = z.enum(['active', 'inactive']);
 export type TUserStatus = z.infer<typeof userStatusSchema>;
 
 export const roleSchema = z.object({
@@ -18,7 +18,7 @@ export const userSchema = z.object({
   email: z.email().min(5),
   firstName: z.string().nullable(),
   lastName: z.string().nullable(),
-  timezone: z.string(),
+  timezone: z.string().optional(),
   status: userStatusSchema,
   role: roleSchema.nullable().optional(),
   createdAt: zDateToIsoNullableOpt,

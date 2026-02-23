@@ -58,6 +58,7 @@ export class SignInUseCase implements ICommandHandler<SignInUseCasePort> {
         email: user.email,
         firstName: null,
         lastName: null,
+        timezone: undefined,
         status: user.status.getValue(),
         createdAt: undefined,
         updatedAt: undefined,

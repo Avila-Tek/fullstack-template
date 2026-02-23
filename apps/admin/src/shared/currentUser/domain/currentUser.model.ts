@@ -11,7 +11,7 @@ export interface UserSession {
     email: string;
     firstName: string | null;
     lastName: string | null;
-    timezone: string;
+    timezone?: string;
     status: string;
     createdAt: Date;
     updatedAt: Date;

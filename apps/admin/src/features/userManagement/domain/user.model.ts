@@ -3,14 +3,14 @@
  * This represents the user entity as used in the UI layer
  */
 
-export type UserStatus = 'ACTIVE' | 'INACTIVE';
+export type UserStatus = 'active' | 'inactive';
 
 export interface User {
   id: string;
   firstName: string | null;
   lastName: string | null;
   email: string;
-  timezone: string;
+  timezone?: string;
   status: UserStatus;
   createdAt: Date | null;
   updatedAt: Date | null;
