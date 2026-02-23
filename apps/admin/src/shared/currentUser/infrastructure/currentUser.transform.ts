@@ -13,11 +13,11 @@ export function toCurrentUserDomain(dto: CurrentUserDto): User {
     firstName: dto.firstName ?? null,
     lastName: dto.lastName ?? null,
     timezone: dto.timezone,
-    status: dto.status as 'active' | 'inactive',
+    status: dto.status as 'ACTIVE' | 'INACTIVE',
     role: dto.role
       ? {
           id: dto.role.id,
-          code: dto.role.code as 'user' | 'admin',
+          code: dto.role.code as 'USER' | 'ADMIN',
           name: dto.role.name,
           permissions: dto.role.permissions ?? [],
         }

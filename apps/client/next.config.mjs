@@ -6,6 +6,13 @@ const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+  webpack: (config) => {
+    config.watchOptions = {
+      ...config.watchOptions,
+      ignored: ['**/node_modules', '**/example/**'],
+    };
+    return config;
+  },
 };
 
 const sentryWebpackPluginOptions = {

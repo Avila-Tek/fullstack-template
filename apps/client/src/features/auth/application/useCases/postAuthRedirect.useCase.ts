@@ -1,5 +1,4 @@
 import { currentUserRoutes } from '@/src/shared/currentUser/domain/currentUser.constants';
-import { hasActiveSubscription } from '@/src/shared/currentUser/domain/currentUser.logic';
 import type { CurrentUser } from '@/src/shared/currentUser/domain/currentUser.model';
 
 /**
@@ -8,8 +7,5 @@ import type { CurrentUser } from '@/src/shared/currentUser/domain/currentUser.mo
  * @returns The redirect URL (/plans if no active subscription, /dashboard if has active subscription)
  */
 export function determinePostAuthRedirect(user: CurrentUser | null): string {
-  if (hasActiveSubscription(user)) {
-    return currentUserRoutes.dashboard;
-  }
-  return currentUserRoutes.plans;
+  return '/home';
 }

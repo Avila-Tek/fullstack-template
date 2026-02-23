@@ -32,7 +32,7 @@ export function SignUpForm() {
 
   const signUp = useSignUp();
   const signIn = useSignIn();
-  const { refetchUser, hasActiveSubscription } = useUser();
+  const { refetchUser } = useUser();
 
   const methods = useForm<TSignUpForm>({
     defaultValues: createSignUpDefaultValues(),
@@ -63,7 +63,7 @@ export function SignUpForm() {
           // Refetch user data from UserContext (which includes subscription)
           await refetchUser();
           // Redirect based on subscription status
-          const redirectUrl = hasActiveSubscription ? '/dashboard' : '/plans';
+          const redirectUrl = '/dashboard';
           router.push(redirectUrl);
         }
       }
