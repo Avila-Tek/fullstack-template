@@ -1,12 +1,16 @@
+import { Inject } from '@nestjs/common';
 import { type IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { GetUserByEmailQuery } from '../../../shared/user/GetUserByEmail';
-import type { GetUserByEmailPort } from '../../application/ports/in/GetUserByEmailPort';
+import { GetUserByEmailPort } from '../../application/ports/in/GetUserByEmailPort';
 
 @QueryHandler(GetUserByEmailQuery)
 export class GetUserByEmailService
   implements IQueryHandler<GetUserByEmailQuery>
 {
-  constructor(private readonly getUserByEmail: GetUserByEmailPort) {}
+  constructor(
+    @Inject(GetUserByEmailPort)
+    private readonly getUserByEmail: GetUserByEmailPort
+  ) {}
 
   async execute(query: GetUserByEmailQuery) {
     const user = await this.getUserByEmail.execute(query.email);

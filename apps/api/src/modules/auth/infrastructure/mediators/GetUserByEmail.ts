@@ -1,4 +1,5 @@
-import type { ICommandHandler, QueryBus } from '@nestjs/cqrs';
+import { Inject } from '@nestjs/common';
+import { type ICommandHandler, QueryBus } from '@nestjs/cqrs';
 import { GetUserByEmailQuery } from '../../../shared/user/GetUserByEmail';
 import type {
   GetUserByEmailCommand,
@@ -10,7 +11,10 @@ import type { UserStatusEnum } from '../../domain/value-objects/UserStatus';
 export class GetUserByEmailAdapter
   implements ICommandHandler<GetUserByEmailPort>
 {
-  constructor(private readonly queryBus: QueryBus) {}
+  constructor(
+    @Inject(QueryBus)
+    private readonly queryBus: QueryBus
+  ) {}
 
   async execute(command: GetUserByEmailCommand) {
     const result = await this.queryBus.execute(
