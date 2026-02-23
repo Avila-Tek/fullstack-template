@@ -2,11 +2,15 @@ import helmet from 'helmet';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
+import { ZodValidationPipe } from './shared/pipes/zodValidationPipe';
 // import { DomainErrorFilter } from './modules/shared/platform/web/DomainErrorFilter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  app.useGlobalPipes(new ZodValidationPipe());
+
+  // app.useGlobalFilters(new DomainErrorFilter());
   app.use(
     helmet({
       contentSecurityPolicy: false,

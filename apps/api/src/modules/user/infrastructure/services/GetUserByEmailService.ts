@@ -4,21 +4,22 @@ import type { GetUserByEmailPort } from '../../application/ports/in/GetUserByEma
 
 @QueryHandler(GetUserByEmailQuery)
 export class GetUserByEmailService
-	implements IQueryHandler<GetUserByEmailQuery>
+  implements IQueryHandler<GetUserByEmailQuery>
 {
-	constructor(private readonly getUserByEmail: GetUserByEmailPort) {}
+  constructor(private readonly getUserByEmail: GetUserByEmailPort) {}
 
-	async execute(query: GetUserByEmailQuery) {
-		const user = await this.getUserByEmail.execute(query.email);
+  async execute(query: GetUserByEmailQuery) {
+    const user = await this.getUserByEmail.execute(query.email);
 
-		if (!user) return null;
+    if (!user) return null;
 
-		return {
-			id: user.id.value,
-			email: user.email.value,
-			passwordHash: user.password!,
-			status: user.status,
-			roleId: '',
-		};
-	}
+    if (!user.passwordHash) throw new Error('User has no password hash');
+
+    return {
+      id: user.id.value,
+      email: user.email.value,
+      passwordHash: user.passwordHash,
+      status: user.status.getValue(),
+    };
+  }
 }

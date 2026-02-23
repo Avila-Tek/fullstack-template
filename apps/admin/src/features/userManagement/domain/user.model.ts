@@ -3,7 +3,7 @@
  * This represents the user entity as used in the UI layer
  */
 
-export type UserStatus = 'Active' | 'Disabled';
+export type UserStatus = 'active' | 'inactive';
 
 export interface User {
   id: string;

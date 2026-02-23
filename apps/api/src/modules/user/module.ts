@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { CreateUserPort } from './application/ports/in/CreateUserPort';
 import { UserRepository } from './application/ports/out/UserRepository';
-import { CreateUserUseCase } from './application/use-cases/RegisterUserUseCase';
+import { CreateUserUseCase } from './application/use-cases/CreateUserUseCase';
 import { UserRepositoryAdapter } from './infrastructure/persistence/UserRepositoryAdapter';
 import { UserController } from './infrastructure/web/UserController';
 import { GetUserByEmailUseCase } from './application/use-cases/GetUserByEmailUseCase';

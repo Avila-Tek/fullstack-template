@@ -155,45 +155,11 @@ const getSessionResponse = z.discriminatedUnion('success', [
 
 export type TGetSessionResponse = z.infer<typeof getSessionResponse>;
 
-// Subscription schema for current user
-const userSubscriptionSchema = z
-  .object({
-    id: z.string(),
-    status: z.string(),
-    isFree: z.boolean(),
-    currentPeriodStart: z.string().nullable(),
-    currentPeriodEnd: z.string().nullable(),
-    cancelAtPeriodEnd: z.boolean(),
-    plan: z.object({
-      id: z.string(),
-      key: z.string(),
-      name: z.string(),
-      isFree: z.boolean(),
-      limits: z.object({
-        habitsMax: z.number().nullable(),
-        reportsEnabled: z.boolean(),
-        historyDays: z.number().nullable(),
-        remindersEnabled: z.boolean(),
-      }),
-    }),
-    price: z.object({
-      id: z.string(),
-      currency: z.string(),
-      interval: z.string(),
-      amountCents: z.number(),
-    }),
-  })
-  .nullable();
-
-export type TUserSubscription = z.infer<typeof userSubscriptionSchema>;
-
 // Current User Response (with subscription)
 const currentUserResponse = z.discriminatedUnion('success', [
   z.object({
     success: z.literal(true),
-    data: userSchema.extend({
-      subscription: userSubscriptionSchema,
-    }),
+    data: userSchema,
   }),
   z.object({ success: z.literal(false), error: z.string() }),
 ]);
