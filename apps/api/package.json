@@ -6,9 +6,9 @@
     "build": "nest build",
     "format": "npx @biomejs/biome format --write",
     "start": "nest start",
-    "dev": "nest start --watch",
+    "dev": "nest start --watch -r tsconfig-paths/register",
     "start:debug": "nest start --debug --watch",
-    "start:prod": "node dist/main",
+    "start:prod": "node -r tsconfig-paths/register dist/main.js",
     "lint": "npx @biomejs/biome lint --write",
     "test": "vitest",
     "test:watch": "vitest --watch",
@@ -30,8 +30,7 @@
     "helmet": "^8.1.0",
     "pg": "^8.18.0",
     "reflect-metadata": "^0.2.2",
-    "rxjs": "^7.8.1",
-    "ts-alias": "^0.0.7"
+    "rxjs": "^7.8.1"
   },
   "devDependencies": {
     "@biomejs/biome": "2.4.4",

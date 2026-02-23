@@ -2,8 +2,8 @@ import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import type { CommandBus } from '@nestjs/cqrs';
 import { authDTO, type TSignInInput, type TSignInResponse } from '@repo/schemas';
-import { ZodApiBody, ZodApiResponse } from '../../../../shared/decorators/zodSwagger';
 import { SignInUseCasePort } from '../../application/ports/in/SignInUseCasePort';
+import { ZodApiBody, ZodApiResponse } from '../../../../shared/decorators/zodSwagger';
 
 @ApiTags('auth')
 @Controller('auth')
