@@ -10,19 +10,7 @@ export interface UserProps {
 }
 
 export class NewUser {
-  public email: Email;
-  public passwordHash: string;
-  public firstName: string | null;
-  public lastName: string | null;
-  public status: UserStatus;
-
-  private constructor(private readonly props: UserProps) {
-    this.email = props.email;
-    this.passwordHash = props.passwordHash;
-    this.firstName = props.firstName;
-    this.lastName = props.lastName;
-    this.status = props.status;
-  }
+  private constructor(private readonly props: UserProps) {}
 
   static create(props: UserProps): NewUser {
     return new NewUser(props);
@@ -30,6 +18,26 @@ export class NewUser {
 
   static restore(props: UserProps): NewUser {
     return new NewUser(props);
+  }
+
+  get email(): Email {
+    return this.props.email;
+  }
+
+  get firstName(): string | null {
+    return this.props.firstName;
+  }
+
+  get lastName(): string | null {
+    return this.props.lastName;
+  }
+
+  get status(): UserStatus {
+    return this.props.status;
+  }
+
+  get passwordHash(): string {
+    return this.props.passwordHash;
   }
 
   isActive(): boolean {
