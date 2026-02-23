@@ -23,13 +23,12 @@ import { GoogleLoginButton } from '../components/GoogleLoginButton';
 import { LoginFormContent } from '../components/LoginFormContent';
 
 export function LoginForm() {
-  const router = useRouter();
   const [tagline] = React.useState(() =>
     getRandomTagline(authPageTypeEnumObject.login)
   );
 
   const signIn = useSignIn();
-  const { setSession, refetchUser, hasActiveSubscription } = useUser();
+  const { setSession, refetchUser } = useUser();
 
   const methods = useForm<TLoginForm>({
     defaultValues: createLoginDefaultValues(),
@@ -47,8 +46,6 @@ export function LoginForm() {
       // Refetch user data from UserContext (which includes subscription)
       await refetchUser();
       // Redirect based on subscription status
-      const redirectUrl = hasActiveSubscription ? '/dashboard' : '/plans';
-      router.push(redirectUrl);
     }
   }
 

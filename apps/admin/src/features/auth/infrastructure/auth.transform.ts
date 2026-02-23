@@ -6,7 +6,7 @@ export function toRoleDomain(dto: TRole | null | undefined): Role | null {
   if (!dto) return null;
   return {
     id: dto.id,
-    code: dto.code as 'user' | 'admin',
+    code: dto.code as 'USER' | 'ADMIN',
     name: dto.name,
     permissions: dto.permissions ?? [],
   };
@@ -18,8 +18,8 @@ export function toUserDomain(dto: AuthUserDto): User {
     email: dto.email,
     firstName: dto.firstName ?? null,
     lastName: dto.lastName ?? null,
-    timezone: dto.timezone,
-    status: dto.status as 'active' | 'inactive',
+    timezone: dto.timezone ?? '',
+    status: dto.status as 'ACTIVE' | 'INACTIVE',
     role: toRoleDomain(dto.role),
     createdAt: dto.createdAt ? new Date(dto.createdAt) : new Date(),
     updatedAt: dto.updatedAt ? new Date(dto.updatedAt) : new Date(),

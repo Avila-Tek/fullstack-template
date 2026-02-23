@@ -1,0 +1,180 @@
+/* Surface colors - renamed from bg-primary to avoid conflict with Tailwind's bg-primary */
+@utility bg-surface {
+  @apply bg-base-white;
+  @apply dark:bg-gray-dark-mode-950;
+}
+
+@utility bg-surface_alt {
+  @apply bg-base-white;
+  @apply dark:bg-gray-dark-mode-800;
+}
+
+@utility bg-surface_hover {
+  @apply bg-gray-light-mode-50;
+  @apply dark:bg-gray-dark-mode-800;
+}
+
+@utility bg-surface-solid {
+  @apply bg-gray-light-mode-950;
+  @apply dark:bg-gray-dark-mode-800;
+}
+
+@utility bg-secondary {
+  @apply bg-gray-light-mode-50;
+  @apply dark:bg-gray-dark-mode-900;
+}
+
+@utility bg-secondary_alt {
+  @apply bg-gray-light-mode-50;
+  @apply dark:bg-gray-dark-mode-950;
+}
+
+@utility bg-secondary_hover {
+  @apply bg-gray-light-mode-100;
+  @apply dark:bg-gray-dark-mode-800;
+}
+
+@utility bg-secondary_subtle {
+  @apply bg-gray-light-mode-25;
+  @apply dark:bg-gray-dark-mode-900;
+}
+
+@utility bg-secondary-solid {
+  @apply bg-gray-light-mode-600;
+  @apply dark:bg-gray-dark-mode-600;
+}
+
+@utility bg-tertiary {
+  @apply bg-gray-light-mode-100;
+  @apply dark:bg-gray-dark-mode-800;
+}
+
+@utility bg-quaternary {
+  @apply bg-gray-light-mode-200;
+  @apply dark:bg-gray-dark-mode-700;
+}
+
+@utility bg-active {
+  @apply bg-gray-light-mode-50;
+  @apply dark:bg-gray-dark-mode-800;
+}
+
+@utility bg-disabled {
+  @apply bg-gray-light-mode-100;
+  @apply dark:bg-gray-dark-mode-800;
+}
+
+@utility bg-disabled_subtle {
+  @apply bg-gray-light-mode-50;
+  @apply dark:bg-gray-dark-mode-900;
+}
+
+@utility bg-overlay {
+  @apply bg-gray-light-mode-950;
+  @apply dark:bg-gray-dark-mode-800;
+}
+
+@utility bg-brand-surface {
+  @apply bg-brand-50;
+  @apply dark:bg-brand-500;
+}
+
+@utility bg-brand-surface_alt {
+  @apply bg-brand-50;
+  @apply dark:bg-gray-dark-mode-800;
+}
+
+@utility bg-brand-secondary {
+  @apply bg-brand-100;
+  @apply dark:bg-brand-600;
+}
+
+@utility bg-brand-tertiary {
+  @apply bg-brand-25;
+  @apply dark:bg-gray-dark-mode-800;
+}
+
+@utility bg-brand-solid {
+  @apply bg-brand-600;
+  @apply dark:bg-brand-600;
+}
+
+@utility bg-brand-solid_alt {
+  @apply bg-brand-500;
+  @apply dark:bg-brand-400;
+}
+
+@utility bg-brand-solid_hover {
+  @apply bg-brand-700;
+  @apply dark:bg-brand-500;
+}
+
+@utility bg-brand-section {
+  @apply bg-brand-800;
+  @apply dark:bg-gray-dark-mode-800;
+}
+
+@utility bg-brand-section_subtle {
+  @apply bg-brand-700;
+  @apply dark:bg-gray-dark-mode-950;
+}
+
+@utility bg-error-surface {
+  @apply bg-error-50;
+  @apply dark:bg-error-500;
+}
+
+@utility bg-error-secondary {
+  @apply bg-error-100;
+  @apply dark:bg-error-600;
+}
+
+@utility bg-error-solid {
+  @apply bg-error-600;
+  @apply dark:bg-error-600;
+}
+
+@utility bg-warning-surface {
+  @apply bg-warning-50;
+  @apply dark:bg-warning-500;
+}
+
+@utility bg-warning-secondary {
+  @apply bg-warning-100;
+  @apply dark:bg-warning-600;
+}
+
+@utility bg-warning-solid {
+  @apply bg-warning-600;
+  @apply dark:bg-warning-600;
+}
+
+@utility bg-success-surface {
+  @apply bg-success-50;
+  @apply dark:bg-success-500;
+}
+
+@utility bg-success-secondary {
+  @apply bg-success-100;
+  @apply dark:bg-success-600;
+}
+
+@utility bg-success-solid {
+  @apply bg-success-600;
+  @apply dark:bg-success-600;
+}
+
+@utility bg-utility-brand-100 {
+  @apply bg-brand-100;
+  @apply dark:bg-brand-900;
+}
+
+@utility bg-utility-brand-200 {
+  @apply bg-brand-200;
+  @apply dark:bg-brand-800;
+}
+
+@utility bg-utility-brand-700 {
+  @apply bg-brand-700;
+  @apply dark:bg-brand-300;
+}
