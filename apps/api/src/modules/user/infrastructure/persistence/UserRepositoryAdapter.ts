@@ -1,9 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
-import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
+import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { DRIZZLE_CLIENT } from '../../../../infrastructure/database/drizzle.module';
-import type { UserRepository } from '../../application/ports/out/UserRepository';
-import type { NewUser } from '../../domain/NewUser';
+import { UserRepository } from '../../application/ports/out/UserRepository';
+import { NewUser } from '../../domain/NewUser';
 import { User } from '../../domain/User';
 import { Email } from '../../domain/value-objects/Email';
 import { UserId } from '../../domain/value-objects/UserId';

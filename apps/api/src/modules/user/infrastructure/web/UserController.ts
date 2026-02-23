@@ -1,8 +1,8 @@
 import { BadRequestException, Body, Controller, Post } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { createUserInput, type TUser, userSchema } from '@repo/schemas';
+import { createUserInput, TUser, userSchema } from '@repo/schemas';
 import { ZodApiBody, ZodApiResponse } from '../../../../shared/decorators/zodSwagger';
-import type { CreateUserPort } from '../../application/ports/in/CreateUserPort';
+import { CreateUserPort } from '../../application/ports/in/CreateUserPort';
 import { InvalidPasswordError } from '../../domain/policies/PasswordPolicy';
 import { RegisterUserRequest } from './dto/RegisterUserRequest';
 import { userFromDomain } from './dto/UserResponse';

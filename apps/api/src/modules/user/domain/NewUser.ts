@@ -1,4 +1,4 @@
-import type { Email } from './value-objects/Email';
+import { Email } from './value-objects/Email';
 import { type UserStatus, UserStatusEnum } from './value-objects/UserStatus';
 
 export interface UserProps {

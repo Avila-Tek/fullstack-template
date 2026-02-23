@@ -1,4 +1,4 @@
-import type { PasswordHasher } from '../../application/ports/out/PasswordHasher';
+import { PasswordHasher } from '../../application/ports/out/PasswordHasher';
 
 export class PasswordHasherAdapter implements PasswordHasher {
 	async hash(password: string) {

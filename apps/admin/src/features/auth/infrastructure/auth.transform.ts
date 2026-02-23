@@ -19,7 +19,7 @@ export function toUserDomain(dto: AuthUserDto): User {
     firstName: dto.firstName ?? null,
     lastName: dto.lastName ?? null,
     timezone: dto.timezone ?? '',
-    status: dto.status as 'ACTIVE' | 'INACTIVE',
+    status: dto.status as 'active' | 'inactive',
     role: toRoleDomain(dto.role),
     createdAt: dto.createdAt ? new Date(dto.createdAt) : new Date(),
     updatedAt: dto.updatedAt ? new Date(dto.updatedAt) : new Date(),

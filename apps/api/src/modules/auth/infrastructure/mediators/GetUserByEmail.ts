@@ -1,11 +1,11 @@
-import type { ICommandHandler, QueryBus } from '@nestjs/cqrs';
+import { ICommandHandler, QueryBus } from '@nestjs/cqrs';
 import { GetUserByEmailQuery } from '../../../shared/user/GetUserByEmail';
-import type {
+import {
   GetUserByEmailCommand,
   GetUserByEmailPort,
 } from '../../application/ports/out/GetUserByEmail';
 import { AuthUser } from '../../domain/entities/AuthUser';
-import type { UserStatusEnum } from '../../domain/value-objects/UserStatus';
+import { UserStatusEnum } from '../../domain/value-objects/UserStatus';
 
 export class GetUserByEmailAdapter
   implements ICommandHandler<GetUserByEmailPort>

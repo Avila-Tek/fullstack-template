@@ -1,5 +1,5 @@
-import type { Email } from './value-objects/Email';
-import type { UserId } from './value-objects/UserId';
+import { Email } from './value-objects/Email';
+import { UserId } from './value-objects/UserId';
 import { UserStatusEnum, type UserStatus } from './value-objects/UserStatus';
 
 export interface UserProps {

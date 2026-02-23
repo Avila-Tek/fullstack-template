@@ -1,7 +1,7 @@
 // sign-in.usecase.spec.ts
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { UnauthorizedException } from '@nestjs/common';
-import type { QueryBus } from '@nestjs/cqrs';
+import { QueryBus } from '@nestjs/cqrs';
 import { SignInUseCase } from '../../modules/auth/application/use-case/SignInUseCase';
 
 function mockUser(overrides: Partial<any> = {}) {

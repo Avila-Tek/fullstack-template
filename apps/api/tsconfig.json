@@ -5,7 +5,7 @@
     "resolvePackageJsonExports": true,
     "esModuleInterop": true,
     "isolatedModules": true,
-    "baseUrl": "./",
+    // "baseUrl": "./",
     "declaration": true,
     "removeComments": true,
     "emitDecoratorMetadata": true,
@@ -20,10 +20,10 @@
     "forceConsistentCasingInFileNames": true,
     "noImplicitAny": false,
     "strictBindCallApply": false,
-    "noFallthroughCasesInSwitch": false,
-    "paths": {
-      "@modules/": ["./src/modules"],
-      "@shared/": ["./src/shared"]
-    }
+    "noFallthroughCasesInSwitch": false
+    // "paths": {
+    //   "@modules/": ["./src/modules"],
+    //   "@shared/": ["./src/shared"]
+    // }
   }
 }

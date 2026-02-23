@@ -6,7 +6,7 @@
     "build": "nest build ./src",
     "format": "npx @biomejs/biome format --write",
     "start": "nest start",
-    "dev": "nest start --watch ./src -r tsconfig-paths/register",
+    "dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node -r tsconfig-paths/register dist/main.js",
     "lint": "npx @biomejs/biome lint --write",

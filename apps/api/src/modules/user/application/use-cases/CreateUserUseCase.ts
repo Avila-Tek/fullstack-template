@@ -1,10 +1,10 @@
 import { ConflictException, Injectable } from '@nestjs/common';
-import type { User } from '../../domain/User';
+import { User } from '../../domain/User';
 import { Email } from '../../domain/value-objects/Email';
 import { UserStatus } from '../../domain/value-objects/UserStatus';
 import { NewUser } from '../../domain/NewUser';
-import type { CreateUserDto, CreateUserPort } from '../ports/in/CreateUserPort';
-import type { UserRepository } from '../ports/out/UserRepository';
+import { CreateUserDto, CreateUserPort } from '../ports/in/CreateUserPort';
+import { UserRepository } from '../ports/out/UserRepository';
 
 @Injectable()
 export class CreateUserUseCase implements CreateUserPort {

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import type {
+import {
   TokenGenerator,
   TokenPayload,
 } from '../../application/ports/out/TokenGenerator';

@@ -1,16 +1,16 @@
 import { Command } from '@nestjs/cqrs';
-import type { AuthUser } from '../../../domain/entities/AuthUser';
+import { AuthUser } from '../../../domain/entities/AuthUser';
 
 export interface GetUserByEmailCommand {
-	email: string;
-	password: string;
+  email: string;
+  password: string;
 }
 
 export class GetUserByEmailPort extends Command<AuthUser | null> {
-	constructor(
-		public readonly email: string,
-		public readonly password: string,
-	) {
-		super();
-	}
+  constructor(
+    public readonly email: string,
+    public readonly password: string
+  ) {
+    super();
+  }
 }
