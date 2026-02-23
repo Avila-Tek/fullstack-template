@@ -1,0 +1,139 @@
+@utility txt-primary-900 {
+  @apply text-gray-light-mode-900;
+  @apply dark:text-gray-dark-mode-50;
+}
+
+@utility txt-primary_on-brand {
+  @apply text-base-white;
+  @apply dark:text-gray-dark-mode-50;
+}
+
+@utility txt-secondary-700 {
+  @apply text-gray-light-mode-700;
+  @apply dark:text-gray-dark-mode-300;
+}
+
+@utility txt-secondary_hover {
+  @apply text-gray-light-mode-800;
+  @apply dark:text-gray-dark-mode-200;
+}
+
+@utility txt-secondary_on-brand {
+  @apply text-brand-200;
+  @apply dark:text-gray-dark-mode-300;
+}
+
+@utility txt-tertiary-600 {
+  @apply text-gray-light-mode-600;
+  @apply dark:text-gray-dark-mode-400;
+}
+
+@utility txt-tertiary_hover {
+  @apply text-gray-light-mode-700;
+  @apply dark:text-gray-dark-mode-300;
+}
+
+@utility txt-tertiary_on-brand {
+  @apply text-brand-200;
+  @apply dark:text-gray-dark-mode-400;
+}
+
+@utility txt-quaternary-500 {
+  @apply text-gray-light-mode-500;
+  @apply dark:text-gray-dark-mode-400;
+}
+
+@utility txt-quaternary-400 {
+  @apply text-gray-light-mode-400;
+  @apply dark:text-gray-dark-mode-500;
+}
+
+@utility txt-quaternary_on-brand {
+  @apply text-brand-300;
+  @apply dark:text-gray-dark-mode-400;
+}
+
+@utility txt-white {
+  @apply text-base-white;
+  @apply dark:text-base-white;
+}
+
+@utility txt-disabled {
+  @apply text-gray-light-mode-500;
+  @apply dark:text-gray-dark-mode-500;
+}
+
+@utility txt-placeholder {
+  @apply text-gray-light-mode-500;
+  @apply dark:text-gray-dark-mode-500;
+}
+
+@utility txt-placeholder_subtle {
+  @apply text-gray-light-mode-300;
+  @apply dark:text-gray-dark-mode-700;
+}
+
+@utility txt-brand-primary-900 {
+  @apply text-brand-900;
+  @apply dark:text-gray-dark-mode-50;
+}
+
+@utility txt-brand-primary-600 {
+  @apply text-brand-700;
+  @apply dark:text-gray-dark-mode-50;
+}
+
+@utility txt-brand-secondary-700 {
+  @apply text-brand-700;
+  @apply dark:text-gray-dark-mode-300;
+}
+
+@utility txt-brand-secondary-500 {
+  @apply text-brand-500;
+  @apply dark:text-gray-dark-mode-300;
+}
+
+@utility txt-brand-tertiary-600 {
+  @apply text-brand-600;
+  @apply dark:text-gray-dark-mode-400;
+}
+
+@utility txt-brand-tertiary_alt {
+  @apply text-brand-400;
+  @apply dark:text-gray-dark-mode-50;
+}
+
+@utility txt-error-primary-600 {
+  @apply text-error-600;
+  @apply dark:text-error-400;
+}
+
+@utility txt-warning-primary-600 {
+  @apply text-warning-600;
+  @apply dark:text-warning-400;
+}
+
+@utility txt-success-primary-600 {
+  @apply text-success-600;
+  @apply dark:text-success-400;
+}
+
+@utility txt-breadcrumb-brand-icon-fg_hover {
+  @apply text-brand-700;
+  @apply dark:text-base-white;
+}
+
+@utility txt-utility-secondary-600 {
+  @apply text-secondary-600;
+  @apply dark:text-secondary-400;
+}
+
+@utility txt-utility-secondary-700 {
+  @apply text-secondary-700;
+  @apply dark:text-secondary-300;
+}
+
+@utility txt-utility-brand-600 {
+  @apply text-brand-600;
+  @apply dark:text-brand-200;
+}
