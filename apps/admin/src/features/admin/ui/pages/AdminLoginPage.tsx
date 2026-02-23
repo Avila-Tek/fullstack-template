@@ -54,7 +54,7 @@ export function AdminLoginPage() {
           email: session.user.email,
           firstName: session.user.firstName,
           lastName: session.user.lastName,
-          timezone: session.user.timezone,
+          timezone: session.user.timezone ?? '',
           status: session.user.status,
           createdAt: session.user.createdAt,
           updatedAt: session.user.updatedAt,

@@ -18,7 +18,7 @@ export const userSchema = z.object({
   email: z.email().min(5),
   firstName: z.string().nullable(),
   lastName: z.string().nullable(),
-  timezone: z.string(),
+  timezone: z.string().optional(),
   status: userStatusSchema,
   role: roleSchema.nullable().optional(),
   createdAt: zDateToIsoNullableOpt,

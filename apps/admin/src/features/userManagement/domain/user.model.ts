@@ -10,7 +10,7 @@ export interface User {
   firstName: string | null;
   lastName: string | null;
   email: string;
-  timezone: string;
+  timezone?: string;
   status: UserStatus;
   createdAt: Date | null;
   updatedAt: Date | null;

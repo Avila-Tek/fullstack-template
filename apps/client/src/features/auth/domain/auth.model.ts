@@ -27,7 +27,7 @@ export interface User {
   email: string;
   firstName: string | null;
   lastName: string | null;
-  timezone: string;
+  timezone?: string;
   status: TUserStatusEnum;
   role: Role | null;
   createdAt: Date;
