@@ -1,16 +1,26 @@
 import { z } from 'zod';
 import { zDateToIsoNullableOpt } from '../utils';
 
-export const userStatusSchema = z.enum(['active', 'inactive']);
+export const userStatusSchema = z.enum(['ACTIVE', 'INACTIVE']);
 export type TUserStatus = z.infer<typeof userStatusSchema>;
+
+export const roleSchema = z.object({
+  id: z.uuid(),
+  code: z.enum(['USER', 'ADMIN']),
+  name: z.string(),
+  permissions: z.array(z.string()),
+});
+
+export type TRole = z.output<typeof roleSchema>;
 
 export const userSchema = z.object({
   id: z.uuid(),
   email: z.email().min(5),
   firstName: z.string().nullable(),
   lastName: z.string().nullable(),
+  timezone: z.string(),
   status: userStatusSchema,
-  timezone: z.string().optional().nullable(),
+  role: roleSchema.nullable().optional(),
   createdAt: zDateToIsoNullableOpt,
   updatedAt: zDateToIsoNullableOpt,
 });

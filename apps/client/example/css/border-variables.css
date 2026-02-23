@@ -1,0 +1,64 @@
+@utility border-primary {
+  @apply border-gray-light-mode-300;
+  @apply dark:border-gray-dark-mode-700;
+}
+
+@utility border-secondary {
+  @apply border-gray-light-mode-200;
+  @apply dark:border-gray-dark-mode-800;
+}
+
+@utility border-tertiary {
+  @apply border-gray-light-mode-100;
+  @apply dark:border-gray-dark-mode-800;
+}
+
+@utility border-disabled {
+  @apply border-gray-light-mode-300;
+  @apply dark:border-gray-dark-mode-700;
+}
+
+@utility border-disabled_subtle {
+  @apply border-gray-light-mode-200;
+  @apply dark:border-gray-dark-mode-800;
+}
+
+@utility border-brand {
+  @apply border-brand-500;
+  @apply dark:border-brand-400;
+}
+
+@utility border-brand_alt {
+  @apply border-brand-600;
+  @apply dark:border-gray-dark-mode-700;
+}
+
+@utility border-error {
+  @apply border-error-500;
+  @apply dark:border-error-400;
+}
+
+@utility border-error_subtle {
+  @apply border-error-300;
+  @apply dark:border-error-400;
+}
+
+@utility border-success {
+  @apply border-success-500;
+  @apply dark:border-success-400;
+}
+
+@utility border-success_subtle {
+  @apply border-success-300;
+  @apply dark:border-success-400;
+}
+
+@utility border-warning {
+  @apply border-warning-500;
+  @apply dark:border-warning-400;
+}
+
+@utility border-warning_subtle {
+  @apply border-warning-300;
+  @apply dark:border-warning-400;
+}
