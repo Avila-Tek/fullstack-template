@@ -1,4 +1,4 @@
-import type { TUser, TUserSubscription } from '@repo/schemas';
+import type { TUser } from '@repo/schemas';
 import type { CurrentUser, UserSession } from '../domain/currentUser.model';
 
 /**
@@ -7,10 +7,8 @@ import type { CurrentUser, UserSession } from '../domain/currentUser.model';
  */
 
 // Current user DTO (re-exported from schemas)
-export type { TUser, TUserSubscription };
-export type CurrentUserDto = TUser & {
-  subscription: TUserSubscription;
-};
+export type { TUser };
+export type CurrentUserDto = TUser;
 
 export interface CurrentUserErrorResponse {
   success: false;

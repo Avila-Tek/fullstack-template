@@ -1,5 +1,6 @@
 'use client';
 
+import * as React from 'react';
 import {
   clearLocalStorage,
   getLocalStorageItem,
@@ -7,21 +8,14 @@ import {
   setLocalStorageItem,
 } from '@repo/services';
 import { useQueryClient } from '@tanstack/react-query';
-import * as React from 'react';
 import { useCurrentUserQuery } from '@/src/shared/currentUser/application/queries/useCurrentUser.query';
 import {
   authStatusEnumObject,
   currentUserQueryKey,
   type TAuthStatusEnum,
 } from '@/src/shared/currentUser/domain/currentUser.constants';
-import {
-  getUserSubscriptionStatus,
-  hasActiveSubscription,
-} from '@/src/shared/currentUser/domain/currentUser.logic';
 import type {
   CurrentUser,
-  SubscriptionPlan,
-  UserSubscriptionStatus,
 } from '@/src/shared/currentUser/domain/currentUser.model';
 import { type UserSession } from '@/src/shared/currentUser/domain/currentUser.model';
 import { CurrentUserService } from '@/src/shared/currentUser/infrastructure';
@@ -32,10 +26,6 @@ interface UserContextState {
   status: 'loading' | 'authenticated' | 'unauthenticated';
   isAuthenticated: boolean;
   isLoading: boolean;
-  // Subscription helpers
-  hasActiveSubscription: boolean;
-  subscriptionStatus: UserSubscriptionStatus;
-  activePlan: SubscriptionPlan | null;
 }
 
 interface UserContextActions {
@@ -133,18 +123,7 @@ export function UserProvider({ children }: UserProviderProps) {
     await refetchUser();
   }, [refetchUser]);
 
-  // Derive subscription state from current user
-  const subscriptionStatus = React.useMemo(() => {
-    return getUserSubscriptionStatus(currentUser);
-  }, [currentUser]);
-
-  const hasActiveSub = React.useMemo(() => {
-    return hasActiveSubscription(currentUser);
-  }, [currentUser]);
-
-  const activePlan = React.useMemo(() => {
-    return currentUser?.subscription?.plan ?? null;
-  }, [currentUser]);
+  
 
   const value = React.useMemo<UserContextValue>(
     () => ({
@@ -153,9 +132,6 @@ export function UserProvider({ children }: UserProviderProps) {
       status,
       isAuthenticated: status === authStatusEnumObject.authenticated,
       isLoading: status === authStatusEnumObject.loading || isUserLoading,
-      hasActiveSubscription: hasActiveSub,
-      subscriptionStatus,
-      activePlan,
       setSession,
       clearSession,
       refreshSession,
@@ -166,9 +142,6 @@ export function UserProvider({ children }: UserProviderProps) {
       accessToken,
       status,
       isUserLoading,
-      hasActiveSub,
-      subscriptionStatus,
-      activePlan,
       setSession,
       clearSession,
       refreshSession,

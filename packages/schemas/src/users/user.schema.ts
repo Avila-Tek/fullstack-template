@@ -10,6 +10,7 @@ export const userSchema = z.object({
   firstName: z.string().nullable(),
   lastName: z.string().nullable(),
   status: userStatusSchema,
+  timezone: z.string().optional().nullable(),
   createdAt: zDateToIsoNullableOpt,
   updatedAt: zDateToIsoNullableOpt,
 });

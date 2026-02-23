@@ -1,6 +1,4 @@
 import { AuthService } from './components/auth';
-import { PlansService } from './components/plans';
-import { SubscriptionsService } from './components/subscriptions';
 import { UserService } from './components/users';
 import type { HttpClient, TokenProvider } from './http';
 import { SafeFetchClient } from './http';
@@ -21,8 +19,6 @@ export interface APIConfig {
  */
 export interface APIService {
   auth: AuthService;
-  plans: PlansService;
-  subscriptions: SubscriptionsService;
   users: UserService;
 }
 
@@ -45,8 +41,6 @@ export class API {
     // Wire services with dependencies
     this.v1 = Object.freeze({
       auth: new AuthService(this.httpClient, config.baseURL),
-      plans: new PlansService(this.httpClient),
-      subscriptions: new SubscriptionsService(this.httpClient),
       users: new UserService(this.httpClient),
     });
   }

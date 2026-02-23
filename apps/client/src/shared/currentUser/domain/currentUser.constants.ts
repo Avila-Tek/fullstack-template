@@ -12,10 +12,7 @@ export const currentUserQueryKeyEnumObject =
   getEnumObjectFromArray(currentUserQueryKey);
 
 // Routes
-export const currentUserRoutes = {
-  plans: '/plans',
-  dashboard: '/dashboard',
-} as const;
+export const currentUserRoutes = {} as const;
 
 // Subscription status that indicates an active subscription
 export const activeSubscriptionStatuses = ['active', 'trialing'] as const;
@@ -23,20 +20,6 @@ export type TActiveSubscriptionStatusEnum =
   (typeof activeSubscriptionStatuses)[number];
 export const activeSubscriptionStatusEnumObject = getEnumObjectFromArray(
   activeSubscriptionStatuses
-);
-
-// User subscription status values for UI decisions
-export const userSubscriptionStatus = [
-  'no_subscription',
-  'active_free',
-  'active_paid',
-  'canceled',
-  'past_due',
-] as const;
-export type TUserSubscriptionStatusEnum =
-  (typeof userSubscriptionStatus)[number];
-export const userSubscriptionStatusEnumObject = getEnumObjectFromArray(
-  userSubscriptionStatus
 );
 
 /**
