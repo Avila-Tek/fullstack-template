@@ -1,6 +1,6 @@
-import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import { Body, Controller, HttpCode, HttpStatus, Inject, Post } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import type { CommandBus } from '@nestjs/cqrs';
+import { CommandBus } from '@nestjs/cqrs';
 import { authDTO, type TSignInInput, type TSignInResponse } from '@repo/schemas';
 import { SignInUseCasePort } from '../../application/ports/in/SignInUseCasePort';
 import { ZodApiBody, ZodApiResponse } from '../../../../shared/decorators/zodSwagger';
@@ -8,7 +8,10 @@ import { ZodApiBody, ZodApiResponse } from '../../../../shared/decorators/zodSwa
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly commandBus: CommandBus) {}
+  constructor(
+    @Inject(CommandBus)
+    private readonly commandBus: CommandBus
+  ) {}
 
   @Post('/sign-in')
   @HttpCode(HttpStatus.OK)

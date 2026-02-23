@@ -1,22 +1,25 @@
-import { UnauthorizedException } from '@nestjs/common';
+import { Inject, UnauthorizedException } from '@nestjs/common';
 import {
   CommandHandler,
   type ICommandHandler,
-  type QueryBus,
+  QueryBus,
 } from '@nestjs/cqrs';
 import {
   type LoginCommand,
   SignInUseCasePort,
 } from '../ports/in/SignInUseCasePort';
 import { GetUserByEmailPort } from '../ports/out/GetUserByEmail';
-import type { PasswordHasher } from '../ports/out/PasswordHasher';
-import type { TokenGenerator } from '../ports/out/TokenGenerator';
+import { PasswordHasher } from '../ports/out/PasswordHasher';
+import { TokenGenerator } from '../ports/out/TokenGenerator';
 
 @CommandHandler(SignInUseCasePort)
 export class SignInUseCase implements ICommandHandler<SignInUseCasePort> {
   constructor(
+    @Inject(QueryBus)
     private readonly queryBus: QueryBus,
+    @Inject(PasswordHasher)
     private readonly passwordService: PasswordHasher,
+    @Inject(TokenGenerator)
     private readonly tokenGenerator: TokenGenerator
   ) {}
 

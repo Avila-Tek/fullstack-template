@@ -1,8 +1,8 @@
-import { BadRequestException, Body, Controller, Post } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Inject, Post } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { createUserInput, type TUser, userSchema } from '@repo/schemas';
 import { ZodApiBody, ZodApiResponse } from '../../../../shared/decorators/zodSwagger';
-import type { CreateUserPort } from '../../application/ports/in/CreateUserPort';
+import { CreateUserPort } from '../../application/ports/in/CreateUserPort';
 import { InvalidPasswordError } from '../../domain/policies/PasswordPolicy';
 import { RegisterUserRequest } from './dto/RegisterUserRequest';
 import { userFromDomain } from './dto/UserResponse';
@@ -10,7 +10,10 @@ import { userFromDomain } from './dto/UserResponse';
 @ApiTags('Users')
 @Controller('users')
 export class UserController {
-	constructor(private readonly registerUseCase: CreateUserPort) {}
+	constructor(
+		@Inject(CreateUserPort)
+		private readonly registerUseCase: CreateUserPort
+	) {}
 
 	@Post('register')
 	@ApiOperation({

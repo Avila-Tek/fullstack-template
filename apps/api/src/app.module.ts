@@ -3,9 +3,10 @@ import { UsersModule } from './modules/user/module';
 import { AuthModule } from './modules/auth/module';
 import { BusModule } from './bus.module';
 import { SecurityModule } from './security.module';
+import { DrizzleModule } from './infrastructure/database/drizzle.module';
 
 @Module({
-  imports: [UsersModule, AuthModule, BusModule, SecurityModule],
+  imports: [DrizzleModule, UsersModule, AuthModule, BusModule, SecurityModule],
   controllers: [],
 })
 export class AppModule {}
