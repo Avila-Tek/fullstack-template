@@ -1,10 +1,10 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { QueryBus, CommandBus } from '@nestjs/cqrs';
 import {
-  AuthProvider,
+  AuthProviderPort,
   type SignInData,
   type SignUpData,
-} from '../../application/ports/out/AuthProvider';
+} from '../../application/ports/out/AuthProviderPort';
 import { ProviderType } from '../../domain/types/ProviderType';
 import type { AuthResult } from '../../domain/types/AuthResult';
 import { PasswordHasher } from '../../application/ports/out/PasswordHasher';
@@ -15,7 +15,7 @@ import { AuthUser } from '../../domain/entities/AuthUser';
 import { UserStatusEnum } from '../../domain/value-objects/UserStatus';
 
 @Injectable()
-export class CredentialsAuthProvider extends AuthProvider {
+export class CredentialsAuthProvider extends AuthProviderPort {
   constructor(
     private readonly queryBus: QueryBus,
     private readonly commandBus: CommandBus,
