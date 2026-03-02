@@ -1,98 +1,125 @@
-// sign-in.usecase.spec.ts
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { UnauthorizedException } from '@nestjs/common';
-import { QueryBus } from '@nestjs/cqrs';
-import { SignInUseCase } from '../../modules/auth/application/use-case/SignInUseCase';
+import { ConflictException } from '@nestjs/common';
+import { CreateUserService } from '../../modules/user/infrastructure/services/CreateUserService';
+import { GetUserByEmailPort } from '../../modules/user/application/ports/in/GetUserByEmailPort';
+import { UserRepository } from '../../modules/user/application/ports/out/UserRepository';
 
-function mockUser(overrides: Partial<any> = {}) {
+function mockUserEntity(overrides: Partial<any> = {}) {
   return {
-    id: 'u1',
-    email: 'a@b.com',
-    roleId: 'r1',
-    password: { getValue: () => 'hashed' },
-    isActive: () => true,
+    id: { value: 'u1' },
+    email: { value: 'a@b.com' },
+    firstName: 'John',
+    lastName: 'Doe',
+    timezone: 'UTC',
+    status: { getValue: () => 'ACTIVE' },
     ...overrides,
   };
 }
 
-describe('SignInUseCase', () => {
-  let queryBus: Pick<QueryBus, 'execute'>;
-  let passwordHasher: { verify: ReturnType<typeof vi.fn> };
-  let tokenGenerator: { generate: ReturnType<typeof vi.fn> };
-
-  let useCase: SignInUseCase;
+describe('CreateUserService', () => {
+  let getUserByEmail: Pick<GetUserByEmailPort, 'execute'>;
+  let userRepository: Pick<UserRepository, 'create' | 'findByEmail'>;
+  let service: CreateUserService;
 
   beforeEach(() => {
-    queryBus = { execute: vi.fn() };
-    passwordHasher = { verify: vi.fn() };
-    tokenGenerator = { generate: vi.fn() };
+    getUserByEmail = { execute: vi.fn() };
+    userRepository = {
+      create: vi.fn(),
+      findByEmail: vi.fn(),
+    };
 
-    useCase = new SignInUseCase(
-      queryBus as any,
-      passwordHasher as any,
-      tokenGenerator as any
+    service = new CreateUserService(
+      getUserByEmail as any,
+      userRepository as any
     );
   });
 
-  it('Sign In: Invalid email', async () => {
-    (queryBus.execute as any).mockResolvedValue(null);
-
-    await expect(
-      useCase.execute({ email: 'a@b.com', password: 'pw' })
-    ).rejects.toBeInstanceOf(UnauthorizedException);
-
-    expect(queryBus.execute).toHaveBeenCalledTimes(1);
-    expect(passwordHasher.verify).not.toHaveBeenCalled();
-    expect(tokenGenerator.generate).not.toHaveBeenCalled();
-  });
-
-  it('Sign In: Disabled user', async () => {
-    (queryBus.execute as any).mockResolvedValue(
-      mockUser({ isActive: () => false })
+  it('should throw ConflictException if user already exists', async () => {
+    (getUserByEmail.execute as ReturnType<typeof vi.fn>).mockResolvedValue(
+      mockUserEntity()
     );
 
-    await expect(
-      useCase.execute({ email: 'a@b.com', password: 'pw' })
-    ).rejects.toMatchObject({ message: 'Account is disabled' });
+    const command = {
+      email: 'a@b.com',
+      password: 'password123',
+      firstName: 'John',
+      lastName: 'Doe',
+    } as any;
 
-    expect(passwordHasher.verify).not.toHaveBeenCalled();
+    await expect(service.execute(command)).rejects.toBeInstanceOf(
+      ConflictException
+    );
+    expect(getUserByEmail.execute).toHaveBeenCalledWith('a@b.com');
+    expect(userRepository.create).not.toHaveBeenCalled();
   });
 
-  it('Sign In: Invalid password', async () => {
-    (queryBus.execute as any).mockResolvedValue(mockUser());
-    passwordHasher.verify.mockResolvedValue(false);
+  it('should successfully create a new user', async () => {
+    (getUserByEmail.execute as ReturnType<typeof vi.fn>).mockResolvedValue(
+      null
+    );
 
-    await expect(
-      useCase.execute({ email: 'a@b.com', password: 'pw' })
-    ).rejects.toMatchObject({ message: 'Invalid credentials' });
+    const createdUser = mockUserEntity();
+    (userRepository.create as ReturnType<typeof vi.fn>).mockResolvedValue(
+      createdUser
+    );
 
-    expect(passwordHasher.verify).toHaveBeenCalledWith('pw', 'hashed');
-    expect(tokenGenerator.generate).not.toHaveBeenCalled();
-  });
+    const command = {
+      email: 'a@b.com',
+      password: 'password123',
+      firstName: 'John',
+      lastName: 'Doe',
+    } as any;
 
-  it('Sign In: Success', async () => {
-    const user = mockUser();
-    (queryBus.execute as any).mockResolvedValue(user);
-    passwordHasher.verify.mockResolvedValue(true);
-    tokenGenerator.generate.mockResolvedValue('token123');
+    const result = await service.execute(command);
 
-    const result = await useCase.execute({
-      email: user.email,
-      password: 'pw',
-    });
+    expect(getUserByEmail.execute).toHaveBeenCalledWith('a@b.com');
+    expect(userRepository.create).toHaveBeenCalled();
 
+    // Check returned DTO maps correctly
     expect(result).toEqual({
-      accessToken: 'token123',
-      userId: user.id,
-      email: user.email,
+      id: 'u1',
+      email: 'a@b.com',
+      firstName: 'John',
+      lastName: 'Doe',
+      timezone: 'UTC',
+      status: 'ACTIVE',
     });
+  });
 
-    expect(queryBus.execute).toHaveBeenCalledTimes(1);
-    expect(passwordHasher.verify).toHaveBeenCalledWith('pw', 'hashed');
-    expect(tokenGenerator.generate).toHaveBeenCalledWith({
-      userId: user.id,
-      email: user.email,
-      roleId: user.roleId,
+  it('should successfully create a new user without first/last names', async () => {
+    (getUserByEmail.execute as ReturnType<typeof vi.fn>).mockResolvedValue(
+      null
+    );
+
+    const createdUser = mockUserEntity({
+      firstName: null,
+      lastName: null,
+      timezone: null,
+    });
+    (userRepository.create as ReturnType<typeof vi.fn>).mockResolvedValue(
+      createdUser
+    );
+
+    const command = {
+      email: 'a@b.com',
+      password: 'password123',
+      firstName: '',
+      lastName: '',
+    } as any;
+
+    const result = await service.execute(command);
+
+    expect(getUserByEmail.execute).toHaveBeenCalledWith('a@b.com');
+    expect(userRepository.create).toHaveBeenCalled();
+
+    // Check returned DTO maps correctly with undefineds
+    expect(result).toEqual({
+      id: 'u1',
+      email: 'a@b.com',
+      firstName: undefined,
+      lastName: undefined,
+      timezone: undefined,
+      status: 'ACTIVE',
     });
   });
 });
