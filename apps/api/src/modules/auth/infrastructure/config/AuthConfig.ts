@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { ProviderType } from '../../domain/types/ProviderType';
+import { AuthConfigPort } from '../../application/ports/out/AuthConfigPort';
 
 @Injectable()
-export class AuthConfig {
+export class AuthConfig implements AuthConfigPort {
   private readonly provider: ProviderType;
 
   constructor() {
