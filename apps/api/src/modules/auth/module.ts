@@ -12,12 +12,13 @@ import { SignUpWithProviderUseCase } from './application/use-case/SignUpWithProv
 import { AuthProviderFactoryPort } from './application/ports/out/AuthProviderFactoryPort';
 import { AuthProviderFactoryImpl } from './infrastructure/providers/AuthProviderFactoryImpl';
 import { CredentialsAuthProvider } from './infrastructure/providers/CredentialsAuthProvider';
+import { AuthConfigPort } from './application/ports/out/AuthConfigPort';
 import { AuthConfig } from './infrastructure/config/AuthConfig';
 
 @Module({
   imports: [CqrsModule],
   providers: [
-    AuthConfig,
+    { provide: AuthConfigPort, useClass: AuthConfig },
     { provide: TokenGenerator, useClass: JwtTokenGenerator },
     { provide: PasswordHasher, useClass: PasswordHasherAdapter },
     {
