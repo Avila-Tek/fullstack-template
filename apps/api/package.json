@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "API Gateway for the backend app IN NEST!",
   "scripts": {
-    "build": "nest build ./src",
+    "build": "nest build",
     "format": "npx @biomejs/biome format --write",
     "start": "nest start",
     "dev": "nest start --watch",
