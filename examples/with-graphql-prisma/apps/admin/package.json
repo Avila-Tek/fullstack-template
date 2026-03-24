@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@apollo/client": "^3.11.8",
-    "@apollo/experimental-nextjs-app-support": "^0.11.3",
+    "@apollo/experimental-nextjs-app-support": "^0.14.0",
     "@headlessui/react": "^2.1.6",
     "@heroicons/react": "^2.1.5",
     "@hookform/resolvers": "^3.9.0",
