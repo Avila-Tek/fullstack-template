@@ -14,7 +14,8 @@
             ],
             "automerge": true,
             "automergeType": "branch",
-            "platformAutomerge": true
+            "platformAutomerge": false,
+            "rebaseConflictedPrs": true
         },
         {
             "matchUpdateTypes": [
