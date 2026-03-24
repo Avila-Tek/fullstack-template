@@ -1,0 +1,23 @@
+name: Renovate Test Push
+on:
+  push:
+    branches:
+      - development # Se dispara cada vez que subas cambios a esta rama
+  workflow_dispatch: # Mantenemos el botón manual por si acaso
+
+jobs:
+  renovate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Self-hosted Renovate
+        uses: renovatebot/github-action@v40.1.11
+        with:
+          configurationFile: renovate.json
+          token: ${{ secrets.RENOVATE_TOKEN }}
+        env:
+          RENOVATE_REPOSITORIES: ${{ github.repository }}
+          # Mantenemos el log en info para rastrear qué detecta en los monorepos
+          LOG_LEVEL: info
