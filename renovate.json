@@ -23,7 +23,7 @@
             "automerge": false
         }
     ],
-    "ignoreSpecs": [
+    "ignorePaths": [
         "node_modules/**",
         "**/node_modules/**"
     ]
