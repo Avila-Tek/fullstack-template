@@ -10,8 +10,8 @@ import {
 	ZodValidationPipe,
 } from '@/shared/swagger/swagger';
 import 'reflect-metadata';
-import { AppModule } from './app.module';
 
+// Load .env before env validation runs
 const envCandidates = [
 	resolve(process.cwd(), '.env'),
 	resolve(process.cwd(), 'apps/api/.env'),
@@ -25,18 +25,17 @@ for (const envPath of envCandidates) {
 	}
 }
 
-function assertEnv(key: string): void {
-	if (!process.env[key]) {
-		throw new Error(`Missing required environment variable: ${key}`);
-	}
-}
+// Side-effect import — validates required env vars and throws if any are missing.
+import './env';
+import { AppModule } from './app.module';
 
 async function bootstrap(): Promise<void> {
-	assertEnv('AUTH_JWKS_URL');
-	assertEnv('AUTH_ISSUER');
-	assertEnv('AUTH_AUDIENCE');
-
-	const app = await NestFactory.create(AppModule, { bufferLogs: true });
+	// bodyParser: false — Better Auth routes require raw body access.
+	// JSON parsing is applied selectively via middleware in IdentityModule.
+	const app = await NestFactory.create(AppModule, {
+		bufferLogs: true,
+		bodyParser: false,
+	});
 	app.useLogger(app.get(Logger));
 
 	app.setGlobalPrefix('api/v1');
@@ -45,8 +44,13 @@ async function bootstrap(): Promise<void> {
 
 	app.use(helmet({ contentSecurityPolicy: false }));
 
+	const trustedOrigins = [
+		process.env.CLIENT_URL ?? 'http://localhost:4200',
+		process.env.ADMIN_URL ?? 'http://localhost:3000',
+	].filter(Boolean);
+
 	app.enableCors({
-		origin: [process.env.CORS],
+		origin: trustedOrigins,
 		methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
 		credentials: true,
 	});

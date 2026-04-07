@@ -12,6 +12,7 @@ import { ApiResponseInterceptor } from './infrastructure/interceptors/api-respon
 import { DomainToHttpMapper } from './infrastructure/mapping/domain-to-http.mapper';
 import { correlationIdMiddleware } from './infrastructure/telemetry/correlation-id.middleware';
 import { sentryScopeMiddleware } from './infrastructure/telemetry/sentry-scope.middleware';
+import { IdentityModule } from './modules/identity/identity.module';
 import { SecurityModule } from './security.module';
 import { JwtAuthGuard } from './shared/guards/jwt-auth.guard';
 import { pinoHttpConfig } from './shared/logger/pino.config';
@@ -21,6 +22,7 @@ import { pinoHttpConfig } from './shared/logger/pino.config';
 		LoggerModule.forRoot(pinoHttpConfig('zoom-api')),
 		DrizzleModule,
 		HealthModule,
+		IdentityModule,
 		SecurityModule,
 	],
 	providers: [
