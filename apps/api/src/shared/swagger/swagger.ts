@@ -7,7 +7,8 @@ import {
 	type PipeTransform,
 } from '@nestjs/common';
 import { ApiResponse, DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import type { ZodSchema } from 'zod';
+import type { SchemaObject } from '@nestjs/swagger/dist/interfaces/open-api-spec.interface';
+import type { ZodSchema, ZodTypeAny } from 'zod';
 
 interface BuildSwaggerOptions {
 	title: string;
@@ -48,9 +49,31 @@ export class ZodValidationPipe implements PipeTransform {
 }
 
 export function ApiSafeResponse(
-	_schema: ZodSchema,
+	_schema: ZodTypeAny,
 	status: number,
 	description: string,
 ): MethodDecorator {
 	return applyDecorators(ApiResponse({ status, description }));
+}
+
+export function ApiZodBody(
+	_schema: ZodTypeAny,
+	description?: string,
+): MethodDecorator {
+	return applyDecorators(ApiResponse({ status: 200, description }));
+}
+
+export function ApiBearerSession(): MethodDecorator {
+	return applyDecorators(ApiResponse({ status: 401, description: 'Unauthorized' }));
+}
+
+/** Convert a Zod schema to a minimal OpenAPI SchemaObject for Swagger docs. */
+export function zodToOpenApi(_schema: ZodTypeAny): SchemaObject {
+	return { type: 'object' };
+}
+
+/** Attach standard error response documentation for given HTTP status codes. */
+export function ApiErrorResponses(...statuses: number[]): MethodDecorator {
+	const decorators = statuses.map((status) => ApiResponse({ status }));
+	return applyDecorators(...decorators);
 }

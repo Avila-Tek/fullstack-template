@@ -12,7 +12,7 @@ export const DRIZZLE_CLIENT = Symbol('DRIZZLE_CLIENT');
 			useFactory: async (): Promise<NodePgDatabase> => {
 				const pool = new Pool({
 					connectionString:
-						process.env.DATABASE ??
+						process.env.DATABASE_URL ??
 						'postgresql://postgres:postgres@localhost:5432/poc',
 				});
 				return drizzle(pool);

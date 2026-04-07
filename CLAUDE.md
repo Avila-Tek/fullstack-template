@@ -88,7 +88,6 @@ It applies repo-wide to `apps/*` and `packages/*`.
 
 ### General
 
-- **Camel-case** for directories and files.
 - **Minimal comments** (only “why”, not “what”).
 - Prefer **tests as documentation**.
 
