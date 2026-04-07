@@ -1,42 +1,64 @@
-// import 'tsconfig-paths/register';
-import 'reflect-metadata';
-import helmet from 'helmet';
+import './instrument';
+import { existsSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { NestFactory } from '@nestjs/core';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import dotenv from 'dotenv';
+import helmet from 'helmet';
+import { Logger } from 'nestjs-pino';
+import {
+	buildSwaggerDocument,
+	ZodValidationPipe,
+} from '@/shared/swagger/swagger';
+import 'reflect-metadata';
 import { AppModule } from './app.module';
-import { ZodValidationPipe } from './shared/pipes/zodValidationPipe';
-// import { DomainErrorFilter } from './modules/shared/platform/web/DomainErrorFilter';
 
-async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+const envCandidates = [
+	resolve(process.cwd(), '.env'),
+	resolve(process.cwd(), 'apps/api/.env'),
+	resolve(__dirname, '../.env'),
+];
 
-  app.useGlobalPipes(new ZodValidationPipe());
-
-  // app.useGlobalFilters(new DomainErrorFilter());
-  app.use(
-    helmet({
-      contentSecurityPolicy: false,
-    })
-  );
-
-  app.enableCors({
-    origin: [process.env.CORS],
-    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    credentials: true,
-  });
-
-  // app.useGlobalFilters(new DomainErrorFilter());
-
-  const config = new DocumentBuilder()
-    .setTitle('API')
-    .setDescription('API documentation')
-    .setVersion('1.0')
-    .addBearerAuth()
-    .build();
-
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api/docs', app, document);
-
-  await app.listen(process.env.PORT ?? 8080);
+for (const envPath of envCandidates) {
+	if (existsSync(envPath)) {
+		dotenv.config({ path: envPath });
+		break;
+	}
 }
+
+function assertEnv(key: string): void {
+	if (!process.env[key]) {
+		throw new Error(`Missing required environment variable: ${key}`);
+	}
+}
+
+async function bootstrap(): Promise<void> {
+	assertEnv('AUTH_JWKS_URL');
+	assertEnv('AUTH_ISSUER');
+	assertEnv('AUTH_AUDIENCE');
+
+	const app = await NestFactory.create(AppModule, { bufferLogs: true });
+	app.useLogger(app.get(Logger));
+
+	app.setGlobalPrefix('api/v1');
+
+	app.useGlobalPipes(new ZodValidationPipe());
+
+	app.use(helmet({ contentSecurityPolicy: false }));
+
+	app.enableCors({
+		origin: [process.env.CORS],
+		methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+		credentials: true,
+	});
+
+	buildSwaggerDocument(app, {
+		title: 'Main API',
+		description: 'Primary REST API',
+		version: '1.0',
+		authType: 'bearer',
+	});
+
+	await app.listen(process.env.PORT ?? 3002);
+}
+
 bootstrap();

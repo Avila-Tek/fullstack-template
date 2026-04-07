@@ -1,12 +1,49 @@
-import { Module } from '@nestjs/common';
-import { UsersModule } from './modules/user/module';
-import { AuthModule } from './modules/auth/module';
-import { BusModule } from './bus.module';
-import { SecurityModule } from './security.module';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
+import { SentryGlobalFilter } from '@sentry/nestjs/setup';
+import { LoggerModule, PinoLogger } from 'nestjs-pino';
+import { LOGGER_PORT } from '@/shared/domain-utils';
 import { DrizzleModule } from './infrastructure/database/drizzle.module';
+import { AllExceptionsFilter } from './infrastructure/filters/all-exceptions.filter';
+import { DomainExceptionFilter } from './infrastructure/filters/domain-exception.filter';
+import { HttpExceptionFilter } from './infrastructure/filters/http-exception.filter';
+import { HealthModule } from './infrastructure/health/health.module';
+import { ApiResponseInterceptor } from './infrastructure/interceptors/api-response.interceptor';
+import { DomainToHttpMapper } from './infrastructure/mapping/domain-to-http.mapper';
+import { correlationIdMiddleware } from './infrastructure/telemetry/correlation-id.middleware';
+import { sentryScopeMiddleware } from './infrastructure/telemetry/sentry-scope.middleware';
+import { SecurityModule } from './security.module';
+import { JwtAuthGuard } from './shared/guards/jwt-auth.guard';
+import { pinoHttpConfig } from './shared/logger/pino.config';
 
 @Module({
-  imports: [DrizzleModule, BusModule, UsersModule, AuthModule, SecurityModule],
-  controllers: [],
+	imports: [
+		LoggerModule.forRoot(pinoHttpConfig('zoom-api')),
+		DrizzleModule,
+		HealthModule,
+		SecurityModule,
+	],
+	providers: [
+		// Outermost — forwards all exceptions to Sentry before domain/http filters handle them
+		{ provide: APP_FILTER, useClass: SentryGlobalFilter },
+		// Catches all unhandled errors and returns a structured 500 response
+		{ provide: APP_FILTER, useClass: AllExceptionsFilter },
+		// Catches HttpException (guards, pipes, manual throws)
+		{ provide: APP_FILTER, useClass: HttpExceptionFilter },
+		// Inner filter — catches DomainException before HttpExceptionFilter sees it
+		{ provide: APP_FILTER, useClass: DomainExceptionFilter },
+		// Wraps all successful responses in the standard ApiResponse envelope
+		{ provide: APP_INTERCEPTOR, useClass: ApiResponseInterceptor },
+		// Validate JWT on every request; use @Public() to opt out.
+		{ provide: APP_GUARD, useClass: JwtAuthGuard },
+		// Mapper used by DomainExceptionFilter
+		DomainToHttpMapper,
+		{ provide: LOGGER_PORT, useExisting: PinoLogger },
+	],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+	configure(consumer: MiddlewareConsumer): void {
+		consumer.apply(correlationIdMiddleware).forRoutes('*');
+		consumer.apply(sentryScopeMiddleware).forRoutes('*');
+	}
+}
