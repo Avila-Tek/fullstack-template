@@ -1,10 +1,12 @@
 import { signUpInput } from '@repo/schemas';
 import { createAuthMiddleware } from 'better-auth/api';
 import type { SignupEventType } from '../../../application/ports/out/audit-log-service.port';
+import { resolveClientIp } from '@/shared/utils/resolve-client-ip';
 import { googleCaptchaService } from '../../security/google-captcha.adapter';
 import { auditLogger } from '../../utils/audit-logger';
 import { recordAuthEvent } from '../../utils/auth-metrics';
 import { hashIp } from '../../utils/hash-ip';
+
 
 // ---------------------------------------------------------------------------
 // Types
@@ -206,8 +208,7 @@ export async function signUpBeforeHookBody(
 ): Promise<Response | undefined> {
 	if (!ctx.request) return;
 
-	const ip =
-		ctx.getHeader('x-forwarded-for') ?? ctx.getHeader('x-real-ip') ?? '';
+	const ip = resolveClientIp(ctx);
 	const userAgent = ctx.getHeader('user-agent') ?? '';
 	const ipHash = hashIp(ip);
 	const correlationId = crypto.randomUUID();

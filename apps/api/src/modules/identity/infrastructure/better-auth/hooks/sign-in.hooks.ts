@@ -1,4 +1,5 @@
 import { createAuthMiddleware } from 'better-auth/api';
+import { resolveClientIp } from '@/shared/utils/resolve-client-ip';
 import { auditLogger } from '../../utils/audit-logger';
 import { recordAuthEvent } from '../../utils/auth-metrics';
 import { hashIp } from '../../utils/hash-ip';
@@ -105,8 +106,7 @@ export async function signInAfterMiddlewareBody(
 	if (!ctx.request) return;
 	if (ctx.path !== '/sign-in/email') return;
 
-	const ip =
-		ctx.getHeader('x-forwarded-for') ?? ctx.getHeader('x-real-ip') ?? '';
+	const ip = resolveClientIp(ctx);
 	const userAgent = ctx.getHeader('user-agent') ?? '';
 	const ipHash = hashIp(ip);
 	const correlationId = crypto.randomUUID();

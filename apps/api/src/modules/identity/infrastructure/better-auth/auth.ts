@@ -7,7 +7,7 @@ import {
 	SESSION_CONFIG,
 } from './auth-config';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
-import { createAuthMiddleware } from 'better-auth/api';
+import { APIError, createAuthMiddleware } from 'better-auth/api';
 import { jwt, twoFactor } from 'better-auth/plugins';
 import { and, desc, eq, inArray } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/node-postgres';
@@ -19,12 +19,13 @@ import {
 	parseDeviceType,
 } from '@/shared/utils/user-agent-parser';
 import { googleOAuthAfterMiddlewareBody } from './hooks/google-oauth.hooks';
-import { signInAfterMiddlewareBody } from './hooks/sign-in.hooks';
+import { deriveErrorType, signInAfterMiddlewareBody } from './hooks/sign-in.hooks';
 import { signOutSessionDeleteBefore } from './hooks/sign-out.hooks';
 import {
 	consumePendingTermsData,
-	signUpBeforeHook,
+	signUpBeforeHookBody,
 } from './hooks/sign-up.hooks';
+import { AccountLockoutService } from '../security/account-lockout.service';
 import { esBetterAuthTranslations } from './i18n/translations';
 import * as schema from '../persistence/db-schema';
 import { validatePasswordComplexity } from '../utils/validate-password-complexity';
@@ -45,6 +46,7 @@ const redis = new Redis(process.env.REDIS_URL ?? 'redis://localhost:6379', {
 });
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 const db = drizzle(pool, { schema });
+const accountLockout = new AccountLockoutService(redis);
 
 const memoryCostArg = Number(process.env.ARGON2_MEMORY_COST ?? 65536);
 const timeCostArg = Number(process.env.ARGON2_TIME_COST ?? 3);
@@ -252,10 +254,39 @@ export const auth = betterAuth({
 	},
 
 	hooks: {
-		before: signUpBeforeHook,
+		before: createAuthMiddleware(async (ctx) => {
+			const result = await signUpBeforeHookBody(ctx);
+			if (result !== undefined) return result;
+
+			if (ctx.path === '/sign-in/email') {
+				const email = (ctx.body as Record<string, unknown>)?.email;
+				if (typeof email === 'string' && await accountLockout.isLocked(email)) {
+					throw new APIError('TOO_MANY_REQUESTS', {
+						message: 'Account temporarily locked.',
+					});
+				}
+			}
+		}),
 		after: createAuthMiddleware(async (ctx) => {
 			await signInAfterMiddlewareBody(ctx);
 			await googleOAuthAfterMiddlewareBody(ctx);
+
+			if (ctx.path === '/sign-in/email') {
+				const email = (ctx.body as Record<string, unknown>)?.email;
+				if (typeof email === 'string') {
+					const returned = ctx.context.returned as
+						| Record<string, unknown>
+						| undefined;
+					const userId = (
+						returned?.user as Record<string, unknown> | undefined
+					)?.id;
+					if (typeof userId === 'string') {
+						await accountLockout.recordSuccess(email);
+					} else if (deriveErrorType(returned) === 'invalid_credentials') {
+						await accountLockout.recordFailure(email);
+					}
+				}
+			}
 		}),
 	},
 
