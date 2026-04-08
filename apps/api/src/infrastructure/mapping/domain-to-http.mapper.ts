@@ -14,6 +14,7 @@ export class DomainToHttpMapper {
 		IDENTITY_NO_PASSWORD_ACCOUNT: 422,
 		IDENTITY_INVALID_PASSWORD: 422,
 		IDENTITY_PASSWORD_REUSE: 422,
+		IDENTITY_SESSION_NOT_FRESH: 403,
 	};
 
 	map(errorCode: string): number {

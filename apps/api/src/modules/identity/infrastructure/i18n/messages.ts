@@ -2,9 +2,10 @@ import type { SupportedLocale } from '@/shared/domain-utils';
 
 type IdentityErrorCode =
 	| 'IDENTITY_INVALID_CREDENTIALS'
-	| 'IDENTITY_NO_PASSWORD_ACCOUNT'
 	| 'IDENTITY_INVALID_PASSWORD'
-	| 'IDENTITY_PASSWORD_REUSE';
+	| 'IDENTITY_NO_PASSWORD_ACCOUNT'
+	| 'IDENTITY_PASSWORD_REUSE'
+	| 'IDENTITY_SESSION_NOT_FRESH';
 
 export const identityDomainMessages: Record<
 	IdentityErrorCode,
@@ -25,5 +26,9 @@ export const identityDomainMessages: Record<
 	IDENTITY_PASSWORD_REUSE: {
 		es: 'La nueva contraseña no debe coincidir con ninguna de tus últimas 5 contraseñas.',
 		en: 'New password must not match any of your last 5 passwords.',
+	},
+	IDENTITY_SESSION_NOT_FRESH: {
+		es: 'Tu sesión ha expirado. Por favor, inicia sesión nuevamente para continuar.',
+		en: 'Your session has expired. Please sign in again to continue.',
 	},
 };

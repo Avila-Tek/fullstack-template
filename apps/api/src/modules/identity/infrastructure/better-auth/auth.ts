@@ -1,6 +1,11 @@
 import { i18n } from '@better-auth/i18n';
 import * as argon2 from 'argon2';
 import { betterAuth } from 'better-auth';
+import {
+	ADVANCED_CONFIG,
+	JWT_JWKS_CONFIG,
+	SESSION_CONFIG,
+} from './auth-config';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { createAuthMiddleware } from 'better-auth/api';
 import { jwt, twoFactor } from 'better-auth/plugins';
@@ -188,10 +193,7 @@ export const auth = betterAuth({
 
 	plugins: [
 		jwt({
-			jwks: {
-				keyPairConfig: { alg: 'RS256', modulusLength: 2048 },
-				jwksPath: '/.well-known/jwks.json',
-			},
+			jwks: JWT_JWKS_CONFIG,
 			jwt: {
 				issuer: process.env.BETTER_AUTH_URL ?? 'http://localhost:3002',
 				audience: [process.env.CLIENT_URL ?? 'http://localhost:4200'],
@@ -220,17 +222,11 @@ export const auth = betterAuth({
 		}),
 	],
 
-	session: {
-		expiresIn: 60 * 60 * 24 * 7,
-		updateAge: 60 * 60 * 24,
-		cookieCache: {
-			enabled: true,
-			maxAge: 60 * 5,
-		},
-	},
+	session: SESSION_CONFIG,
 
 	advanced: {
 		useSecureCookies: process.env.NODE_ENV === 'production',
+		...ADVANCED_CONFIG,
 	},
 
 	emailVerification: {

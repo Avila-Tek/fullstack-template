@@ -157,8 +157,8 @@ export class BetterAuthPasswordResetController {
 export class BetterAuthTokenController {
 	@Post('api/v1/auth/token')
 	@ApiOperation({
-		summary: 'Exchange session cookie for RS256 JWT',
-		description: 'Returns a short-lived JWT for stateless auth in apps/api.',
+		summary: 'Exchange session cookie for ES256 JWT',
+		description: 'Returns a short-lived JWT (ES256) for stateless auth in apps/api.',
 	})
 	@ApiResponse({ status: 200, schema: zodToOpenApi(tokenResponse) })
 	@ApiErrorResponses(401)
