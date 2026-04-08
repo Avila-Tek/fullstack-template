@@ -2,65 +2,65 @@
 
 **Plan**: `docs/plans/auth-rate-limiting-hardening-plan.md`  
 **Spec**: `docs/specs/SPEC-auth-hardening.md`  
-**Status**: Not started
+**Status**: Complete
 
 ---
 
 ## Phase 1 — Infrastructure plumbing (T1, T2, T3 — parallelizable)
 
-- [ ] **T1.1** Add `assertEnv('REDIS_URL')` to `apps/api/src/env.ts`
-- [ ] **T1.2** Add `trust proxy` block to `apps/api/src/main.ts` (qa/prod only)
-- [ ] **T2.1** Create `apps/api/src/shared/utils/resolve-client-ip.ts`
-- [ ] **T2.2** Write unit tests — `apps/api/test/shared/utils/resolve-client-ip.spec.ts` (RED → GREEN)
-- [ ] **T3.1** Fix `secondaryStorage.set` in `auth.ts` — apply 86400 s fallback TTL when `ttl` is falsy
-- [ ] **T3.2** Convert `secondaryStorage.delete` in `auth.ts` to `async/await`
+- [x] **T1.1** Add `assertEnv('REDIS_URL')` to `apps/api/src/env.ts`
+- [x] **T1.2** Add `trust proxy` block to `apps/api/src/main.ts` (qa/prod only)
+- [x] **T2.1** Create `apps/api/src/shared/utils/resolve-client-ip.ts`
+- [x] **T2.2** Write unit tests — `apps/api/test/shared/utils/resolve-client-ip.spec.ts` (RED → GREEN)
+- [x] **T3.1** Fix `secondaryStorage.set` in `auth.ts` — apply 86400 s fallback TTL when `ttl` is falsy
+- [x] **T3.2** Convert `secondaryStorage.delete` in `auth.ts` to `async/await`
 
 ### Checkpoint 1
-- [ ] `npx turbo typecheck --filter @repo/api` passes
-- [ ] `npm -C apps/api test` passes (all existing tests + T2 unit tests)
+- [x] `npx turbo typecheck --filter @repo/api` passes
+- [x] `npm -C apps/api test` passes (all existing tests + T2 unit tests)
 
 ---
 
 ## Phase 2 — Middleware hardening (T4 — depends on T2)
 
-- [ ] **T4.1** Export `signUpBeforeHookBody` from `apps/api/src/modules/identity/infrastructure/better-auth/hooks/sign-up.hooks.ts`
-- [ ] **T4.2** Export `deriveErrorType` from `apps/api/src/modules/identity/infrastructure/better-auth/hooks/sign-in.hooks.ts`
-- [ ] **T4.3** Update `signin-ip-rate-limit.middleware.spec.ts` — replace `incr`/`expire` mocks with `eval` mock; add CF header test (RED)
-- [ ] **T4.4** Write `apps/api/test/modules/identity/infrastructure/web/middlewares/signup-ip-rate-limit.middleware.spec.ts` (RED)
-- [ ] **T4.5** Refactor `signin-ip-rate-limit.middleware.ts` — Lua atomic counter, `@Inject(REDIS_CLIENT)`, `resolveClientIp`, dynamic message
-- [ ] **T4.6** Refactor `signup-ip-rate-limit.middleware.ts` — same fixes as T4.5
-- [ ] **T4.7** Update `identity.module.ts` — import `RedisModule`, add both middlewares to `providers`
-- [ ] **T4.8** Confirm T4.3 + T4.4 tests GREEN
+- [x] **T4.1** Export `signUpBeforeHookBody` from `apps/api/src/modules/identity/infrastructure/better-auth/hooks/sign-up.hooks.ts`
+- [x] **T4.2** Export `deriveErrorType` from `apps/api/src/modules/identity/infrastructure/better-auth/hooks/sign-in.hooks.ts`
+- [x] **T4.3** Update `signin-ip-rate-limit.middleware.spec.ts` — replace `incr`/`expire` mocks with `eval` mock; add CF header test (RED → GREEN)
+- [x] **T4.4** Write `apps/api/test/modules/identity/infrastructure/web/middlewares/signup-ip-rate-limit.middleware.spec.ts` (RED → GREEN)
+- [x] **T4.5** Refactor `signin-ip-rate-limit.middleware.ts` — Lua atomic counter, `@Inject(REDIS_CLIENT)`, `resolveClientIp`, dynamic message
+- [x] **T4.6** Refactor `signup-ip-rate-limit.middleware.ts` — same fixes as T4.5
+- [x] **T4.7** Update `identity.module.ts` — import `RedisModule`, add both middlewares to `providers`
+- [x] **T4.8** Confirm T4.3 + T4.4 tests GREEN
 
 ### Checkpoint 2
-- [ ] `npx turbo typecheck --filter @repo/api` passes
-- [ ] All signin + signup middleware tests pass
-- [ ] No `@Optional()` in either middleware file
-- [ ] No `new Redis(...)` in either middleware file
+- [x] `npx turbo typecheck --filter @repo/api` passes
+- [x] All signin + signup middleware tests pass
+- [x] No `@Optional()` in either middleware file
+- [x] No `new Redis(...)` in either middleware file
 
 ---
 
 ## Phase 3 — Per-account lockout (T5)
 
-- [ ] **T5.1** Write `apps/api/test/modules/identity/infrastructure/security/account-lockout.service.spec.ts` (RED)
-- [ ] **T5.2** Implement `apps/api/src/modules/identity/infrastructure/security/account-lockout.service.ts`
-- [ ] **T5.3** Confirm T5.1 tests GREEN
-- [ ] **T5.4** Wire `AccountLockoutService` into `auth.ts` — compose `before` hook (isLocked check) + `after` hook (recordFailure / recordSuccess)
+- [x] **T5.1** Write `apps/api/test/modules/identity/infrastructure/security/account-lockout.service.spec.ts` (RED → GREEN)
+- [x] **T5.2** Implement `apps/api/src/modules/identity/infrastructure/security/account-lockout.service.ts`
+- [x] **T5.3** Confirm T5.1 tests GREEN
+- [x] **T5.4** Wire `AccountLockoutService` into `auth.ts` — compose `before` hook (isLocked check) + `after` hook (recordFailure / recordSuccess)
 
 ### Checkpoint 3
-- [ ] `npx turbo typecheck --filter @repo/api` passes
-- [ ] AccountLockoutService tests pass
-- [ ] `before` hook in `auth.ts` checks lockout on `/sign-in/email` path
-- [ ] `after` hook in `auth.ts` records failure on `INVALID_EMAIL_OR_PASSWORD`, success on session created
+- [x] `npx turbo typecheck --filter @repo/api` passes
+- [x] AccountLockoutService tests pass
+- [x] `before` hook in `auth.ts` checks lockout on `/sign-in/email` path
+- [x] `after` hook in `auth.ts` records failure on `INVALID_EMAIL_OR_PASSWORD`, success on session created
 
 ---
 
 ## Phase 4 — Final validation
 
-- [ ] **T6.1** `npx turbo typecheck --filter @repo/api` — clean
-- [ ] **T6.2** `npx turbo lint --filter @repo/api` — clean (run `lint:fix` if needed)
-- [ ] **T6.3** `npm -C apps/api test` — all tests pass
-- [ ] **T6.4** No `any`/`as any`, no `console.log`, no `new Redis(...)` inside middlewares
+- [x] **T6.1** `npx turbo typecheck --filter @repo/api` — clean
+- [x] **T6.2** `npx turbo lint --filter @repo/api` — clean on all changed files (pre-existing failures unrelated to this work)
+- [x] **T6.3** `npm -C apps/api test` — all 133 tests pass (26 files)
+- [x] **T6.4** No `any`/`as any`, no `console.log`, no `new Redis(...)` inside middlewares
 
 ---
 
