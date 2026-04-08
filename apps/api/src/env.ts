@@ -9,3 +9,4 @@ function assertEnv(key: string): void {
 
 assertEnv('DATABASE_URL');
 assertEnv('BETTER_AUTH_SECRET');
+assertEnv('REDIS_URL');
