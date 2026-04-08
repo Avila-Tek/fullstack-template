@@ -1,17 +1,19 @@
-import type { NextRequest } from 'next/server';
-import { NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
+import createIntlMiddleware from 'next-intl/middleware';
+import { routing } from '@/src/i18n/routing';
 
-export function middleware(request: NextRequest) {
+const handleI18n = createIntlMiddleware(routing);
+
+export function middleware(request: NextRequest): NextResponse {
   const { pathname } = request.nextUrl;
 
-  // Redirigir la raíz a /login
   if (pathname === '/') {
     return NextResponse.redirect(new URL('/login', request.url));
   }
 
-  return NextResponse.next();
+  return handleI18n(request);
 }
 
 export const config = {
-  matcher: ['/'],
+  matcher: [String.raw`/((?!api|_next/static|_next/image|favicon.ico|.*\..*).*)` ],
 };
