@@ -6,6 +6,7 @@ import { createAuthMiddleware } from 'better-auth/api';
 import { jwt, twoFactor } from 'better-auth/plugins';
 import { and, desc, eq, inArray } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/node-postgres';
+import Redis from 'ioredis';
 import { Pool } from 'pg';
 import { normalizeEmail } from '@/shared/utils/normalize-email';
 import {
@@ -29,6 +30,14 @@ import { validatePasswordComplexity } from '../utils/validate-password-complexit
 if (!process.env.DATABASE_URL) {
 	throw new Error('DATABASE_URL is required for Better Auth');
 }
+
+// Dedicated Redis client for Better Auth secondary storage (session cache + rate limiting).
+// Must be created here — Better Auth initializes before the NestJS DI container.
+const redis = new Redis(process.env.REDIS_URL ?? 'redis://localhost:6379', {
+	lazyConnect: false,
+	maxRetriesPerRequest: 1,
+	enableOfflineQueue: false,
+});
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 const db = drizzle(pool, { schema });
 
@@ -76,10 +85,18 @@ export const auth = betterAuth({
 			account: schema.account,
 			verification: schema.verification,
 			twoFactor: schema.twoFactor,
-			rateLimit: schema.rateLimit,
 			jwks: schema.jwks,
 		},
 	}),
+
+	secondaryStorage: {
+		get: (key) => redis.get(key),
+		set: async (key, value, ttl) => {
+			if (ttl) await redis.set(key, value, 'EX', ttl);
+			else await redis.set(key, value);
+		},
+		delete: (key) => redis.del(key).then(() => undefined),
+	},
 
 	user: {
 		additionalFields: {
@@ -166,7 +183,7 @@ export const auth = betterAuth({
 		enabled: true,
 		window: 60,
 		max: 10,
-		storage: 'database',
+		storage: 'secondary-storage',
 	},
 
 	plugins: [

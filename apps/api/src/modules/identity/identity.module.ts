@@ -23,6 +23,7 @@ import { Argon2HashAdapter } from './infrastructure/security/argon2-hash.adapter
 import { HmacTokenAdapter } from './infrastructure/security/hmac-token.adapter';
 import { BetterAuthDocsModule } from './infrastructure/web/controllers/better-auth-docs.module';
 import { ChangePasswordController } from './infrastructure/web/controllers/change-password.controller';
+import { SigninIpRateLimitMiddleware } from './infrastructure/web/middlewares/signin-ip-rate-limit.middleware';
 import { SignupIpRateLimitMiddleware } from './infrastructure/web/middlewares/signup-ip-rate-limit.middleware';
 
 @Module({
@@ -57,6 +58,12 @@ export class IdentityModule implements NestModule {
 		// Per-IP rate limit on the sign-up endpoint (5 attempts / hour)
 		consumer.apply(SignupIpRateLimitMiddleware).forRoutes({
 			path: 'api/v1/auth/sign-up/email',
+			method: RequestMethod.POST,
+		});
+
+		// Per-IP rate limit on the sign-in endpoint (20 attempts / hour)
+		consumer.apply(SigninIpRateLimitMiddleware).forRoutes({
+			path: 'api/v1/auth/sign-in/email',
 			method: RequestMethod.POST,
 		});
 

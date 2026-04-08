@@ -8,7 +8,6 @@ export { emailChangeVerification } from './schemas/email-change-verification.sch
 export { jwks } from './schemas/jwks.schema';
 export { loginAuditLog } from './schemas/login-audit-log.schema';
 export { passwordHistory } from './schemas/password-history.schema';
-export { rateLimit } from './schemas/rate-limit.schema';
 export { session } from './schemas/session.schema';
 export {
 	signupAuditLog,
