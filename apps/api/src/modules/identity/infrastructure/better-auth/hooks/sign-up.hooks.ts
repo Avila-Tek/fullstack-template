@@ -197,10 +197,13 @@ function failureEventType(errorCode: string): SignupEventType {
 }
 
 // ---------------------------------------------------------------------------
-// Better Auth AuthMiddleware — wired into betterAuth({ hooks: { before } })
+// Inner middleware body — exported so it can be called from the composed hook
+// in auth.ts (same pattern as signInAfterMiddlewareBody)
 // ---------------------------------------------------------------------------
 
-export const signUpBeforeHook = createAuthMiddleware(async (ctx) => {
+export async function signUpBeforeHookBody(
+	ctx: Parameters<Parameters<typeof createAuthMiddleware>[0]>[0],
+): Promise<Response | undefined> {
 	if (!ctx.request) return;
 
 	const ip =
@@ -260,4 +263,10 @@ export const signUpBeforeHook = createAuthMiddleware(async (ctx) => {
 		resultStatus: 'success',
 	});
 	recordAuthEvent('signup_success');
-});
+}
+
+// ---------------------------------------------------------------------------
+// Better Auth AuthMiddleware — wired into betterAuth({ hooks: { before } })
+// ---------------------------------------------------------------------------
+
+export const signUpBeforeHook = createAuthMiddleware(signUpBeforeHookBody);

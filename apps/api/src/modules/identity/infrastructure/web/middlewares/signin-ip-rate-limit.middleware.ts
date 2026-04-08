@@ -1,15 +1,27 @@
 import { createHash } from 'node:crypto';
 import type { IncomingMessage, ServerResponse } from 'node:http';
-import { Injectable, type NestMiddleware, Optional } from '@nestjs/common';
-import Redis from 'ioredis';
+import { Inject, Injectable, type NestMiddleware } from '@nestjs/common';
+import { resolveClientIp } from '@/shared/utils/resolve-client-ip';
+import { REDIS_CLIENT } from '../../redis/redis.constants';
 
 const RATE_LIMIT = 20;
 const WINDOW_SECONDS = 3600;
-const TOO_MANY_MESSAGE = 'Too many sign-in attempts. Try again in 1 hour.';
+const WINDOW_HOURS = Math.round(WINDOW_SECONDS / 3600);
+const TOO_MANY_MESSAGE = `Too many sign-in attempts. Try again in ${WINDOW_HOURS} hour${WINDOW_HOURS === 1 ? '' : 's'}.`;
+
+const LUA_INCR_WITH_TTL = `
+  local c = redis.call('INCR', KEYS[1])
+  if c == 1 then redis.call('EXPIRE', KEYS[1], ARGV[1]) end
+  return c
+`;
 
 interface RedisLike {
-	incr(key: string): Promise<number>;
-	expire(key: string, seconds: number): Promise<number>;
+	eval(
+		script: string,
+		numkeys: number,
+		key: string,
+		ttl: string,
+	): Promise<unknown>;
 }
 
 type RequestWithIp = IncomingMessage & { ip?: string };
@@ -18,13 +30,8 @@ type RequestWithIp = IncomingMessage & { ip?: string };
 export class SigninIpRateLimitMiddleware implements NestMiddleware {
 	private readonly redis: RedisLike;
 
-	constructor(@Optional() redis?: RedisLike) {
-		this.redis =
-			redis ??
-			new Redis({
-				host: process.env.REDIS_HOST ?? '127.0.0.1',
-				port: Number(process.env.REDIS_PORT ?? 6379),
-			});
+	constructor(@Inject(REDIS_CLIENT) redis: RedisLike) {
+		this.redis = redis;
 	}
 
 	async use(
@@ -32,14 +39,16 @@ export class SigninIpRateLimitMiddleware implements NestMiddleware {
 		res: ServerResponse,
 		next: () => void,
 	): Promise<void> {
-		const ip = req.ip ?? '';
+		const ip = resolveClientIp(req);
 		const hash = createHash('sha256').update(ip).digest('hex');
 		const key = `signin_ratelimit:${hash}`;
 
-		const count = await this.redis.incr(key);
-		if (count === 1) {
-			await this.redis.expire(key, WINDOW_SECONDS);
-		}
+		const count = (await this.redis.eval(
+			LUA_INCR_WITH_TTL,
+			1,
+			key,
+			String(WINDOW_SECONDS),
+		)) as number;
 
 		if (count > RATE_LIMIT) {
 			res.writeHead(429, { 'Content-Type': 'application/json' });

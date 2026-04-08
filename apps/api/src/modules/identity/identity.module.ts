@@ -19,6 +19,7 @@ import { DrizzleAccountRepository } from './infrastructure/persistence/repositor
 import { DrizzlePasswordHistoryRepository } from './infrastructure/persistence/repositories/drizzle-password-history-repository.adapter';
 import { DrizzleSessionRepository } from './infrastructure/persistence/repositories/drizzle-session-repository.adapter';
 import { DrizzleUserRepository } from './infrastructure/persistence/repositories/drizzle-user-repository.adapter';
+import { RedisModule } from './infrastructure/redis/redis.module';
 import { Argon2HashAdapter } from './infrastructure/security/argon2-hash.adapter';
 import { HmacTokenAdapter } from './infrastructure/security/hmac-token.adapter';
 import { BetterAuthDocsModule } from './infrastructure/web/controllers/better-auth-docs.module';
@@ -28,6 +29,7 @@ import { SignupIpRateLimitMiddleware } from './infrastructure/web/middlewares/si
 
 @Module({
 	imports: [
+		RedisModule,
 		// Mounts Better Auth handler at /api/v1/auth/* and wires the middleware.
 		AuthModule.forRoot({ auth }),
 		// Virtual Better Auth route stubs for Swagger docs — excluded in production
@@ -35,6 +37,8 @@ import { SignupIpRateLimitMiddleware } from './infrastructure/web/middlewares/si
 	],
 	controllers: [ChangePasswordController],
 	providers: [
+		SigninIpRateLimitMiddleware,
+		SignupIpRateLimitMiddleware,
 		// Use cases
 		{ provide: ChangePasswordUseCasePort, useClass: ChangePasswordUseCase },
 

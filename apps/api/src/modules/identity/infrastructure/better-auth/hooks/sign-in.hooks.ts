@@ -34,7 +34,7 @@ export type SignInHookParams = SignInSuccessParams | SignInFailureParams;
 // Helpers
 // ---------------------------------------------------------------------------
 
-function deriveErrorType(returned: unknown): SignInErrorType {
+export function deriveErrorType(returned: unknown): SignInErrorType {
 	if (!returned || typeof returned !== 'object') return 'unknown';
 
 	const err = returned as Record<string, unknown>;

@@ -1,7 +1,7 @@
 import { createHash } from 'node:crypto';
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { SigninIpRateLimitMiddleware } from '@/modules/identity/infrastructure/web/middlewares/signin-ip-rate-limit.middleware';
+import { SignupIpRateLimitMiddleware } from '@/modules/identity/infrastructure/web/middlewares/signup-ip-rate-limit.middleware';
 
 interface RedisLike {
 	eval(script: string, numkeys: number, key: string, ttl: string): Promise<unknown>;
@@ -32,7 +32,7 @@ function makeRes(): ServerResponse & {
 	};
 }
 
-describe('SigninIpRateLimitMiddleware', () => {
+describe('SignupIpRateLimitMiddleware', () => {
 	let nextMock: ReturnType<typeof vi.fn>;
 	let next: () => void;
 
@@ -42,7 +42,7 @@ describe('SigninIpRateLimitMiddleware', () => {
 	});
 
 	it('calls next when under the rate limit', async () => {
-		const middleware = new SigninIpRateLimitMiddleware(makeRedis(1));
+		const middleware = new SignupIpRateLimitMiddleware(makeRedis(1));
 		const res = makeRes();
 
 		await middleware.use(makeReq(), res, next);
@@ -51,8 +51,8 @@ describe('SigninIpRateLimitMiddleware', () => {
 		expect(res.writeHead).not.toHaveBeenCalled();
 	});
 
-	it('calls next at exactly the rate limit boundary (20)', async () => {
-		const middleware = new SigninIpRateLimitMiddleware(makeRedis(20));
+	it('calls next at exactly the rate limit boundary (5)', async () => {
+		const middleware = new SignupIpRateLimitMiddleware(makeRedis(5));
 		const res = makeRes();
 
 		await middleware.use(makeReq(), res, next);
@@ -61,7 +61,7 @@ describe('SigninIpRateLimitMiddleware', () => {
 	});
 
 	it('returns 429 when over the rate limit', async () => {
-		const middleware = new SigninIpRateLimitMiddleware(makeRedis(21));
+		const middleware = new SignupIpRateLimitMiddleware(makeRedis(6));
 		const res = makeRes();
 
 		await middleware.use(makeReq(), res, next);
@@ -74,7 +74,7 @@ describe('SigninIpRateLimitMiddleware', () => {
 
 	it('calls eval with a Lua script containing INCR and EXPIRE', async () => {
 		const redis = makeRedis(1);
-		const middleware = new SigninIpRateLimitMiddleware(redis);
+		const middleware = new SignupIpRateLimitMiddleware(redis);
 
 		await middleware.use(makeReq(), makeRes(), next);
 
@@ -87,7 +87,7 @@ describe('SigninIpRateLimitMiddleware', () => {
 
 	it('passes TTL argument of 3600 to eval', async () => {
 		const redis = makeRedis(1);
-		const middleware = new SigninIpRateLimitMiddleware(redis);
+		const middleware = new SignupIpRateLimitMiddleware(redis);
 
 		await middleware.use(makeReq(), makeRes(), next);
 
@@ -98,7 +98,7 @@ describe('SigninIpRateLimitMiddleware', () => {
 
 	it('uses different redis keys for different IPs', async () => {
 		const redis = makeRedis(1);
-		const middleware = new SigninIpRateLimitMiddleware(redis);
+		const middleware = new SignupIpRateLimitMiddleware(redis);
 
 		await middleware.use(makeReq('1.1.1.1'), makeRes(), next);
 		await middleware.use(makeReq('2.2.2.2'), makeRes(), next);
@@ -111,7 +111,7 @@ describe('SigninIpRateLimitMiddleware', () => {
 
 	it('uses cf-connecting-ip header over req.ip for key derivation', async () => {
 		const redis = makeRedis(1);
-		const middleware = new SigninIpRateLimitMiddleware(redis);
+		const middleware = new SignupIpRateLimitMiddleware(redis);
 		const cfIp = '5.5.5.5';
 
 		await middleware.use(makeReq('1.2.3.4', cfIp), makeRes(), next);
@@ -119,12 +119,12 @@ describe('SigninIpRateLimitMiddleware', () => {
 		const evalMock = redis.eval as ReturnType<typeof vi.fn>;
 		const key = (evalMock.mock.calls[0] as unknown[])[2] as string;
 		const expectedHash = createHash('sha256').update(cfIp).digest('hex');
-		expect(key).toBe(`signin_ratelimit:${expectedHash}`);
+		expect(key).toBe(`signup_ratelimit:${expectedHash}`);
 	});
 
 	it('falls back to req.ip when cf-connecting-ip is absent', async () => {
 		const redis = makeRedis(1);
-		const middleware = new SigninIpRateLimitMiddleware(redis);
+		const middleware = new SignupIpRateLimitMiddleware(redis);
 		const ip = '1.2.3.4';
 
 		await middleware.use(makeReq(ip), makeRes(), next);
@@ -132,6 +132,6 @@ describe('SigninIpRateLimitMiddleware', () => {
 		const evalMock = redis.eval as ReturnType<typeof vi.fn>;
 		const key = (evalMock.mock.calls[0] as unknown[])[2] as string;
 		const expectedHash = createHash('sha256').update(ip).digest('hex');
-		expect(key).toBe(`signin_ratelimit:${expectedHash}`);
+		expect(key).toBe(`signup_ratelimit:${expectedHash}`);
 	});
 });
