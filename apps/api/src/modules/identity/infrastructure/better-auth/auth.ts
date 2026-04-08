@@ -1,3 +1,4 @@
+import { i18n } from '@better-auth/i18n';
 import * as argon2 from 'argon2';
 import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
@@ -18,6 +19,7 @@ import {
 	consumePendingTermsData,
 	signUpBeforeHook,
 } from './hooks/sign-up.hooks';
+import { esBetterAuthTranslations } from './i18n/translations';
 import * as schema from '../persistence/db-schema';
 import { validatePasswordComplexity } from '../utils/validate-password-complexity';
 
@@ -190,6 +192,13 @@ export const auth = betterAuth({
 			otpOptions: {
 				period: 30,
 				digits: 6,
+			},
+		}),
+		i18n({
+			defaultLocale: 'en',
+			detection: ['header'],
+			translations: {
+				es: esBetterAuthTranslations,
 			},
 		}),
 	],

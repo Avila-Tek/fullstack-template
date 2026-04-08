@@ -1,0 +1,1 @@
+export { esBetterAuthTranslations } from './translations';
