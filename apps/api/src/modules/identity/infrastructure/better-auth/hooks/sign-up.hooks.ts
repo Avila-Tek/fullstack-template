@@ -1,12 +1,11 @@
 import { signUpInput } from '@repo/schemas';
 import { createAuthMiddleware } from 'better-auth/api';
-import type { SignupEventType } from '../../../application/ports/out/audit-log-service.port';
 import { resolveClientIp } from '@/shared/utils/resolve-client-ip';
+import type { SignupEventType } from '../../../application/ports/out/audit-log-service.port';
 import { googleCaptchaService } from '../../security/google-captcha.adapter';
 import { auditLogger } from '../../utils/audit-logger';
 import { recordAuthEvent } from '../../utils/auth-metrics';
 import { hashIp } from '../../utils/hash-ip';
-
 
 // ---------------------------------------------------------------------------
 // Types

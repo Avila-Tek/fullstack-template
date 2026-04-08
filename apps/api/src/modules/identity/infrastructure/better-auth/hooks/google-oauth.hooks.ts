@@ -2,58 +2,59 @@ import { createAuthMiddleware } from 'better-auth/api';
 import { auditLogger } from '../../utils/audit-logger';
 import { recordAuthEvent } from '../../utils/auth-metrics';
 import { hashIp } from '../../utils/hash-ip';
+import { resolveClientIp } from '@/shared/utils/resolve-client-ip';
 
 // ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
 
 export interface GoogleOAuthSuccessParams {
-	userId: string;
-	ipHash: string;
-	correlationId: string;
+  userId: string;
+  ipHash: string;
+  correlationId: string;
 }
 
 export interface GoogleOAuthFailureParams {
-	errorType: 'oauth_error';
-	ipHash: string;
-	correlationId: string;
+  errorType: 'oauth_error';
+  ipHash: string;
+  correlationId: string;
 }
 
 export type GoogleOAuthHookParams =
-	| GoogleOAuthSuccessParams
-	| GoogleOAuthFailureParams;
+  | GoogleOAuthSuccessParams
+  | GoogleOAuthFailureParams;
 
 // ---------------------------------------------------------------------------
 // Core handler — exported for direct unit testing
 // ---------------------------------------------------------------------------
 
 export function handleGoogleOAuthAfter(params: GoogleOAuthHookParams): void {
-	if ('userId' in params) {
-		auditLogger.info({
-			level: 'security',
-			event: 'auth.google.success',
-			userId: params.userId,
-			provider: 'google',
-			ipHash: params.ipHash,
-			correlationId: params.correlationId,
-			resultStatus: 'success',
-		});
-		recordAuthEvent('auth.google.success', { provider: 'google' });
-	} else {
-		auditLogger.warn({
-			level: 'security',
-			event: 'auth.google.failure',
-			error_type: params.errorType,
-			provider: 'google',
-			ipHash: params.ipHash,
-			correlationId: params.correlationId,
-			resultStatus: 'failure',
-		});
-		recordAuthEvent('auth.google.failure', {
-			provider: 'google',
-			error_type: 'oauth_error',
-		});
-	}
+  if ('userId' in params) {
+    auditLogger.info({
+      level: 'security',
+      event: 'auth.google.success',
+      userId: params.userId,
+      provider: 'google',
+      ipHash: params.ipHash,
+      correlationId: params.correlationId,
+      resultStatus: 'success',
+    });
+    recordAuthEvent('auth.google.success', { provider: 'google' });
+  } else {
+    auditLogger.warn({
+      level: 'security',
+      event: 'auth.google.failure',
+      error_type: params.errorType,
+      provider: 'google',
+      ipHash: params.ipHash,
+      correlationId: params.correlationId,
+      resultStatus: 'failure',
+    });
+    recordAuthEvent('auth.google.failure', {
+      provider: 'google',
+      error_type: 'oauth_error',
+    });
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -61,10 +62,10 @@ export function handleGoogleOAuthAfter(params: GoogleOAuthHookParams): void {
 // ---------------------------------------------------------------------------
 
 export interface AfterHookCtx {
-	request?: Request;
-	path: string;
-	getHeader: (name: string) => string | null | undefined;
-	context: Record<string, unknown>;
+  request?: Request;
+  path: string;
+  getHeader: (name: string) => string | null | undefined;
+  context: Record<string, unknown>;
 }
 
 // ---------------------------------------------------------------------------
@@ -72,30 +73,29 @@ export interface AfterHookCtx {
 // ---------------------------------------------------------------------------
 
 export async function googleOAuthAfterMiddlewareBody(
-	ctx: AfterHookCtx,
+  ctx: AfterHookCtx
 ): Promise<void> {
-	if (!ctx.request) return;
-	if (ctx.path !== '/sign-in/social') return;
+  if (!ctx.request) return;
+  if (ctx.path !== '/sign-in/social') return;
 
-	const ip =
-		ctx.getHeader('x-forwarded-for') ?? ctx.getHeader('x-real-ip') ?? '';
-	const ipHash = hashIp(ip);
-	const correlationId = crypto.randomUUID();
+  const ip = resolveClientIp(ctx);
+  const ipHash = hashIp(ip);
+  const correlationId = crypto.randomUUID();
 
-	const returned = ctx.context.returned;
-	const user = (returned as Record<string, unknown> | undefined)?.user;
-	const userId =
-		typeof (user as Record<string, unknown> | undefined)?.id === 'string'
-			? ((user as Record<string, unknown>).id as string)
-			: undefined;
+  const returned = ctx.context.returned;
+  const user = (returned as Record<string, unknown> | undefined)?.user;
+  const userId =
+    typeof (user as Record<string, unknown> | undefined)?.id === 'string'
+      ? ((user as Record<string, unknown>).id as string)
+      : undefined;
 
-	if (userId) {
-		handleGoogleOAuthAfter({ userId, ipHash, correlationId });
-	} else {
-		handleGoogleOAuthAfter({ errorType: 'oauth_error', ipHash, correlationId });
-	}
+  if (userId) {
+    handleGoogleOAuthAfter({ userId, ipHash, correlationId });
+  } else {
+    handleGoogleOAuthAfter({ errorType: 'oauth_error', ipHash, correlationId });
+  }
 }
 
 export const googleOAuthAfterHook = createAuthMiddleware(
-	googleOAuthAfterMiddlewareBody,
+  googleOAuthAfterMiddlewareBody
 );
