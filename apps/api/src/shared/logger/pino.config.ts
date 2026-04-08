@@ -19,7 +19,6 @@ export function pinoHttpConfig(serviceName: string): Params {
 				}) => ({
 					method: req.method,
 					path: req.url,
-					correlationId: (req as Record<string, unknown>).correlationId,
 					sourceIp: req.headers?.['x-forwarded-for'] ?? req.remoteAddress ?? '',
 				}),
 				res: (res: { statusCode: number }) => ({

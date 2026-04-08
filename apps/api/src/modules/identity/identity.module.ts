@@ -8,7 +8,6 @@ import { AuthModule } from '@thallesp/nestjs-better-auth';
 import { json } from 'express';
 import { ChangePasswordUseCasePort } from './application/ports/in/change-password.use-case.port';
 import { AccountRepositoryPort } from './application/ports/out/account-repository.port';
-import { EmailServicePort } from './application/ports/out/email-service.port';
 import { PasswordHashServicePort } from './application/ports/out/password-hash-service.port';
 import { PasswordHistoryRepositoryPort } from './application/ports/out/password-history-repository.port';
 import { SessionRepositoryPort } from './application/ports/out/session-repository.port';
@@ -16,17 +15,15 @@ import { TokenServicePort } from './application/ports/out/token-service.port';
 import { UserRepositoryPort } from './application/ports/out/user-repository.port';
 import { ChangePasswordUseCase } from './application/use-cases/change-password.use-case';
 import { auth } from './infrastructure/better-auth/auth';
-import { SmtpEmailAdapter } from './infrastructure/email/smtp-email-adapter';
-import { AdminBearerGuard } from './infrastructure/guards/admin-bearer.guard';
-import { Argon2HashAdapter } from './infrastructure/hash/argon2-hash-adapter';
 import { DrizzleAccountRepository } from './infrastructure/persistence/repositories/drizzle-account-repository.adapter';
 import { DrizzlePasswordHistoryRepository } from './infrastructure/persistence/repositories/drizzle-password-history-repository.adapter';
 import { DrizzleSessionRepository } from './infrastructure/persistence/repositories/drizzle-session-repository.adapter';
 import { DrizzleUserRepository } from './infrastructure/persistence/repositories/drizzle-user-repository.adapter';
-import { SignupIpRateLimitMiddleware } from './infrastructure/rate-limit/signup-ip-rate-limit.middleware';
-import { HmacTokenAdapter } from './infrastructure/token/hmac-token-adapter';
-import { BetterAuthDocsModule } from './infrastructure/web/better-auth-docs.module';
-import { ChangePasswordController } from './infrastructure/web/change-password.controller';
+import { Argon2HashAdapter } from './infrastructure/security/argon2-hash.adapter';
+import { HmacTokenAdapter } from './infrastructure/security/hmac-token.adapter';
+import { BetterAuthDocsModule } from './infrastructure/web/controllers/better-auth-docs.module';
+import { ChangePasswordController } from './infrastructure/web/controllers/change-password.controller';
+import { SignupIpRateLimitMiddleware } from './infrastructure/web/middlewares/signup-ip-rate-limit.middleware';
 
 @Module({
 	imports: [
@@ -37,9 +34,6 @@ import { ChangePasswordController } from './infrastructure/web/change-password.c
 	],
 	controllers: [ChangePasswordController],
 	providers: [
-		// Guards
-		AdminBearerGuard,
-
 		// Use cases
 		{ provide: ChangePasswordUseCasePort, useClass: ChangePasswordUseCase },
 
@@ -53,11 +47,10 @@ import { ChangePasswordController } from './infrastructure/web/change-password.c
 		{ provide: UserRepositoryPort, useClass: DrizzleUserRepository },
 
 		// Service adapters
-		{ provide: EmailServicePort, useClass: SmtpEmailAdapter },
 		{ provide: PasswordHashServicePort, useClass: Argon2HashAdapter },
 		{ provide: TokenServicePort, useClass: HmacTokenAdapter },
 	],
-	exports: [AdminBearerGuard],
+	exports: [],
 })
 export class IdentityModule implements NestModule {
 	configure(consumer: MiddlewareConsumer): void {

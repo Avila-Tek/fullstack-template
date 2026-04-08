@@ -2,18 +2,18 @@
 // Used in: better-auth singleton (runtime) and drizzle config (migrations).
 // Not a barrel re-export — do not import individual table types from here.
 
-export { account } from './schema/account.schema';
-export { device } from './schema/device.schema';
-export { emailChangeVerification } from './schema/email-change-verification.schema';
-export { jwks } from './schema/jwks.schema';
-export { loginAuditLog } from './schema/login-audit-log.schema';
-export { passwordHistory } from './schema/password-history.schema';
-export { rateLimit } from './schema/rate-limit.schema';
-export { session } from './schema/session.schema';
+export { account } from './schemas/account.schema';
+export { device } from './schemas/device.schema';
+export { emailChangeVerification } from './schemas/email-change-verification.schema';
+export { jwks } from './schemas/jwks.schema';
+export { loginAuditLog } from './schemas/login-audit-log.schema';
+export { passwordHistory } from './schemas/password-history.schema';
+export { rateLimit } from './schemas/rate-limit.schema';
+export { session } from './schemas/session.schema';
 export {
 	signupAuditLog,
 	signupEventTypeEnum,
-} from './schema/signup-audit-log.schema';
-export { twoFactor } from './schema/two-factor.schema';
-export { user } from './schema/user.schema';
-export { verification } from './schema/verification.schema';
+} from './schemas/signup-audit-log.schema';
+export { twoFactor } from './schemas/two-factor.schema';
+export { user } from './schemas/user.schema';
+export { verification } from './schemas/verification.schema';

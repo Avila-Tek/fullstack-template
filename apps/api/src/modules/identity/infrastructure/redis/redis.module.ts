@@ -1,7 +1,7 @@
 import { Module, OnModuleDestroy } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 import Redis from 'ioredis';
-import { auditLogger } from '../shared/logger/audit-logger';
+import { auditLogger } from '../utils/audit-logger';
 import { REDIS_CLIENT } from './redis.constants';
 
 @Module({

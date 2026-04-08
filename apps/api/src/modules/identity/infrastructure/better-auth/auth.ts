@@ -6,31 +6,28 @@ import { jwt, twoFactor } from 'better-auth/plugins';
 import { and, desc, eq, inArray } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';
-import { smtpEmailService } from '../email/smtp-email-adapter';
-import { googleOAuthAfterMiddlewareBody } from '../hooks/google-oauth.hooks';
-import { signInAfterMiddlewareBody } from '../hooks/sign-in.hooks';
-import { signOutSessionDeleteBefore } from '../hooks/sign-out.hooks';
-import {
-	consumePendingTermsData,
-	signUpBeforeHook,
-} from '../hooks/sign-up.hooks';
-import * as schema from '../persistence/db-schema';
-import { generateRecoveryToken } from '../shared/utils/generate-recovery-token';
-import { normalizeEmail } from '../shared/utils/normalize-email';
+import { normalizeEmail } from '@/shared/utils/normalize-email';
 import {
 	parseDeviceName,
 	parseDeviceType,
-} from '../shared/utils/parse-device-name';
-import { validatePasswordComplexity } from '../shared/utils/validate-password-complexity';
+} from '@/shared/utils/user-agent-parser';
+import { googleOAuthAfterMiddlewareBody } from './hooks/google-oauth.hooks';
+import { signInAfterMiddlewareBody } from './hooks/sign-in.hooks';
+import { signOutSessionDeleteBefore } from './hooks/sign-out.hooks';
+import {
+	consumePendingTermsData,
+	signUpBeforeHook,
+} from './hooks/sign-up.hooks';
+import * as schema from '../persistence/db-schema';
+import { validatePasswordComplexity } from '../utils/validate-password-complexity';
 
 // Dedicated connection pool for Better Auth — reuses the same DATABASE_URL as the API.
 // Better Auth owns lifecycle of this connection; it must be available before the
 // NestJS DI container starts, which is why we cannot inject it from DrizzleModule here.
-const pool = new Pool({
-	connectionString:
-		process.env.DATABASE_URL ??
-		'postgresql://postgres:postgres@localhost:5432/poc',
-});
+if (!process.env.DATABASE_URL) {
+	throw new Error('DATABASE_URL is required for Better Auth');
+}
+const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 const db = drizzle(pool, { schema });
 
 const memoryCostArg = Number(process.env.ARGON2_MEMORY_COST ?? 65536);
@@ -42,24 +39,26 @@ async function appendPasswordHistory(
 	userId: string,
 	hashedPassword: string,
 ): Promise<void> {
-	await db.insert(schema.passwordHistory).values({
-		id: crypto.randomUUID(),
-		userId,
-		hashedPassword,
+	await db.transaction(async (tx) => {
+		await tx.insert(schema.passwordHistory).values({
+			id: crypto.randomUUID(),
+			userId,
+			hashedPassword,
+		});
+
+		const history = await tx
+			.select({ id: schema.passwordHistory.id })
+			.from(schema.passwordHistory)
+			.where(eq(schema.passwordHistory.userId, userId))
+			.orderBy(desc(schema.passwordHistory.createdAt));
+
+		if (history.length > 5) {
+			const idsToDelete = history.slice(5).map((r) => r.id);
+			await tx
+				.delete(schema.passwordHistory)
+				.where(inArray(schema.passwordHistory.id, idsToDelete));
+		}
 	});
-
-	const history = await db
-		.select({ id: schema.passwordHistory.id })
-		.from(schema.passwordHistory)
-		.where(eq(schema.passwordHistory.userId, userId))
-		.orderBy(desc(schema.passwordHistory.createdAt));
-
-	if (history.length > 5) {
-		const idsToDelete = history.slice(5).map((r) => r.id);
-		await db
-			.delete(schema.passwordHistory)
-			.where(inArray(schema.passwordHistory.id, idsToDelete));
-	}
 }
 
 export const auth = betterAuth({
@@ -136,7 +135,9 @@ export const auth = betterAuth({
 			user: { email: string };
 			url: string;
 		}) => {
-			await smtpEmailService.sendPasswordResetEmail(user.email, url);
+			// TODO: integrate shared Postmark email service
+			void user.email;
+			void url;
 		},
 	},
 
@@ -214,7 +215,9 @@ export const auth = betterAuth({
 			user: { email: string };
 			url: string;
 		}) => {
-			await smtpEmailService.sendVerificationEmail(user.email, url);
+			// TODO: integrate shared Postmark email service
+			void user.email;
+			void url;
 		},
 		afterEmailVerification: async (user: { id: string }) => {
 			await db
@@ -302,27 +305,6 @@ export const auth = betterAuth({
 							userAgent: ua,
 							ipAddress: ip,
 						});
-
-						const [userRow] = await db
-							.select({ email: schema.user.email })
-							.from(schema.user)
-							.where(eq(schema.user.id, session.userId))
-							.limit(1);
-
-						if (userRow) {
-							const secret = process.env.BETTER_AUTH_SECRET ?? '';
-							const token = generateRecoveryToken(session.userId, secret);
-							const clientUrl =
-								process.env.CLIENT_URL ?? 'http://localhost:4200';
-							const recoveryUrl = `${clientUrl}/security/recover?token=${token}`;
-							await smtpEmailService.sendLoginAlertEmail(
-								userRow.email,
-								deviceName,
-								ip,
-								new Date(),
-								recoveryUrl,
-							);
-						}
 					}
 
 					await db.insert(schema.loginAuditLog).values({

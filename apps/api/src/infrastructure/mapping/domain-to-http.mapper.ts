@@ -10,6 +10,10 @@ export class DomainToHttpMapper {
 
 	private static readonly STATUS: Record<string, number> = {
 		REGION_COUNTRY_NOT_FOUND: 404,
+		IDENTITY_INVALID_CREDENTIALS: 401,
+		IDENTITY_NO_PASSWORD_ACCOUNT: 422,
+		IDENTITY_INVALID_PASSWORD: 422,
+		IDENTITY_PASSWORD_REUSE: 422,
 	};
 
 	map(errorCode: string): number {
