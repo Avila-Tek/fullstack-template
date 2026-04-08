@@ -1,7 +1,6 @@
 import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import {
-	backupCodesResponse,
 	disableTotpInput,
 	enableTotpResponse,
 	forgetPasswordInput,
@@ -167,15 +166,6 @@ export class BetterAuthTokenController {
 		/* handled by Better Auth middleware */
 	}
 
-	@Get('api/v1/auth/.well-known/jwks.json')
-	@ApiOperation({
-		summary: 'JWKS public key set',
-		description: 'Public keys used by apps/api to verify RS256 JWTs.',
-	})
-	@ApiResponse({ status: 200, schema: { type: 'object' } })
-	jwks(): void {
-		/* handled by Better Auth middleware */
-	}
 }
 
 @SkipApiResponse()
@@ -250,15 +240,4 @@ export class BetterAuthTwoFactorController {
 		/* handled by Better Auth middleware */
 	}
 
-	@Post('api/v1/auth/two-factor/generate-backup-codes')
-	@ApiOperation({
-		summary: 'Regenerate backup codes',
-		description:
-			'Generates a fresh set of one-time backup codes, invalidating previous codes.',
-	})
-	@ApiResponse({ status: 200, schema: zodToOpenApi(backupCodesResponse) })
-	@ApiErrorResponses(401)
-	generateBackupCodes(): void {
-		/* handled by Better Auth middleware */
-	}
 }

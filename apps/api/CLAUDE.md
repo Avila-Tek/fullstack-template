@@ -22,6 +22,7 @@ src/modules/<feature>/
   infrastructure/
     persistence/    # Drizzle adapters
     web/            # NestJS controllers
+test/               # Test files mirroring the src/ folder structure
 ```
 
 ## Key rules
@@ -51,4 +52,5 @@ src/modules/<feature>/
 
 ## Tests
 
-Instantiate use cases directly — no TestBed. Mock ports with `vi.fn()`. Assert on returned value or thrown exception.
+- **Location**: test files live in `test/` mirroring the `src/` folder structure (e.g. `src/modules/identity/application/use-cases/foo.ts` → `test/modules/identity/application/use-cases/foo.spec.ts`).
+- Instantiate use cases directly — no TestBed. Mock ports with `vi.fn()`. Assert on returned value or thrown exception.
