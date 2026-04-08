@@ -50,7 +50,7 @@ It applies repo-wide to `apps/*` and `packages/*`.
 
 ### Backend
 
-- **TypeScript, Node >=20, Fastify**
+- **TypeScript, Node >=20, NestJS**
 
 ### Platform / tooling
 
