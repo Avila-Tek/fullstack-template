@@ -1,11 +1,12 @@
+import type { useTranslations } from 'next-intl';
 import { z } from 'zod';
 
 /**
  * Form DTOs for Auth feature
  *
  * This file contains:
- * - Zod schemas for form validation
- * - Form types (inferred from schemas)
+ * - Zod schema factory functions (receive a `t` function, return schema with translated messages)
+ * - Form types (inferred from base schemas)
  * - Default values factory functions
  *
  * NOTE: API input/output types come from @repo/schemas
@@ -13,31 +14,26 @@ import { z } from 'zod';
  * (e.g., confirmPassword field exists in form but not in API)
  */
 
-/**
- * Shared field validations
- */
-const emailValidation = z
-  .string()
-  .min(1, 'El correo es obligatorio')
-  .email('Por favor ingresa un correo válido');
+export type TAuthTranslations = ReturnType<typeof useTranslations<'auth'>>;
 
-const passwordValidation = z
-  .string()
-  .min(8, 'La contraseña debe tener al menos 8 caracteres');
+// ---------------------------------------------------------------------------
+// Login
+// ---------------------------------------------------------------------------
 
-const optionalNameValidation = z
-  .string()
-  .max(50, 'El nombre debe tener menos de 50 caracteres');
+export function buildLoginSchema(t: TAuthTranslations) {
+  return z.object({
+    email: z
+      .string()
+      .min(1, t('validation.emailRequired'))
+      .email(t('validation.emailInvalid')),
+    password: z
+      .string()
+      .min(1, t('validation.passwordRequired'))
+      .min(8, t('validation.passwordMin')),
+  });
+}
 
-/**
- * Login form
- */
-export const loginFormDefinition = z.object({
-  email: emailValidation,
-  password: z.string().min(1, 'La contraseña es obligatoria'),
-});
-
-export type TLoginForm = z.infer<typeof loginFormDefinition>;
+export type TLoginForm = z.infer<ReturnType<typeof buildLoginSchema>>;
 
 export function createLoginDefaultValues(
   partial?: Partial<TLoginForm>
@@ -48,30 +44,36 @@ export function createLoginDefaultValues(
   };
 }
 
-/**
- * Sign up form
- */
-const signUpBaseSchema = z.object({
-  firstName: optionalNameValidation,
-  lastName: optionalNameValidation,
-  email: emailValidation,
-  password: passwordValidation,
-  rePassword: z.string().min(1, 'Por favor confirma tu contraseña'),
-});
+// ---------------------------------------------------------------------------
+// Sign up
+// ---------------------------------------------------------------------------
 
-export const signUpFormDefinition = signUpBaseSchema.superRefine(
-  (data, ctx) => {
+function buildSignUpBaseSchema(t: TAuthTranslations) {
+  return z.object({
+    firstName: z.string().max(50, t('validation.nameMax')),
+    lastName: z.string().max(50, t('validation.nameMax')),
+    email: z
+      .string()
+      .min(1, t('validation.emailRequired'))
+      .email(t('validation.emailInvalid')),
+    password: z.string().min(8, t('validation.passwordMin')),
+    rePassword: z.string().min(1, t('validation.confirmPasswordRequired')),
+  });
+}
+
+export function buildSignUpSchema(t: TAuthTranslations) {
+  return buildSignUpBaseSchema(t).superRefine((data, ctx) => {
     if (data.password !== data.rePassword) {
       ctx.addIssue({
         code: 'custom',
-        message: 'Las contraseñas no coinciden',
+        message: t('validation.passwordsMismatch'),
         path: ['rePassword'],
       });
     }
-  }
-);
+  });
+}
 
-export type TSignUpForm = z.infer<typeof signUpBaseSchema>;
+export type TSignUpForm = z.infer<ReturnType<typeof buildSignUpBaseSchema>>;
 
 export function createSignUpDefaultValues(
   partial?: Partial<TSignUpForm>
@@ -85,33 +87,52 @@ export function createSignUpDefaultValues(
   };
 }
 
-/**
- * Send OTP form (for password recovery)
- */
-export const sendOtpFormDefinition = z.object({
-  email: emailValidation,
-});
+// ---------------------------------------------------------------------------
+// Send OTP (forgot password)
+// ---------------------------------------------------------------------------
 
-export type TSendOtpForm = z.infer<typeof sendOtpFormDefinition>;
+export function buildForgotPasswordSchema(t: TAuthTranslations) {
+  return z.object({
+    email: z
+      .string()
+      .min(1, t('validation.emailRequired'))
+      .email(t('validation.emailInvalid')),
+  });
+}
 
-export function createSendOtpDefaultValues(
-  partial?: Partial<TSendOtpForm>
-): TSendOtpForm {
+export type TForgotPasswordForm = z.infer<
+  ReturnType<typeof buildForgotPasswordSchema>
+>;
+
+export function createForgotPasswordDefaultValues(
+  partial?: Partial<TForgotPasswordForm>
+): TForgotPasswordForm {
   return {
     email: partial?.email ?? '',
   };
 }
 
-/**
- * OTP form (simple, only otp field)
- */
-const otpValidation = z.string().length(6, 'El código debe tener 6 dígitos');
+// Keep legacy alias for any callers that use the old name
+export const buildSendOtpSchema = buildForgotPasswordSchema;
+export type TSendOtpForm = TForgotPasswordForm;
 
-export const otpFormDefinition = z.object({
-  otp: otpValidation,
-});
+export function createSendOtpDefaultValues(
+  partial?: Partial<TSendOtpForm>
+): TSendOtpForm {
+  return createForgotPasswordDefaultValues(partial);
+}
 
-export type TOtpForm = z.infer<typeof otpFormDefinition>;
+// ---------------------------------------------------------------------------
+// OTP verification
+// ---------------------------------------------------------------------------
+
+export function buildOtpSchema(t: TAuthTranslations) {
+  return z.object({
+    otp: z.string().length(6, t('validation.otpDigits')),
+  });
+}
+
+export type TOtpForm = z.infer<ReturnType<typeof buildOtpSchema>>;
 
 export function createOtpDefaultValues(partial?: Partial<TOtpForm>): TOtpForm {
   return {
@@ -119,15 +140,21 @@ export function createOtpDefaultValues(partial?: Partial<TOtpForm>): TOtpForm {
   };
 }
 
-/**
- * Verify OTP form (with email)
- */
-export const verifyOtpFormDefinition = z.object({
-  email: emailValidation,
-  otp: otpValidation,
-});
+// ---------------------------------------------------------------------------
+// Verify OTP (with email)
+// ---------------------------------------------------------------------------
 
-export type TVerifyOtpForm = z.infer<typeof verifyOtpFormDefinition>;
+export function buildVerifyOtpSchema(t: TAuthTranslations) {
+  return z.object({
+    email: z
+      .string()
+      .min(1, t('validation.emailRequired'))
+      .email(t('validation.emailInvalid')),
+    otp: z.string().length(6, t('validation.otpDigits')),
+  });
+}
+
+export type TVerifyOtpForm = z.infer<ReturnType<typeof buildVerifyOtpSchema>>;
 
 export function createVerifyOtpDefaultValues(
   partial?: Partial<TVerifyOtpForm>
@@ -138,15 +165,20 @@ export function createVerifyOtpDefaultValues(
   };
 }
 
-/**
- * Email callback form (for email verification links)
- */
-export const emailCallbackFormDefinition = z.object({
-  tokenHash: z.string().min(1, 'Token requerido'),
-  type: z.string().min(1, 'Tipo requerido'),
-});
+// ---------------------------------------------------------------------------
+// Email callback (email verification links)
+// ---------------------------------------------------------------------------
 
-export type TEmailCallbackForm = z.infer<typeof emailCallbackFormDefinition>;
+export function buildEmailCallbackSchema(t: TAuthTranslations) {
+  return z.object({
+    tokenHash: z.string().min(1, t('validation.tokenRequired')),
+    type: z.string().min(1, t('validation.typeRequired')),
+  });
+}
+
+export type TEmailCallbackForm = z.infer<
+  ReturnType<typeof buildEmailCallbackSchema>
+>;
 
 export function createEmailCallbackDefaultValues(
   partial?: Partial<TEmailCallbackForm>
@@ -157,46 +189,37 @@ export function createEmailCallbackDefaultValues(
   };
 }
 
-/**
- * Forgot password form
- */
-export const forgotPasswordFormDefinition = z.object({
-  email: emailValidation,
-});
+// ---------------------------------------------------------------------------
+// Reset password
+// ---------------------------------------------------------------------------
 
-export type TForgotPasswordForm = z.infer<typeof forgotPasswordFormDefinition>;
-
-export function createForgotPasswordDefaultValues(
-  partial?: Partial<TForgotPasswordForm>
-): TForgotPasswordForm {
-  return {
-    email: partial?.email ?? '',
-  };
+function buildResetPasswordBaseSchema(t: TAuthTranslations) {
+  return z.object({
+    email: z
+      .string()
+      .min(1, t('validation.emailRequired'))
+      .email(t('validation.emailInvalid')),
+    otp: z.string().length(6, t('validation.otpDigits')),
+    newPassword: z.string().min(8, t('validation.passwordMin')),
+    confirmPassword: z.string().min(1, t('validation.confirmPasswordRequired')),
+  });
 }
 
-/**
- * Reset password form
- */
-const resetPasswordBaseSchema = z.object({
-  email: emailValidation,
-  otp: z.string().length(6, 'El código debe tener 6 dígitos'),
-  newPassword: passwordValidation,
-  confirmPassword: z.string().min(1, 'Por favor confirma tu contraseña'),
-});
-
-export const resetPasswordFormDefinition = resetPasswordBaseSchema.superRefine(
-  (data, ctx) => {
+export function buildResetPasswordSchema(t: TAuthTranslations) {
+  return buildResetPasswordBaseSchema(t).superRefine((data, ctx) => {
     if (data.newPassword !== data.confirmPassword) {
       ctx.addIssue({
         code: 'custom',
-        message: 'Las contraseñas no coinciden',
+        message: t('validation.passwordsMismatch'),
         path: ['confirmPassword'],
       });
     }
-  }
-);
+  });
+}
 
-export type TResetPasswordForm = z.infer<typeof resetPasswordBaseSchema>;
+export type TResetPasswordForm = z.infer<
+  ReturnType<typeof buildResetPasswordBaseSchema>
+>;
 
 export function createResetPasswordDefaultValues(
   partial?: Partial<TResetPasswordForm>

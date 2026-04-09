@@ -2,9 +2,12 @@
 
 import { GoogleLogoIcon } from '@repo/ui';
 import { Button } from '@repo/ui/components/button';
+import { useTranslations } from 'next-intl';
 import { AuthService } from '../../infrastructure';
 
 export function GoogleLoginButton() {
+  const t = useTranslations('auth');
+
   function handleGoogleLogin() {
     window.location.href = AuthService.getGoogleAuthUrl();
   }
@@ -17,7 +20,7 @@ export function GoogleLoginButton() {
       onClick={handleGoogleLogin}
     >
       <GoogleLogoIcon className="h-5 w-5" />
-      Continuar con Google
+      {t('login.googleButton')}
     </Button>
   );
 }

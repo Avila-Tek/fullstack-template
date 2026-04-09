@@ -11,10 +11,11 @@ import {
   FormMessage,
 } from '@repo/ui/components/form';
 import { Loader2, Mail } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import {
+  buildOtpSchema,
   createOtpDefaultValues,
-  otpFormDefinition,
   type TOtpForm,
 } from '../../infrastructure/auth.form';
 import { FormError } from '../components/FormError';
@@ -36,9 +37,12 @@ export function OtpVerificationForm({
   isVerifying,
   isResending,
   error,
-}: OtpVerificationFormProps) {
+}: Readonly<OtpVerificationFormProps>) {
+  const t = useTranslations('auth');
+  const schema = buildOtpSchema(t);
+
   const form = useForm<TOtpForm>({
-    resolver: zodResolver(otpFormDefinition),
+    resolver: zodResolver(schema),
     defaultValues: createOtpDefaultValues(),
   });
 
@@ -57,11 +61,10 @@ export function OtpVerificationForm({
       </div>
       <div className="space-y-2">
         <h3 className="txt-primary-900 text-lg font-semibold">
-          Ingresa el código de verificación
+          {t('otp.title')}
         </h3>
         <p className="text-sm txt-tertiary-600 leading-relaxed">
-          Te enviamos un código de 6 dígitos a{' '}
-          <span className="font-medium">{email}</span>
+          {t('otp.message', { email })}
         </p>
       </div>
       <Form {...form}>
@@ -74,7 +77,7 @@ export function OtpVerificationForm({
             name="otp"
             render={({ field }) => (
               <FormItem className="flex flex-col items-center">
-                <FormLabel className="sr-only">Código OTP</FormLabel>
+                <FormLabel className="sr-only">{t('otp.label')}</FormLabel>
                 <FormControl>
                   <OtpInput field={field} disabled={isVerifying} />
                 </FormControl>
@@ -91,7 +94,7 @@ export function OtpVerificationForm({
             {isVerifying ? (
               <Loader2 className="h-4 w-4 animate-spin" />
             ) : (
-              'Verificar'
+              t('otp.submitButton')
             )}
           </Button>
         </form>
@@ -102,7 +105,7 @@ export function OtpVerificationForm({
         onClick={handleResend}
         disabled={isResending}
       >
-        {isResending ? 'Reenviando...' : '¿No lo recibiste? Reenviar código'}
+        {isResending ? t('otp.resendingButton') : t('otp.resendButton')}
       </Button>
     </div>
   );

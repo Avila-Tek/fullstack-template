@@ -9,7 +9,32 @@ import {
 } from '@repo/ui/components/form';
 import { Input } from '@repo/ui/components/input';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
+import type { ReactNode } from 'react';
 import { useFormContext } from 'react-hook-form';
+
+function renderTermsLink(chunks: ReactNode) {
+  return (
+    <Link
+      href="/terms"
+      className="underline underline-offset-2 hover:txt-tertiary-600"
+    >
+      {chunks}
+    </Link>
+  );
+}
+
+function renderPrivacyLink(chunks: ReactNode) {
+  return (
+    <Link
+      href="/privacy"
+      className="underline underline-offset-2 hover:txt-tertiary-600"
+    >
+      {chunks}
+    </Link>
+  );
+}
+
 import type { TSignUpForm } from '../../infrastructure/auth.form';
 import { FormError } from './FormError';
 import { LoadingButton } from './LoadingButton';
@@ -20,7 +45,11 @@ interface SignUpFormContentProps {
   error?: Error | null;
 }
 
-export function SignUpFormContent({ disabled, error }: SignUpFormContentProps) {
+export function SignUpFormContent({
+  disabled,
+  error,
+}: Readonly<SignUpFormContentProps>) {
+  const t = useTranslations('auth');
   const { control } = useFormContext<TSignUpForm>();
 
   return (
@@ -32,15 +61,12 @@ export function SignUpFormContent({ disabled, error }: SignUpFormContentProps) {
           render={({ field }) => (
             <FormItem className="space-y-2">
               <FormLabel className="txt-secondary-700 text-sm font-medium">
-                Nombre{' '}
-                <span className="txt-quaternary-400 font-normal">
-                  (opcional)
-                </span>
+                {t('signUp.firstNameLabel')}
               </FormLabel>
               <FormControl>
                 <Input
                   type="text"
-                  placeholder="Tu nombre"
+                  placeholder={t('signUp.firstNamePlaceholder')}
                   autoComplete="given-name"
                   className="h-11 rounded-xl"
                   disabled={disabled}
@@ -58,15 +84,12 @@ export function SignUpFormContent({ disabled, error }: SignUpFormContentProps) {
           render={({ field }) => (
             <FormItem className="space-y-2">
               <FormLabel className="txt-secondary-700 text-sm font-medium">
-                Apellido{' '}
-                <span className="txt-quaternary-400 font-normal">
-                  (opcional)
-                </span>
+                {t('signUp.lastNameLabel')}
               </FormLabel>
               <FormControl>
                 <Input
                   type="text"
-                  placeholder="Tu apellido"
+                  placeholder={t('signUp.lastNamePlaceholder')}
                   autoComplete="family-name"
                   className="h-11 rounded-xl"
                   disabled={disabled}
@@ -85,12 +108,12 @@ export function SignUpFormContent({ disabled, error }: SignUpFormContentProps) {
         render={({ field }) => (
           <FormItem className="space-y-2">
             <FormLabel className="txt-secondary-700 text-sm font-medium">
-              Correo electrónico
+              {t('signUp.emailLabel')}
             </FormLabel>
             <FormControl>
               <Input
                 type="email"
-                placeholder="tu@ejemplo.com"
+                placeholder={t('signUp.emailPlaceholder')}
                 autoComplete="email"
                 className="h-11 rounded-xl"
                 disabled={disabled}
@@ -108,11 +131,11 @@ export function SignUpFormContent({ disabled, error }: SignUpFormContentProps) {
         render={({ field }) => (
           <FormItem className="space-y-2">
             <FormLabel className="txt-secondary-700 text-sm font-medium">
-              Contraseña
+              {t('signUp.passwordLabel')}
             </FormLabel>
             <FormControl>
               <PasswordInput
-                placeholder="Crea una contraseña"
+                placeholder={t('signUp.passwordPlaceholder')}
                 autoComplete="new-password"
                 showStrengthIndicator
                 className="h-11 rounded-xl"
@@ -131,11 +154,11 @@ export function SignUpFormContent({ disabled, error }: SignUpFormContentProps) {
         render={({ field }) => (
           <FormItem className="space-y-2">
             <FormLabel className="txt-secondary-700 text-sm font-medium">
-              Confirmar contraseña
+              {t('signUp.confirmPasswordLabel')}
             </FormLabel>
             <FormControl>
               <PasswordInput
-                placeholder="Confirma tu contraseña"
+                placeholder={t('signUp.confirmPasswordPlaceholder')}
                 autoComplete="new-password"
                 className="h-11 rounded-xl"
                 disabled={disabled}
@@ -153,27 +176,17 @@ export function SignUpFormContent({ disabled, error }: SignUpFormContentProps) {
         <LoadingButton
           type="submit"
           loading={disabled}
-          loadingText="Creando cuenta..."
+          loadingText={t('signUp.submitLoading')}
           variant="cta"
         >
-          Comenzar
+          {t('signUp.submitButton')}
         </LoadingButton>
 
         <p className="text-center text-xs txt-quaternary-400 leading-relaxed">
-          Al continuar, aceptas nuestros{' '}
-          <Link
-            href="/terms"
-            className="underline underline-offset-2 hover:txt-tertiary-600"
-          >
-            Términos
-          </Link>{' '}
-          y{' '}
-          <Link
-            href="/privacy"
-            className="underline underline-offset-2 hover:txt-tertiary-600"
-          >
-            Política de Privacidad
-          </Link>
+          {t.rich('signUp.termsText', {
+            terms: renderTermsLink,
+            privacy: renderPrivacyLink,
+          })}
         </p>
       </div>
     </div>

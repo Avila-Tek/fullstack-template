@@ -48,7 +48,8 @@ const auth = {
   },
   forgotPassword: {
     title: 'Reset password',
-    description: "Don't worry! Enter your email and we'll send you a link to reset your password.",
+    description:
+      "Don't worry! Enter your email and we'll send you a link to reset your password.",
     emailLabel: 'Email address',
     emailPlaceholder: 'you@example.com',
     submitButton: 'Send link',
@@ -66,7 +67,8 @@ const auth = {
   },
   resetPassword: {
     title: 'New password',
-    description: 'Enter the 6-digit code we sent to {email} and your new password.',
+    description:
+      'Enter the 6-digit code we sent to {email} and your new password.',
     otpLabel: 'Verification code',
     newPasswordLabel: 'New password',
     newPasswordPlaceholder: 'Minimum 8 characters',
@@ -81,12 +83,14 @@ const auth = {
     title: 'Verify your email',
     titleSuccess: 'Email verified',
     subtitleSuccess: 'Welcome to HabitFlow',
-    defaultMessage: "We sent you a verification link. Click it to confirm your email and get started.",
+    defaultMessage:
+      'We sent you a verification link. Click it to confirm your email and get started.',
     defaultNote: "Didn't receive it? Check spam or contact support.",
     defaultActionLabel: 'Back to sign in',
     expiredError: 'This link or code may have expired. No worries, try again.',
     verifyingMessage: 'Verifying your email...',
-    successMessage: 'Your email has been verified. You are ready to start building great habits!',
+    successMessage:
+      'Your email has been verified. You are ready to start building great habits!',
     successButton: "Let's go!",
     errorTitle: 'Something went wrong',
     errorRetryLabel: 'Try again',
@@ -113,7 +117,8 @@ const auth = {
     errorTitle: 'Authentication error',
     errorSubtitle: 'Something went wrong',
     loadingStatus: 'Completing Google authentication...',
-    successStatus: 'Your account has been verified. Redirecting to dashboard...',
+    successStatus:
+      'Your account has been verified. Redirecting to dashboard...',
     errorStatus: 'Could not complete Google authentication.',
     retryButton: 'Try again',
   },
@@ -137,6 +142,7 @@ const auth = {
     show: 'Show password',
     hide: 'Hide password',
   },
+  divider: 'or',
 } as const satisfies DeepString<typeof es>;
 
 export default auth;

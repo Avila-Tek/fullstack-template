@@ -3,19 +3,19 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import * as React from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useUser } from '@/src/shared/hooks/useUser';
 import { useSignIn } from '../../application/useCases/login.useCase';
 import { useSignUp } from '../../application/useCases/signUp.useCase';
 import {
-  authPageTypeEnumObject,
   authSearchParamEnumObject,
   getRandomTagline,
 } from '../../domain/auth.constants';
 import {
+  buildSignUpSchema,
   createSignUpDefaultValues,
-  signUpFormDefinition,
   type TSignUpForm,
 } from '../../infrastructure/auth.form';
 import { AuthCard } from '../components/AuthCard';
@@ -25,18 +25,21 @@ import { GoogleLoginButton } from '../components/GoogleLoginButton';
 import { SignUpFormContent } from '../components/SignUpFormContent';
 
 export function SignUpForm() {
+  const t = useTranslations('auth');
   const router = useRouter();
   const [tagline] = React.useState(() =>
-    getRandomTagline(authPageTypeEnumObject.signUp)
+    getRandomTagline(t.raw('signUp.taglines') as readonly string[])
   );
 
   const signUp = useSignUp();
   const signIn = useSignIn();
   const { refetchUser } = useUser();
 
+  const schema = React.useMemo(() => buildSignUpSchema(t), [t]);
+
   const methods = useForm<TSignUpForm>({
     defaultValues: createSignUpDefaultValues(),
-    resolver: zodResolver(signUpFormDefinition),
+    resolver: zodResolver(schema),
   });
 
   async function onSubmit(data: TSignUpForm) {
@@ -53,34 +56,30 @@ export function SignUpForm() {
           `/verify-email?${authSearchParamEnumObject.email}=${emailParam}`
         );
       } else if (result.result?.user) {
-        // Auto sign-in after successful signup
         const signInResult = await signIn.mutateAsync({
           email: data.email,
           password: data.password,
         });
 
         if (signInResult.success && signInResult.session) {
-          // Refetch user data from UserContext (which includes subscription)
           await refetchUser();
-          // Redirect based on subscription status
-          const redirectUrl = '/dashboard';
-          router.push(redirectUrl);
+          router.push('/dashboard');
         }
       }
     }
   }
 
-  const header = <AuthHeader title="Crea una cuenta" subtitle={tagline} />;
+  const header = <AuthHeader title={t('signUp.title')} subtitle={tagline} />;
 
   const footer = (
     <React.Fragment>
       <p className="text-center text-sm txt-quaternary-500">
-        ¿Ya tienes una cuenta?{' '}
+        {t('signUp.hasAccount')}{' '}
         <Link
           href="/login"
           className="font-medium txt-brand-primary-600 hover:underline underline-offset-4"
         >
-          Inicia sesión
+          {t('signUp.signIn')}
         </Link>
       </p>
     </React.Fragment>

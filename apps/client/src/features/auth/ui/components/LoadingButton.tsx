@@ -3,6 +3,7 @@
 import { Button } from '@repo/ui/components/button';
 import { cn } from '@repo/ui/lib/utils';
 import { Loader2 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import * as React from 'react';
 
 interface LoadingButtonProps extends React.ComponentProps<typeof Button> {
@@ -17,7 +18,10 @@ export function LoadingButton({
   disabled,
   className,
   ...props
-}: LoadingButtonProps) {
+}: Readonly<LoadingButtonProps>) {
+  const t = useTranslations('shared');
+  const resolvedLoadingText = loadingText ?? t('loading.defaultText');
+
   return (
     <Button
       disabled={loading || disabled}
@@ -33,7 +37,7 @@ export function LoadingButton({
       {loading ? (
         <React.Fragment>
           <Loader2 className="h-4 w-4 animate-spin mr-2" />
-          <span>{loadingText || 'Please wait...'}</span>
+          <span>{resolvedLoadingText}</span>
         </React.Fragment>
       ) : (
         children

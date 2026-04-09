@@ -2,18 +2,15 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import * as React from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useUser } from '@/src/shared/hooks/useUser';
 import { useSignIn } from '../../application/useCases/login.useCase';
+import { getRandomTagline } from '../../domain/auth.constants';
 import {
-  authPageTypeEnumObject,
-  getRandomTagline,
-} from '../../domain/auth.constants';
-import {
+  buildLoginSchema,
   createLoginDefaultValues,
-  loginFormDefinition,
   type TLoginForm,
 } from '../../infrastructure/auth.form';
 import { AuthCard } from '../components/AuthCard';
@@ -23,16 +20,19 @@ import { GoogleLoginButton } from '../components/GoogleLoginButton';
 import { LoginFormContent } from '../components/LoginFormContent';
 
 export function LoginForm() {
+  const t = useTranslations('auth');
   const [tagline] = React.useState(() =>
-    getRandomTagline(authPageTypeEnumObject.login)
+    getRandomTagline(t.raw('login.taglines') as readonly string[])
   );
 
   const signIn = useSignIn();
   const { setSession, refetchUser } = useUser();
 
+  const schema = React.useMemo(() => buildLoginSchema(t), [t]);
+
   const methods = useForm<TLoginForm>({
     defaultValues: createLoginDefaultValues(),
-    resolver: zodResolver(loginFormDefinition),
+    resolver: zodResolver(schema),
   });
 
   async function onSubmit(data: TLoginForm) {
@@ -41,25 +41,22 @@ export function LoginForm() {
     }
     const result = await signIn.mutateAsync(data);
     if (result.success && result.session) {
-      // Store session (accessToken) in localStorage and cookies
       setSession(result.session);
-      // Refetch user data from UserContext (which includes subscription)
       await refetchUser();
-      // Redirect based on subscription status
     }
   }
 
-  const header = <AuthHeader title="Bienvenido de vuelta" subtitle={tagline} />;
+  const header = <AuthHeader title={t('login.title')} subtitle={tagline} />;
 
   const footer = (
     <React.Fragment>
       <p className="text-center text-sm txt-quaternary-500">
-        ¿Eres nuevo?{' '}
+        {t('login.noAccount')}{' '}
         <Link
           href="/signup"
           className="font-medium txt-brand-primary-600 hover:underline underline-offset-4"
         >
-          Crea una cuenta
+          {t('login.createAccount')}
         </Link>
       </p>
     </React.Fragment>

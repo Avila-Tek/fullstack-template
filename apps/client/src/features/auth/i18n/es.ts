@@ -46,7 +46,8 @@ const auth = {
   },
   forgotPassword: {
     title: 'Restablecer contraseña',
-    description: '¡No te preocupes! Ingresa tu correo y te enviaremos un enlace para restablecer tu contraseña.',
+    description:
+      '¡No te preocupes! Ingresa tu correo y te enviaremos un enlace para restablecer tu contraseña.',
     emailLabel: 'Correo electrónico',
     emailPlaceholder: 'tu@ejemplo.com',
     submitButton: 'Enviar enlace',
@@ -64,7 +65,8 @@ const auth = {
   },
   resetPassword: {
     title: 'Nueva contraseña',
-    description: 'Ingresa el código de 6 dígitos que enviamos a {email} y tu nueva contraseña.',
+    description:
+      'Ingresa el código de 6 dígitos que enviamos a {email} y tu nueva contraseña.',
     otpLabel: 'Código de verificación',
     newPasswordLabel: 'Nueva contraseña',
     newPasswordPlaceholder: 'Mínimo 8 caracteres',
@@ -73,18 +75,22 @@ const auth = {
     submitButton: 'Restablecer contraseña',
     submitLoading: 'Restableciendo...',
     backToLogin: 'Volver a iniciar sesión',
-    noEmailError: 'No se proporcionó un correo electrónico. Por favor, inicia el proceso de recuperación nuevamente.',
+    noEmailError:
+      'No se proporcionó un correo electrónico. Por favor, inicia el proceso de recuperación nuevamente.',
   },
   verifyEmail: {
     title: 'Verifica tu correo',
     titleSuccess: 'Correo verificado',
     subtitleSuccess: 'Bienvenido a HabitFlow',
-    defaultMessage: 'Te enviamos un enlace de verificación. Haz clic en él para confirmar tu correo y comenzar.',
+    defaultMessage:
+      'Te enviamos un enlace de verificación. Haz clic en él para confirmar tu correo y comenzar.',
     defaultNote: '¿No lo recibiste? Revisa spam o contacta soporte.',
     defaultActionLabel: 'Volver a iniciar sesión',
-    expiredError: 'Este enlace o código puede haber expirado. No te preocupes, intenta de nuevo.',
+    expiredError:
+      'Este enlace o código puede haber expirado. No te preocupes, intenta de nuevo.',
     verifyingMessage: 'Verificando tu correo...',
-    successMessage: 'Tu correo ha sido verificado. ¡Estás listo para empezar a construir grandes hábitos!',
+    successMessage:
+      'Tu correo ha sido verificado. ¡Estás listo para empezar a construir grandes hábitos!',
     successButton: '¡Vamos!',
     errorTitle: 'Algo salió mal',
     errorRetryLabel: 'Intentar de nuevo',
@@ -135,6 +141,7 @@ const auth = {
     show: 'Mostrar contraseña',
     hide: 'Ocultar contraseña',
   },
+  divider: 'o',
 } as const;
 
 export default auth;

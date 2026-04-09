@@ -9,6 +9,7 @@ import {
 } from '@repo/ui/components/form';
 import { Input } from '@repo/ui/components/input';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
 import type { TLoginForm } from '../../infrastructure/auth.form';
 import { FormError } from './FormError';
@@ -20,7 +21,11 @@ interface LoginFormContentProps {
   error?: Error | null;
 }
 
-export function LoginFormContent({ disabled, error }: LoginFormContentProps) {
+export function LoginFormContent({
+  disabled,
+  error,
+}: Readonly<LoginFormContentProps>) {
+  const t = useTranslations('auth');
   const { control } = useFormContext<TLoginForm>();
 
   return (
@@ -31,12 +36,12 @@ export function LoginFormContent({ disabled, error }: LoginFormContentProps) {
         render={({ field }) => (
           <FormItem className="space-y-2">
             <FormLabel className="txt-secondary-700 text-sm font-medium">
-              Correo electrónico
+              {t('login.emailLabel')}
             </FormLabel>
             <FormControl>
               <Input
                 type="email"
-                placeholder="tu@ejemplo.com"
+                placeholder={t('login.emailPlaceholder')}
                 autoComplete="email"
                 className="h-11 rounded-xl"
                 disabled={disabled}
@@ -55,18 +60,18 @@ export function LoginFormContent({ disabled, error }: LoginFormContentProps) {
           <FormItem className="space-y-2">
             <div className="flex items-center justify-between">
               <FormLabel className="txt-secondary-700 text-sm font-medium">
-                Contraseña
+                {t('login.passwordLabel')}
               </FormLabel>
               <Link
                 href="/forgot-password"
                 className="text-xs txt-quaternary-500 hover:txt-brand-primary-600 transition-colors"
               >
-                ¿Olvidaste?
+                {t('login.forgotPassword')}
               </Link>
             </div>
             <FormControl>
               <PasswordInput
-                placeholder="Ingresa tu contraseña"
+                placeholder={t('login.passwordPlaceholder')}
                 autoComplete="current-password"
                 className="h-11 rounded-xl"
                 disabled={disabled}
@@ -84,9 +89,9 @@ export function LoginFormContent({ disabled, error }: LoginFormContentProps) {
         <LoadingButton
           type="submit"
           loading={disabled}
-          loadingText="Iniciando sesión..."
+          loadingText={t('login.submitLoading')}
         >
-          Continuar
+          {t('login.submitButton')}
         </LoadingButton>
       </div>
     </div>

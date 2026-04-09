@@ -5,17 +5,17 @@ import { Button } from '@repo/ui/components/button';
 import { ArrowLeft, Mail } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import * as React from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useForgotPassword } from '../../application/useCases/forgotPassword.useCase';
 import {
-  authPageTypeEnumObject,
   authSearchParamEnumObject,
   getRandomTagline,
 } from '../../domain/auth.constants';
 import {
+  buildForgotPasswordSchema,
   createForgotPasswordDefaultValues,
-  forgotPasswordFormDefinition,
   type TForgotPasswordForm,
 } from '../../infrastructure/auth.form';
 import { AuthCard } from '../components/AuthCard';
@@ -23,18 +23,21 @@ import { AuthHeader } from '../components/AuthHeader';
 import { ForgotPasswordFormContent } from '../components/ForgotPasswordFormContent';
 
 export function ForgotPasswordForm() {
+  const t = useTranslations('auth');
   const router = useRouter();
   const [tagline] = React.useState(() =>
-    getRandomTagline(authPageTypeEnumObject.forgotPassword)
+    getRandomTagline(t.raw('forgotPassword.taglines') as readonly string[])
   );
   const [disabled, setDisabled] = React.useState(false);
   const [emailSent, setEmailSent] = React.useState(false);
 
   const forgotPassword = useForgotPassword();
 
+  const schema = React.useMemo(() => buildForgotPasswordSchema(t), [t]);
+
   const methods = useForm<TForgotPasswordForm>({
     defaultValues: createForgotPasswordDefaultValues(),
-    resolver: zodResolver(forgotPasswordFormDefinition),
+    resolver: zodResolver(schema),
   });
 
   async function onSubmit(data: TForgotPasswordForm) {
@@ -58,7 +61,7 @@ export function ForgotPasswordForm() {
   }
 
   const header = (
-    <AuthHeader title="Restablecer contraseña" subtitle={tagline} />
+    <AuthHeader title={t('forgotPassword.title')} subtitle={tagline} />
   );
 
   const footer = (
@@ -67,7 +70,7 @@ export function ForgotPasswordForm() {
       className="flex items-center justify-center gap-2 text-sm txt-quaternary-500 hover:txt-brand-primary-600 transition-colors"
     >
       <ArrowLeft className="h-4 w-4" />
-      Volver a iniciar sesión
+      {t('forgotPassword.backToLogin')}
     </Link>
   );
 
@@ -80,20 +83,19 @@ export function ForgotPasswordForm() {
           </div>
           <div className="space-y-2">
             <h3 className="txt-primary-900 text-lg font-semibold">
-              Revisa tu bandeja de entrada
+              {t('forgotPassword.emailSentTitle')}
             </h3>
             <p className="text-sm txt-tertiary-600 leading-relaxed">
-              Enviamos un código de verificación a{' '}
-              <span className="font-medium txt-primary-900">
-                {methods.getValues('email')}
-              </span>
+              {t('forgotPassword.emailSentMessage', {
+                email: methods.getValues('email'),
+              })}
             </p>
           </div>
           <Button
             className="w-full h-11 rounded-xl mt-2"
             onClick={handleGoToResetPassword}
           >
-            Ingresar código
+            {t('forgotPassword.enterCodeButton')}
           </Button>
           <Button
             variant="outline"
@@ -102,7 +104,7 @@ export function ForgotPasswordForm() {
               setEmailSent(false);
             }}
           >
-            Intentar con otro correo
+            {t('forgotPassword.tryAnotherEmail')}
           </Button>
         </div>
       </AuthCard>

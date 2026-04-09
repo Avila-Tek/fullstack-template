@@ -1,13 +1,13 @@
 'use client';
 
 import { useRouter, useSearchParams } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import * as React from 'react';
 import {
   useVerifyEmailFlow,
   verifyEmailFlowStatusEnum,
 } from '../../application/useCases/verifyEmailFlow.useCase';
 import {
-  authPageTypeEnumObject,
   authSearchParamEnumObject,
   getRandomTagline,
   supabaseOtpTypeEnumObject,
@@ -21,6 +21,7 @@ import { VerifySuccessStatus } from '../components/VerifySuccessStatus';
 import { OtpVerificationForm } from './OtpVerificationForm';
 
 export function VerifyEmailForm() {
+  const t = useTranslations('auth');
   const router = useRouter();
   const searchParams = useSearchParams();
   const tokenHash = searchParams.get(authSearchParamEnumObject.token_hash);
@@ -29,7 +30,7 @@ export function VerifyEmailForm() {
     supabaseOtpTypeEnumObject.email;
   const email = searchParams.get(authSearchParamEnumObject.email);
   const [tagline] = React.useState(() =>
-    getRandomTagline(authPageTypeEnumObject.verifyEmail)
+    getRandomTagline(t.raw('verifyEmail.taglines') as readonly string[])
   );
 
   const {
@@ -44,7 +45,6 @@ export function VerifyEmailForm() {
     otpError,
   } = useVerifyEmailFlow();
 
-  // Flujo Supabase: verificar automáticamente con token_hash
   React.useEffect(() => {
     if (tokenHash) {
       verifyWithToken({ tokenHash, type });
@@ -57,12 +57,12 @@ export function VerifyEmailForm() {
     <AuthHeader
       title={
         status === verifyEmailFlowStatusEnum.success
-          ? 'Correo verificado'
-          : 'Verifica tu correo'
+          ? t('verifyEmail.titleSuccess')
+          : t('verifyEmail.title')
       }
       subtitle={
         status === verifyEmailFlowStatusEnum.success
-          ? 'Bienvenido a HabitFlow'
+          ? t('verifyEmail.subtitleSuccess')
           : tagline
       }
     />
@@ -80,10 +80,7 @@ export function VerifyEmailForm() {
     if (status === verifyEmailFlowStatusEnum.error) {
       return (
         <VerifyErrorStatus
-          message={
-            errorMessage ??
-            'Este enlace o código puede haber expirado. No te preocupes, intenta de nuevo.'
-          }
+          message={errorMessage ?? t('verifyEmail.expiredError')}
           onRetry={resetFlow}
           onBack={() => router.push('/login')}
         />

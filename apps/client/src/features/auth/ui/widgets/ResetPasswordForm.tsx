@@ -4,17 +4,17 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import * as React from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useResetPassword } from '../../application/useCases/resetPassword.useCase';
 import {
-  authPageTypeEnumObject,
   authSearchParamEnumObject,
   getRandomTagline,
 } from '../../domain/auth.constants';
 import {
+  buildResetPasswordSchema,
   createResetPasswordDefaultValues,
-  resetPasswordFormDefinition,
   type TResetPasswordForm,
 } from '../../infrastructure/auth.form';
 import { AuthCard } from '../components/AuthCard';
@@ -22,19 +22,22 @@ import { AuthHeader } from '../components/AuthHeader';
 import { ResetPasswordFormContent } from '../components/ResetPasswordFormContent';
 
 export function ResetPasswordForm() {
+  const t = useTranslations('auth');
   const router = useRouter();
   const searchParams = useSearchParams();
   const email = searchParams.get(authSearchParamEnumObject.email) ?? '';
   const [tagline] = React.useState(() =>
-    getRandomTagline(authPageTypeEnumObject.forgotPassword)
+    getRandomTagline(t.raw('forgotPassword.taglines') as readonly string[])
   );
   const [disabled, setDisabled] = React.useState(false);
 
   const resetPassword = useResetPassword();
 
+  const schema = React.useMemo(() => buildResetPasswordSchema(t), [t]);
+
   const methods = useForm<TResetPasswordForm>({
     defaultValues: createResetPasswordDefaultValues({ email }),
-    resolver: zodResolver(resetPasswordFormDefinition),
+    resolver: zodResolver(schema),
   });
 
   async function onSubmit(data: TResetPasswordForm) {
@@ -49,7 +52,9 @@ export function ResetPasswordForm() {
     setDisabled(false);
   }
 
-  const header = <AuthHeader title="Nueva contraseña" subtitle={tagline} />;
+  const header = (
+    <AuthHeader title={t('resetPassword.title')} subtitle={tagline} />
+  );
 
   const footer = (
     <Link
@@ -57,7 +62,7 @@ export function ResetPasswordForm() {
       className="flex items-center justify-center gap-2 text-sm txt-quaternary-500 hover:txt-brand-primary-600 transition-colors"
     >
       <ArrowLeft className="h-4 w-4" />
-      Volver a iniciar sesión
+      {t('resetPassword.backToLogin')}
     </Link>
   );
 
@@ -66,8 +71,7 @@ export function ResetPasswordForm() {
       <AuthCard header={header} footer={footer}>
         <div className="text-center py-4">
           <p className="text-sm txt-tertiary-600">
-            No se proporcionó un correo electrónico. Por favor, inicia el
-            proceso de recuperación nuevamente.
+            {t('resetPassword.noEmailError')}
           </p>
         </div>
       </AuthCard>

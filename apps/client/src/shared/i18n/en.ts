@@ -5,6 +5,9 @@ const shared = {
     generic: 'Something went wrong',
     network: 'Connection error. Please try again.',
   },
+  loading: {
+    defaultText: 'Please wait...',
+  },
   metadata: {
     defaultTitle: 'HabitFlow',
     defaultDescription: 'Build better habits every day',

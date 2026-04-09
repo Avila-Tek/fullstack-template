@@ -8,6 +8,7 @@ import {
   FormMessage,
 } from '@repo/ui/components/form';
 import { Input } from '@repo/ui/components/input';
+import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
 import type { TForgotPasswordForm } from '../../infrastructure/auth.form';
 import { FormError } from './FormError';
@@ -21,14 +22,14 @@ interface ForgotPasswordFormContentProps {
 export function ForgotPasswordFormContent({
   disabled,
   error,
-}: ForgotPasswordFormContentProps) {
+}: Readonly<ForgotPasswordFormContentProps>) {
+  const t = useTranslations('auth');
   const { control } = useFormContext<TForgotPasswordForm>();
 
   return (
     <div className="space-y-4">
       <p className="text-sm txt-tertiary-600 leading-relaxed">
-        ¡No te preocupes! Ingresa tu correo y te enviaremos un enlace para
-        restablecer tu contraseña.
+        {t('forgotPassword.description')}
       </p>
 
       <FormField
@@ -37,12 +38,12 @@ export function ForgotPasswordFormContent({
         render={({ field }) => (
           <FormItem className="space-y-2">
             <FormLabel className="txt-secondary-700 text-sm font-medium">
-              Correo electrónico
+              {t('forgotPassword.emailLabel')}
             </FormLabel>
             <FormControl>
               <Input
                 type="email"
-                placeholder="tu@ejemplo.com"
+                placeholder={t('forgotPassword.emailPlaceholder')}
                 autoComplete="email"
                 className="h-11 rounded-xl"
                 disabled={disabled}
@@ -60,9 +61,9 @@ export function ForgotPasswordFormContent({
         <LoadingButton
           type="submit"
           loading={disabled}
-          loadingText="Enviando..."
+          loadingText={t('forgotPassword.submitLoading')}
         >
-          Enviar enlace
+          {t('forgotPassword.submitButton')}
         </LoadingButton>
       </div>
     </div>

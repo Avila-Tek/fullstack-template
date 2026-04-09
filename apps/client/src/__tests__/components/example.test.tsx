@@ -1,5 +1,6 @@
+import { expect, it, jest } from '@jest/globals';
 import React from 'react';
-import Home from '@/app/page';
+import Home from '@/src/app/page';
 import { render } from '../test-utils/test-utils';
 
 // Mock the Google Font loader
