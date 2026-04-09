@@ -24,12 +24,12 @@ export function buildLoginSchema(t: TAuthTranslations) {
   return z.object({
     email: z
       .string()
-      .min(1, t('validation.emailRequired'))
-      .email(t('validation.emailInvalid')),
+      .min(1, { message: t('validation.emailRequired') })
+      .email({ message: t('validation.emailInvalid') }),
     password: z
       .string()
-      .min(1, t('validation.passwordRequired'))
-      .min(8, t('validation.passwordMin')),
+      .min(1, { message: t('validation.passwordRequired') })
+      .min(8, { message: t('validation.passwordMin') }),
   });
 }
 
@@ -50,14 +50,16 @@ export function createLoginDefaultValues(
 
 function buildSignUpBaseSchema(t: TAuthTranslations) {
   return z.object({
-    firstName: z.string().max(50, t('validation.nameMax')),
-    lastName: z.string().max(50, t('validation.nameMax')),
+    firstName: z.string().max(50, { message: t('validation.nameMax') }),
+    lastName: z.string().max(50, { message: t('validation.nameMax') }),
     email: z
       .string()
-      .min(1, t('validation.emailRequired'))
-      .email(t('validation.emailInvalid')),
-    password: z.string().min(8, t('validation.passwordMin')),
-    rePassword: z.string().min(1, t('validation.confirmPasswordRequired')),
+      .min(1, { message: t('validation.emailRequired') })
+      .email({ message: t('validation.emailInvalid') }),
+    password: z.string().min(8, { message: t('validation.passwordMin') }),
+    rePassword: z
+      .string()
+      .min(1, { message: t('validation.confirmPasswordRequired') }),
   });
 }
 
@@ -95,8 +97,8 @@ export function buildForgotPasswordSchema(t: TAuthTranslations) {
   return z.object({
     email: z
       .string()
-      .min(1, t('validation.emailRequired'))
-      .email(t('validation.emailInvalid')),
+      .min(1, { message: t('validation.emailRequired') })
+      .email({ message: t('validation.emailInvalid') }),
   });
 }
 
@@ -128,7 +130,7 @@ export function createSendOtpDefaultValues(
 
 export function buildOtpSchema(t: TAuthTranslations) {
   return z.object({
-    otp: z.string().length(6, t('validation.otpDigits')),
+    otp: z.string().length(6, { message: t('validation.otpDigits') }),
   });
 }
 
@@ -148,9 +150,9 @@ export function buildVerifyOtpSchema(t: TAuthTranslations) {
   return z.object({
     email: z
       .string()
-      .min(1, t('validation.emailRequired'))
-      .email(t('validation.emailInvalid')),
-    otp: z.string().length(6, t('validation.otpDigits')),
+      .min(1, { message: t('validation.emailRequired') })
+      .email({ message: t('validation.emailInvalid') }),
+    otp: z.string().length(6, { message: t('validation.otpDigits') }),
   });
 }
 
@@ -171,8 +173,8 @@ export function createVerifyOtpDefaultValues(
 
 export function buildEmailCallbackSchema(t: TAuthTranslations) {
   return z.object({
-    tokenHash: z.string().min(1, t('validation.tokenRequired')),
-    type: z.string().min(1, t('validation.typeRequired')),
+    tokenHash: z.string().min(1, { message: t('validation.tokenRequired') }),
+    type: z.string().min(1, { message: t('validation.typeRequired') }),
   });
 }
 
@@ -197,11 +199,13 @@ function buildResetPasswordBaseSchema(t: TAuthTranslations) {
   return z.object({
     email: z
       .string()
-      .min(1, t('validation.emailRequired'))
-      .email(t('validation.emailInvalid')),
-    otp: z.string().length(6, t('validation.otpDigits')),
-    newPassword: z.string().min(8, t('validation.passwordMin')),
-    confirmPassword: z.string().min(1, t('validation.confirmPasswordRequired')),
+      .min(1, { message: t('validation.emailRequired') })
+      .email({ message: t('validation.emailInvalid') }),
+    otp: z.string().length(6, { message: t('validation.otpDigits') }),
+    newPassword: z.string().min(8, { message: t('validation.passwordMin') }),
+    confirmPassword: z
+      .string()
+      .min(1, { message: t('validation.confirmPasswordRequired') }),
   });
 }
 

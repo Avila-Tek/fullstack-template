@@ -11,6 +11,7 @@ export function AdminDashboardPage({
   user,
 }: Readonly<AdminDashboardPageProps>) {
   const t = useTranslations('admin');
+  const name = user?.firstName || user?.email || '';
 
   return (
     <div className="space-y-6">
@@ -18,9 +19,7 @@ export function AdminDashboardPage({
         <h1 className="text-2xl font-bold text-gray-900">
           {t('dashboard.title')}
         </h1>
-        <p className="text-gray-600 mt-1">
-          {t('dashboard.welcome')} {user?.firstName || user?.email}
-        </p>
+        <p className="text-gray-600 mt-1">{t('dashboard.welcome', { name })}</p>
       </div>
     </div>
   );

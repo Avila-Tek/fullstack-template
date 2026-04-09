@@ -1,14 +1,13 @@
 import { describe, expect, it } from '@jest/globals';
-import {
-  buildLoginSchema,
-} from '../auth.form';
+import { buildLoginSchema, type TAuthTranslations } from '../auth.form';
 
-const t = (key: string) => `translated:${key}`;
+const t = (key: string): string => `translated:${key}`;
+const mockT = t as unknown as TAuthTranslations;
 
 describe('buildLoginSchema', () => {
   it('requires email', () => {
-    const schema = buildLoginSchema(t as never);
-    const result = schema.safeParse({ email: '', password: 'validpass' });
+    const schema = buildLoginSchema(mockT);
+    const result = schema.safeParse({ email: '', password: 'validpass1' });
     expect(result.success).toBe(false);
     expect(result.error?.issues[0]?.message).toBe(
       'translated:validation.emailRequired'
@@ -16,8 +15,11 @@ describe('buildLoginSchema', () => {
   });
 
   it('requires valid email format', () => {
-    const schema = buildLoginSchema(t as never);
-    const result = schema.safeParse({ email: 'notanemail', password: 'validpass' });
+    const schema = buildLoginSchema(mockT);
+    const result = schema.safeParse({
+      email: 'notanemail',
+      password: 'validpass1',
+    });
     expect(result.success).toBe(false);
     expect(result.error?.issues[0]?.message).toBe(
       'translated:validation.emailInvalid'
@@ -25,7 +27,7 @@ describe('buildLoginSchema', () => {
   });
 
   it('requires password', () => {
-    const schema = buildLoginSchema(t as never);
+    const schema = buildLoginSchema(mockT);
     const result = schema.safeParse({ email: 'a@b.com', password: '' });
     expect(result.success).toBe(false);
     expect(result.error?.issues[0]?.message).toBe(
@@ -33,9 +35,21 @@ describe('buildLoginSchema', () => {
     );
   });
 
+  it('requires password min 8 chars', () => {
+    const schema = buildLoginSchema(mockT);
+    const result = schema.safeParse({ email: 'a@b.com', password: 'short' });
+    expect(result.success).toBe(false);
+    expect(result.error?.issues[0]?.message).toBe(
+      'translated:validation.passwordMin'
+    );
+  });
+
   it('passes valid input', () => {
-    const schema = buildLoginSchema(t as never);
-    const result = schema.safeParse({ email: 'a@b.com', password: 'validpass' });
+    const schema = buildLoginSchema(mockT);
+    const result = schema.safeParse({
+      email: 'a@b.com',
+      password: 'validpass1',
+    });
     expect(result.success).toBe(true);
   });
 });

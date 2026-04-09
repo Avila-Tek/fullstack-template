@@ -10,13 +10,12 @@ import { useSignInMutation } from '@/src/features/auth/application/mutations/use
 import {
   buildLoginSchema,
   createLoginDefaultValues,
-  type TAuthTranslations,
   type TLoginForm,
 } from '@/src/features/auth/infrastructure/auth.form';
 import { useUser } from '@/src/shared/hooks/useUser';
 
 export function AdminLoginPage() {
-  const tAuth = useTranslations('auth') as TAuthTranslations;
+  const tAuth = useTranslations('auth');
   const t = useTranslations('admin');
   const router = useRouter();
   const { user, setSession, clearSession, refetchUser } = useUser();

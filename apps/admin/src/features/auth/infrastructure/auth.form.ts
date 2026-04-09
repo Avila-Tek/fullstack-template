@@ -9,7 +9,10 @@ export function buildLoginSchema(t: TAuthTranslations) {
       .string()
       .min(1, { message: t('validation.emailRequired') })
       .email({ message: t('validation.emailInvalid') }),
-    password: z.string().min(1, { message: t('validation.passwordRequired') }),
+    password: z
+      .string()
+      .min(1, { message: t('validation.passwordRequired') })
+      .min(8, { message: t('validation.passwordMin') }),
   });
 }
 

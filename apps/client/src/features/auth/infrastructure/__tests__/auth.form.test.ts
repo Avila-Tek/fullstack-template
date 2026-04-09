@@ -6,13 +6,15 @@ import {
   buildOtpSchema,
   buildResetPasswordSchema,
   buildSignUpSchema,
+  type TAuthTranslations,
 } from '../auth.form';
 
-const t = (key: string) => `translated:${key}`;
+const t = (key: string): string => `translated:${key}`;
+const mockT = t as unknown as TAuthTranslations;
 
 describe('buildLoginSchema', () => {
   it('requires email', () => {
-    const schema = buildLoginSchema(t as never);
+    const schema = buildLoginSchema(mockT);
     const result = schema.safeParse({ email: '', password: 'validpass' });
     expect(result.success).toBe(false);
     expect(result.error?.issues[0]?.message).toBe(
@@ -21,7 +23,7 @@ describe('buildLoginSchema', () => {
   });
 
   it('requires valid email format', () => {
-    const schema = buildLoginSchema(t as never);
+    const schema = buildLoginSchema(mockT);
     const result = schema.safeParse({
       email: 'notanemail',
       password: 'validpass',
@@ -33,7 +35,7 @@ describe('buildLoginSchema', () => {
   });
 
   it('requires password', () => {
-    const schema = buildLoginSchema(t as never);
+    const schema = buildLoginSchema(mockT);
     const result = schema.safeParse({ email: 'a@b.com', password: '' });
     expect(result.success).toBe(false);
     expect(result.error?.issues[0]?.message).toBe(
@@ -42,7 +44,7 @@ describe('buildLoginSchema', () => {
   });
 
   it('requires password min 8 chars', () => {
-    const schema = buildLoginSchema(t as never);
+    const schema = buildLoginSchema(mockT);
     const result = schema.safeParse({ email: 'a@b.com', password: 'short' });
     expect(result.success).toBe(false);
     expect(result.error?.issues[0]?.message).toBe(
@@ -51,7 +53,7 @@ describe('buildLoginSchema', () => {
   });
 
   it('passes valid input', () => {
-    const schema = buildLoginSchema(t as never);
+    const schema = buildLoginSchema(mockT);
     const result = schema.safeParse({
       email: 'a@b.com',
       password: 'validpass',
@@ -70,7 +72,7 @@ describe('buildSignUpSchema', () => {
   };
 
   it('fails when passwords do not match', () => {
-    const schema = buildSignUpSchema(t as never);
+    const schema = buildSignUpSchema(mockT);
     const result = schema.safeParse({ ...valid, rePassword: 'different' });
     expect(result.success).toBe(false);
     const issue = result.error?.issues.find((i) =>
@@ -80,7 +82,7 @@ describe('buildSignUpSchema', () => {
   });
 
   it('passes valid input', () => {
-    const schema = buildSignUpSchema(t as never);
+    const schema = buildSignUpSchema(mockT);
     const result = schema.safeParse(valid);
     expect(result.success).toBe(true);
   });
@@ -88,7 +90,7 @@ describe('buildSignUpSchema', () => {
 
 describe('buildForgotPasswordSchema', () => {
   it('requires email', () => {
-    const schema = buildForgotPasswordSchema(t as never);
+    const schema = buildForgotPasswordSchema(mockT);
     const result = schema.safeParse({ email: '' });
     expect(result.success).toBe(false);
     expect(result.error?.issues[0]?.message).toBe(
@@ -106,7 +108,7 @@ describe('buildResetPasswordSchema', () => {
   };
 
   it('fails when passwords do not match', () => {
-    const schema = buildResetPasswordSchema(t as never);
+    const schema = buildResetPasswordSchema(mockT);
     const result = schema.safeParse({ ...valid, confirmPassword: 'different' });
     expect(result.success).toBe(false);
     const issue = result.error?.issues.find((i) =>
@@ -116,7 +118,7 @@ describe('buildResetPasswordSchema', () => {
   });
 
   it('passes valid input', () => {
-    const schema = buildResetPasswordSchema(t as never);
+    const schema = buildResetPasswordSchema(mockT);
     const result = schema.safeParse(valid);
     expect(result.success).toBe(true);
   });
@@ -124,7 +126,7 @@ describe('buildResetPasswordSchema', () => {
 
 describe('buildOtpSchema', () => {
   it('requires exactly 6 digits', () => {
-    const schema = buildOtpSchema(t as never);
+    const schema = buildOtpSchema(mockT);
     const result = schema.safeParse({ otp: '123' });
     expect(result.success).toBe(false);
     expect(result.error?.issues[0]?.message).toBe(
@@ -135,7 +137,7 @@ describe('buildOtpSchema', () => {
 
 describe('buildEmailCallbackSchema', () => {
   it('requires tokenHash', () => {
-    const schema = buildEmailCallbackSchema(t as never);
+    const schema = buildEmailCallbackSchema(mockT);
     const result = schema.safeParse({ tokenHash: '', type: 'verify' });
     expect(result.success).toBe(false);
     expect(result.error?.issues[0]?.message).toBe(
@@ -144,7 +146,7 @@ describe('buildEmailCallbackSchema', () => {
   });
 
   it('requires type', () => {
-    const schema = buildEmailCallbackSchema(t as never);
+    const schema = buildEmailCallbackSchema(mockT);
     const result = schema.safeParse({ tokenHash: 'abc', type: '' });
     expect(result.success).toBe(false);
     expect(result.error?.issues[0]?.message).toBe(

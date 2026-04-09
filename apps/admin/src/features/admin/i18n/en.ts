@@ -16,7 +16,7 @@ const admin = {
   },
   dashboard: {
     title: 'Dashboard',
-    welcome: 'Welcome to the admin panel,',
+    welcome: 'Welcome to the admin panel, {name}',
   },
   layout: {
     sidebarTitle: 'Admin Panel',
