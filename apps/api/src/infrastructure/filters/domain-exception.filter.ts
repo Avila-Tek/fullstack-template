@@ -50,9 +50,15 @@ export class DomainExceptionFilter implements ExceptionFilter {
 			exception.message,
 		);
 
+		const detail =
+			typeof exception.meta?.reason === 'string'
+				? resolveMessage(catalog, exception.meta.reason, locale, '') || undefined
+				: undefined;
+
 		const body: ApiResponse<null> = {
 			code: status,
 			data: null,
+			...(detail !== undefined && { detail }),
 			error: exception.error,
 			message,
 			success: false,

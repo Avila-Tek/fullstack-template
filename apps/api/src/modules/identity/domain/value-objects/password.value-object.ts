@@ -13,7 +13,7 @@ export class Password {
 	static create(plaintext: string): Password {
 		const result = passwordComplexitySchema.safeParse(plaintext);
 		if (!result.success) {
-			throw new InvalidPasswordException();
+			throw new InvalidPasswordException({ reason: result.error.issues[0].message });
 		}
 		return new Password(plaintext);
 	}

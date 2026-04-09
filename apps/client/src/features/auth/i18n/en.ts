@@ -133,6 +133,11 @@ const auth = {
     otpDigits: 'Code must be 6 digits',
     tokenRequired: 'Token required',
     typeRequired: 'Type required',
+    passwordMinLength: 'At least 8 characters',
+    passwordUppercase: 'At least one uppercase letter',
+    passwordLowercase: 'At least one lowercase letter',
+    passwordDigit: 'At least one number',
+    passwordSpecial: 'At least one special character',
   },
   password: {
     weak: 'Weak',

@@ -5,6 +5,11 @@ type IdentityErrorCode =
 	| 'IDENTITY_INVALID_EMAIL'
 	| 'IDENTITY_INVALID_PASSWORD'
 	| 'IDENTITY_NO_PASSWORD_ACCOUNT'
+	| 'IDENTITY_PASSWORD_MIN_LENGTH'
+	| 'IDENTITY_PASSWORD_MISSING_DIGIT'
+	| 'IDENTITY_PASSWORD_MISSING_LOWERCASE'
+	| 'IDENTITY_PASSWORD_MISSING_SPECIAL'
+	| 'IDENTITY_PASSWORD_MISSING_UPPERCASE'
 	| 'IDENTITY_PASSWORD_REUSE'
 	| 'IDENTITY_SESSION_NOT_FRESH';
 
@@ -27,6 +32,26 @@ export const identityDomainMessages: Record<
 	IDENTITY_INVALID_PASSWORD: {
 		es: 'La contraseña no cumple con los requisitos.',
 		en: 'Password does not meet requirements.',
+	},
+	IDENTITY_PASSWORD_MIN_LENGTH: {
+		en: 'Password must be at least 8 characters.',
+		es: 'La contraseña debe tener al menos 8 caracteres.',
+	},
+	IDENTITY_PASSWORD_MISSING_DIGIT: {
+		en: 'Password must contain at least one number.',
+		es: 'La contraseña debe contener al menos un número.',
+	},
+	IDENTITY_PASSWORD_MISSING_LOWERCASE: {
+		en: 'Password must contain at least one lowercase letter.',
+		es: 'La contraseña debe contener al menos una letra minúscula.',
+	},
+	IDENTITY_PASSWORD_MISSING_SPECIAL: {
+		en: 'Password must contain at least one special character.',
+		es: 'La contraseña debe contener al menos un carácter especial.',
+	},
+	IDENTITY_PASSWORD_MISSING_UPPERCASE: {
+		en: 'Password must contain at least one uppercase letter.',
+		es: 'La contraseña debe contener al menos una letra mayúscula.',
 	},
 	IDENTITY_PASSWORD_REUSE: {
 		es: 'La nueva contraseña no debe coincidir con ninguna de tus últimas 5 contraseñas.',

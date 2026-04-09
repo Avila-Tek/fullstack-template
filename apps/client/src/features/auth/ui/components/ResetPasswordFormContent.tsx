@@ -14,6 +14,7 @@ import { FormError } from './FormError';
 import { LoadingButton } from './LoadingButton';
 import { OtpInput } from './OtpInput';
 import { PasswordInput } from './PasswordInput';
+import { PasswordStrengthChecklist } from './PasswordStrengthChecklist';
 
 interface ResetPasswordFormContentProps {
   disabled: boolean;
@@ -27,7 +28,8 @@ export function ResetPasswordFormContent({
   email,
 }: Readonly<ResetPasswordFormContentProps>) {
   const t = useTranslations('auth');
-  const { control } = useFormContext<TResetPasswordForm>();
+  const { control, watch } = useFormContext<TResetPasswordForm>();
+  const newPasswordValue = watch('newPassword');
 
   return (
     <div className="space-y-4">
@@ -73,6 +75,7 @@ export function ResetPasswordFormContent({
               />
             </FormControl>
             <FormMessage />
+            <PasswordStrengthChecklist value={newPasswordValue ?? ''} />
           </FormItem>
         )}
       />

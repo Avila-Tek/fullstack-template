@@ -39,6 +39,7 @@ import type { TSignUpForm } from '../../infrastructure/auth.form';
 import { FormError } from './FormError';
 import { LoadingButton } from './LoadingButton';
 import { PasswordInput } from './PasswordInput';
+import { PasswordStrengthChecklist } from './PasswordStrengthChecklist';
 
 interface SignUpFormContentProps {
   disabled: boolean;
@@ -50,7 +51,8 @@ export function SignUpFormContent({
   error,
 }: Readonly<SignUpFormContentProps>) {
   const t = useTranslations('auth');
-  const { control } = useFormContext<TSignUpForm>();
+  const { control, watch } = useFormContext<TSignUpForm>();
+  const passwordValue = watch('password');
 
   return (
     <div className="space-y-4">
@@ -144,6 +146,7 @@ export function SignUpFormContent({
               />
             </FormControl>
             <FormMessage />
+            <PasswordStrengthChecklist value={passwordValue ?? ''} />
           </FormItem>
         )}
       />

@@ -7,6 +7,7 @@ export interface FieldError {
 export interface ApiResponse<T> {
 	code: number;
 	data: T | null;
+	detail?: string;
 	error: string | null;
 	message: string | null;
 	success: boolean;
