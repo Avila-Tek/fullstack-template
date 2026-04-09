@@ -1,6 +1,6 @@
 import type {
   TEmailCallbackQuery,
-  TResetPasswordInput,
+  TResetPasswordWithOtpInput,
   TRole,
 } from '@repo/schemas';
 import type { Role, Session, SignUpResult, User } from '../domain/auth.model';
@@ -79,7 +79,7 @@ export function toEmailCallbackQuery(
  */
 export function toResetPasswordInput(
   form: TResetPasswordForm
-): TResetPasswordInput {
+): TResetPasswordWithOtpInput {
   return {
     email: form.email,
     otp: form.otp,

@@ -1,197 +1,142 @@
-import { getEnumObjectFromArray } from '@repo/utils';
 import { z } from 'zod';
 import { userSchema } from '../users/user.schema';
+import { passwordComplexitySchema } from './password.schema';
 
-// Auth Search Params
-export const authSearchParam = ['token_hash', 'type'] as const;
-export type TAuthSearchParamEnum = (typeof authSearchParam)[number];
-export const authSearchParamEnumObject =
-  getEnumObjectFromArray(authSearchParam);
+// ---- Request schemas (shared between frontend and API) ----
 
-// Sign In Input
-const signInInput = z.object({
+export const loginInput = z.object({
   email: z.email(),
   password: z.string().min(8),
 });
 
-const signInResponse = z.discriminatedUnion('success', [
-  z.object({
-    success: z.literal(true),
-    data: z.object({
-      user: userSchema,
-      accessToken: z.string(),
-      refreshToken: z.string(),
-    }),
-  }),
-  z.object({ success: z.literal(false), error: z.string() }),
-]);
-
-export type TSignInInput = z.infer<typeof signInInput>;
-export type TSignInResponse = z.infer<typeof signInResponse>;
-
-// JWT User Payload
-const jwtUserPayload = z.object({
-  id: z.string(),
-});
-
-export type JwtUserPayload = z.infer<typeof jwtUserPayload>;
-
-// Sign Up Input
-const signUpInput = z.object({
+// Full sign-up input including captcha + T&C fields required by the API.
+export const signUpInput = z.object({
   email: z.email(),
-  password: z.string().min(8),
-  rePassword: z.string().min(8),
+  password: passwordComplexitySchema,
+  rePassword: passwordComplexitySchema,
   firstName: z.string().optional(),
   lastName: z.string().optional(),
+  captchaToken: z.string().min(1),
+  captchaVersion: z.enum(['v2', 'v3']).optional(),
+  termsAccepted: z.literal(true),
+  termsAcceptedVersion: z.string().min(1),
 });
 
-const signUpResponse = z.discriminatedUnion('success', [
-  z.object({
-    success: z.literal(true),
-    data: z.object({
-      user: userSchema.nullable(),
-      requiresEmailConfirmation: z.boolean(),
-    }),
-  }),
-  z.object({ success: z.literal(false), error: z.string() }),
-]);
-
-export type TSignUpInput = z.infer<typeof signUpInput>;
-export type TSignUpResponse = z.infer<typeof signUpResponse>;
-
-// Email Callback Query
-const emailCallbackQuery = z.object({
-  token_hash: z.string(),
-  type: z.string(),
-});
-
-export type TEmailCallbackQuery = z.infer<typeof emailCallbackQuery>;
-
-// Email Callback Response
-const emailCallbackResponse = z.discriminatedUnion('success', [
-  z.object({
-    success: z.literal(true),
-    data: z.object({
-      user: userSchema,
-      accessToken: z.string(),
-      refreshToken: z.string(),
-    }),
-  }),
-  z.object({ success: z.literal(false), error: z.string() }),
-]);
-
-export type TEmailCallbackResponse = z.infer<typeof emailCallbackResponse>;
-
-// Send OTP Input
-const sendOtpInput = z.object({
+export const forgetPasswordInput = z.object({
   email: z.email(),
 });
 
-export type TSendOtpInput = z.infer<typeof sendOtpInput>;
+export const sendOtpInput = forgetPasswordInput;
 
-// Verify OTP Input
-const verifyOtpInput = z.object({
+export const verifyOtpInput = z.object({
   email: z.email(),
   otp: z.string().length(6),
 });
 
-export type TVerifyOtpInput = z.infer<typeof verifyOtpInput>;
-
-// Verify OTP Response
-const verifyOtpResponse = z.discriminatedUnion('success', [
-  z.object({
-    success: z.literal(true),
-    data: z.object({
-      user: userSchema,
-      accessToken: z.string(),
-      refreshToken: z.string(),
-    }),
-  }),
-  z.object({ success: z.literal(false), error: z.string() }),
-]);
-
-export type TVerifyOtpResponse = z.infer<typeof verifyOtpResponse>;
-
-// Sign Out Input
-const signOutInput = z.object({});
-
-export type TSignOutInput = z.infer<typeof signOutInput>;
-
-// Forgot Password Input
-const forgotPasswordInput = z.object({
-  email: z.email(),
+export const resetPasswordInput = z.object({
+  token: z.string().min(1),
+  newPassword: passwordComplexitySchema,
 });
 
-export type TForgotPasswordInput = z.infer<typeof forgotPasswordInput>;
-
-// Reset Password Input
-const resetPasswordInput = z.object({
+export const resetPasswordWithOtpInput = z.object({
   email: z.email(),
   otp: z.string().length(6),
-  newPassword: z.string().min(8),
+  newPassword: passwordComplexitySchema,
 });
 
-export type TResetPasswordInput = z.infer<typeof resetPasswordInput>;
+export const changePasswordInput = z.object({
+  currentPassword: z.string().min(1),
+  newPassword: passwordComplexitySchema,
+});
 
-// Google OAuth Input
-const googleAuthInput = z.object({
+export const socialSignInInput = z.object({
+  provider: z.enum(['google']),
   callbackUrl: z.string().url().optional(),
 });
 
-export type TGoogleAuthInput = z.infer<typeof googleAuthInput>;
-
-// Get Session Response (OAuth callback)
-const getSessionResponse = z.discriminatedUnion('success', [
-  z.object({
-    success: z.literal(true),
-    data: z.object({
-      user: userSchema,
-      accessToken: z.string(),
-      refreshToken: z.string(),
-    }),
-  }),
-  z.object({ success: z.literal(false), error: z.string() }),
-]);
-
-export type TGetSessionResponse = z.infer<typeof getSessionResponse>;
-
-// Current User Response (with subscription)
-const currentUserResponse = z.discriminatedUnion('success', [
-  z.object({
-    success: z.literal(true),
-    data: userSchema,
-  }),
-  z.object({ success: z.literal(false), error: z.string() }),
-]);
-
-export type TCurrentUserResponse = z.infer<typeof currentUserResponse>;
-
-export const authDTO = Object.freeze({
-  // Sign In
-  signInInput,
-  signInResponse,
-  jwtUserPayload,
-  // Sign Up
-  signUpInput,
-  signUpResponse,
-  // Email Callback
-  emailCallbackQuery,
-  emailCallbackResponse,
-  // Send OTP
-  sendOtpInput,
-  // Verify OTP
-  verifyOtpInput,
-  verifyOtpResponse,
-  // Sign Out
-  signOutInput,
-  // Current User
-  currentUserResponse,
-  // Forgot Password
-  forgotPasswordInput,
-  // Reset Password
-  resetPasswordInput,
-  // Google OAuth
-  googleAuthInput,
-  // Get Session (OAuth callback)
-  getSessionResponse,
+export const totpVerifyInput = z.object({
+  code: z.string().length(6),
 });
+
+export const disableTotpInput = z.object({
+  password: z.string().min(1),
+});
+
+// ---- Response schemas ----
+
+export const signOutResponse = z.object({
+  success: z.literal(true),
+});
+
+export const verificationResultResponse = z.object({
+  success: z.boolean(),
+  message: z.string().optional(),
+});
+
+export const tokenResponse = z.object({
+  token: z.string(),
+});
+
+export const socialSignInResponse = z.object({
+  url: z.string().url(),
+});
+
+export const enableTotpResponse = z.object({
+  qrCodeUri: z.string(),
+  backupCodes: z.array(z.string()),
+});
+
+export const backupCodesResponse = z.object({
+  backupCodes: z.array(z.string()),
+});
+
+export const getSessionResponse = z.object({
+  user: userSchema.nullable(),
+  session: z.object({ id: z.string(), expiresAt: z.string() }).nullable(),
+});
+
+export const signInResponse = userSchema;
+export const signUpResponse = userSchema;
+export const verifyOtpResponse = userSchema;
+export const currentUserResponse = userSchema;
+export const emailCallbackResponse = verificationResultResponse;
+
+// ---- Auth namespace (response schemas grouped for service consumption) ----
+
+export const authDTO = {
+  signInResponse,
+  signUpResponse,
+  emailCallbackResponse,
+  verifyOtpResponse,
+  currentUserResponse,
+  getSessionResponse,
+} as const;
+
+// ---- Auth search param keys ----
+
+export const authSearchParamEnumObject = {
+  token_hash: 'token_hash',
+  type: 'type',
+} as const;
+
+// ---- Types ----
+
+export type TLoginInput = z.infer<typeof loginInput>;
+export type TSignInInput = z.infer<typeof loginInput>;
+export type TSignUpInput = z.infer<typeof signUpInput>;
+export type TForgotPasswordInput = z.infer<typeof forgetPasswordInput>;
+export type TSendOtpInput = z.infer<typeof sendOtpInput>;
+export type TVerifyOtpInput = z.infer<typeof verifyOtpInput>;
+export type TResetPasswordInput = z.infer<typeof resetPasswordInput>;
+export type TResetPasswordWithOtpInput = z.infer<
+  typeof resetPasswordWithOtpInput
+>;
+export type TChangePasswordInput = z.infer<typeof changePasswordInput>;
+export type TSocialSignInInput = z.infer<typeof socialSignInInput>;
+export type TTotpVerifyInput = z.infer<typeof totpVerifyInput>;
+export type TDisableTotpInput = z.infer<typeof disableTotpInput>;
+
+export interface TEmailCallbackQuery {
+  token_hash: string;
+  type: string;
+}

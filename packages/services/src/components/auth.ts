@@ -3,7 +3,7 @@ import {
   authSearchParamEnumObject,
   TEmailCallbackQuery,
   TForgotPasswordInput,
-  TResetPasswordInput,
+  TResetPasswordWithOtpInput,
   TSendOtpInput,
   TSignInInput,
   TSignUpInput,
@@ -203,7 +203,7 @@ export class AuthService {
    * Reset password with OTP
    */
   async resetPassword(
-    input: TResetPasswordInput,
+    input: TResetPasswordWithOtpInput,
     options?: HttpRequestOptions
   ): Promise<Safe<void>> {
     return await this.httpClient.post(

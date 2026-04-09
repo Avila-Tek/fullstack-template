@@ -1,7 +1,7 @@
 import type {
   TEmailCallbackQuery,
   TForgotPasswordInput,
-  TResetPasswordInput,
+  TResetPasswordWithOtpInput,
   TSendOtpInput,
   TSignInInput,
   TSignUpInput,
@@ -47,6 +47,6 @@ export interface AuthApi {
   sendOtp(input: TSendOtpInput): Promise<AuthResponse<void>>;
   verifyOtp(input: TVerifyOtpInput): Promise<AuthResponse<AuthSessionDto>>;
   forgotPassword(input: TForgotPasswordInput): Promise<AuthResponse<void>>;
-  resetPassword(input: TResetPasswordInput): Promise<AuthResponse<void>>;
+  resetPassword(input: TResetPasswordWithOtpInput): Promise<AuthResponse<void>>;
   getGoogleAuthUrl(callbackUrl?: string): string;
 }

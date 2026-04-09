@@ -1,4 +1,4 @@
-import type { TResetPasswordInput } from '@repo/schemas';
+import type { TResetPasswordWithOtpInput } from '@repo/schemas';
 import type { TResetPasswordForm } from '../../infrastructure/auth.form';
 import { toResetPasswordInput } from '../../infrastructure/auth.transform';
 import { useResetPasswordMutation } from '../mutations/useResetPassword.mutation';
@@ -8,7 +8,7 @@ type ResetPasswordResult = {
 };
 
 type Dependencies = {
-  resetPassword: (data: TResetPasswordInput) => Promise<void>;
+  resetPassword: (data: TResetPasswordWithOtpInput) => Promise<void>;
 };
 
 export async function resetPasswordUseCase(

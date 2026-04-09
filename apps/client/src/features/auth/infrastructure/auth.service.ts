@@ -1,7 +1,7 @@
 import type {
   TEmailCallbackQuery,
   TForgotPasswordInput,
-  TResetPasswordInput,
+  TResetPasswordWithOtpInput,
   TSendOtpInput,
   TSignInInput,
   TSignUpInput,
@@ -67,7 +67,7 @@ export class AuthServiceClass {
     }
   }
 
-  async resetPassword(input: TResetPasswordInput): Promise<void> {
+  async resetPassword(input: TResetPasswordWithOtpInput): Promise<void> {
     const result = await this.api.resetPassword(input);
     if (!result.success) {
       throw new Error(result.error);

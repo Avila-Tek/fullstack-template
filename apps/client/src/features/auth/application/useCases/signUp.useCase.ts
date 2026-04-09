@@ -1,4 +1,3 @@
-import type { TSignUpInput } from '@repo/schemas';
 import type { SignUpResult } from '../../domain/auth.model';
 import type { TSignUpForm } from '../../infrastructure/auth.form';
 import { useSignUpMutation } from '../mutations/useSignUp.mutation';
@@ -9,7 +8,7 @@ type SignUpUseCaseResult = {
 };
 
 type Dependencies = {
-  signUp: (data: TSignUpInput) => Promise<SignUpResult>;
+  signUp: (data: TSignUpForm) => Promise<SignUpResult>;
 };
 
 export async function signUpUseCase(
