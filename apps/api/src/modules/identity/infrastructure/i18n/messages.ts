@@ -2,6 +2,7 @@ import type { SupportedLocale } from '@/shared/domain-utils';
 
 type IdentityErrorCode =
 	| 'IDENTITY_INVALID_CREDENTIALS'
+	| 'IDENTITY_INVALID_EMAIL'
 	| 'IDENTITY_INVALID_PASSWORD'
 	| 'IDENTITY_NO_PASSWORD_ACCOUNT'
 	| 'IDENTITY_PASSWORD_REUSE'
@@ -14,6 +15,10 @@ export const identityDomainMessages: Record<
 	IDENTITY_INVALID_CREDENTIALS: {
 		es: 'La contraseña actual es incorrecta.',
 		en: 'Current password is incorrect.',
+	},
+	IDENTITY_INVALID_EMAIL: {
+		en: 'Invalid email address.',
+		es: 'Dirección de correo electrónico inválida.',
 	},
 	IDENTITY_NO_PASSWORD_ACCOUNT: {
 		es: 'No se encontró una cuenta con contraseña para este usuario.',

@@ -1,3 +1,4 @@
+import { EMAIL_REGEX } from '@repo/schemas';
 import { useTranslations } from 'next-intl';
 import { z } from 'zod';
 
@@ -8,7 +9,9 @@ export function buildLoginSchema(t: TAuthTranslations) {
     email: z
       .string()
       .min(1, { message: t('validation.emailRequired') })
-      .email({ message: t('validation.emailInvalid') }),
+      .refine((val) => val === '' || EMAIL_REGEX.test(val), {
+        message: t('validation.emailInvalid'),
+      }),
     password: z
       .string()
       .min(1, { message: t('validation.passwordRequired') })

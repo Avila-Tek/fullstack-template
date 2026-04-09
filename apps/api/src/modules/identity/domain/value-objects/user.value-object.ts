@@ -1,6 +1,6 @@
 // Domain value objects — zero framework dependencies.
-
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+import { emailSchema } from '@repo/schemas';
+import { InvalidEmailException } from '../exceptions/invalid-email.exception';
 
 export class Email {
 	readonly value: string;
@@ -11,8 +11,9 @@ export class Email {
 
 	static create(raw: string): Email {
 		const normalized = raw.trim().toLowerCase();
-		if (!normalized || !EMAIL_REGEX.test(normalized)) {
-			throw new Error(`Invalid email address: "${raw}"`);
+		const result = emailSchema.safeParse(normalized);
+		if (!result.success) {
+			throw new InvalidEmailException();
 		}
 		return new Email(normalized);
 	}

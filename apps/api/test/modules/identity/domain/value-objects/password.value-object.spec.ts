@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { InvalidPasswordException } from '@/modules/identity/domain/exceptions/invalid-password.exception';
 import { Password } from '@/modules/identity/domain/value-objects/password.value-object';
 
 describe('Password', () => {
@@ -7,23 +8,23 @@ describe('Password', () => {
 		expect(pw.value).toBe('Str0ng!Pass');
 	});
 
-	it('throws on too short password', () => {
-		expect(() => Password.create('Ab1!')).toThrow();
+	it('throws InvalidPasswordException on too short password', () => {
+		expect(() => Password.create('Ab1!')).toThrow(InvalidPasswordException);
 	});
 
-	it('throws on missing uppercase', () => {
-		expect(() => Password.create('lowercase1!')).toThrow();
+	it('throws InvalidPasswordException on missing uppercase', () => {
+		expect(() => Password.create('lowercase1!')).toThrow(InvalidPasswordException);
 	});
 
-	it('throws on missing lowercase', () => {
-		expect(() => Password.create('UPPERCASE1!')).toThrow();
+	it('throws InvalidPasswordException on missing lowercase', () => {
+		expect(() => Password.create('UPPERCASE1!')).toThrow(InvalidPasswordException);
 	});
 
-	it('throws on missing digit', () => {
-		expect(() => Password.create('NoDigits!!')).toThrow();
+	it('throws InvalidPasswordException on missing digit', () => {
+		expect(() => Password.create('NoDigits!!')).toThrow(InvalidPasswordException);
 	});
 
-	it('throws on missing special character', () => {
-		expect(() => Password.create('NoSpecial1A')).toThrow();
+	it('throws InvalidPasswordException on missing special character', () => {
+		expect(() => Password.create('NoSpecial1A')).toThrow(InvalidPasswordException);
 	});
 });

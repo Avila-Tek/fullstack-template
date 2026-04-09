@@ -63,6 +63,9 @@ export const esBetterAuthTranslations: Record<string, string> = {
 	INVALID_TWO_FACTOR_COOKIE:
 		'Cookie de autenticación de dos factores inválida.',
 
+	// ── Account lockout ────────────────────────────────────────────
+	ACCOUNT_TEMPORARILY_LOCKED: 'La cuenta está temporalmente bloqueada.',
+
 	// ── Server errors (generic — never leak internals) ─────────────
 	FAILED_TO_CREATE_SESSION: 'Ocurrió un error inesperado.',
 	FAILED_TO_CREATE_USER: 'Ocurrió un error inesperado.',

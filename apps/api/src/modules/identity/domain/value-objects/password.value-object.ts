@@ -1,4 +1,5 @@
 import { passwordComplexitySchema } from '@repo/schemas';
+import { InvalidPasswordException } from '../exceptions/invalid-password.exception';
 
 // Password VO enforces complexity rules on construction.
 // Only the plaintext is held — hashing is an infrastructure concern (IPasswordHashServicePort).
@@ -12,7 +13,7 @@ export class Password {
 	static create(plaintext: string): Password {
 		const result = passwordComplexitySchema.safeParse(plaintext);
 		if (!result.success) {
-			throw new Error(result.error.issues[0].message);
+			throw new InvalidPasswordException();
 		}
 		return new Password(plaintext);
 	}

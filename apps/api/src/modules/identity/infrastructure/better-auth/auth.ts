@@ -26,6 +26,7 @@ import {
 	signUpBeforeHookBody,
 } from './hooks/sign-up.hooks';
 import { AccountLockoutService } from '../security/account-lockout.service';
+import { enBetterAuthTranslations } from './i18n/en-translations';
 import { esBetterAuthTranslations } from './i18n/translations';
 import * as schema from '../persistence/db-schema';
 import { validatePasswordComplexity } from '../utils/validate-password-complexity';
@@ -138,8 +139,8 @@ export const auth = betterAuth({
 		requireEmailVerification: true,
 		password: {
 			hash: async (password: string): Promise<string> => {
-				const { valid, errors } = validatePasswordComplexity(password);
-				if (!valid) throw new Error(errors[0]);
+				const { valid } = validatePasswordComplexity(password);
+				if (!valid) throw new APIError('BAD_REQUEST', { message: 'INVALID_PASSWORD' });
 				return argon2.hash(password, {
 					type: argon2.argon2id,
 					memoryCost: memoryCostArg,
@@ -220,6 +221,7 @@ export const auth = betterAuth({
 			defaultLocale: 'en',
 			detection: ['header'],
 			translations: {
+				en: enBetterAuthTranslations,
 				es: esBetterAuthTranslations,
 			},
 		}),
@@ -262,7 +264,7 @@ export const auth = betterAuth({
 				const email = (ctx.body as Record<string, unknown>)?.email;
 				if (typeof email === 'string' && await accountLockout.isLocked(email)) {
 					throw new APIError('TOO_MANY_REQUESTS', {
-						message: 'Account temporarily locked.',
+						message: 'ACCOUNT_TEMPORARILY_LOCKED',
 					});
 				}
 			}

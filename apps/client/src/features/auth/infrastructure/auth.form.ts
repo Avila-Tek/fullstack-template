@@ -1,3 +1,4 @@
+import { EMAIL_REGEX } from '@repo/schemas';
 import type { useTranslations } from 'next-intl';
 import { z } from 'zod';
 
@@ -16,16 +17,22 @@ import { z } from 'zod';
 
 export type TAuthTranslations = ReturnType<typeof useTranslations<'auth'>>;
 
+function emailField(t: TAuthTranslations) {
+  return z
+    .string()
+    .min(1, { message: t('validation.emailRequired') })
+    .refine((val) => val === '' || EMAIL_REGEX.test(val), {
+      message: t('validation.emailInvalid'),
+    });
+}
+
 // ---------------------------------------------------------------------------
 // Login
 // ---------------------------------------------------------------------------
 
 export function buildLoginSchema(t: TAuthTranslations) {
   return z.object({
-    email: z
-      .string()
-      .min(1, { message: t('validation.emailRequired') })
-      .email({ message: t('validation.emailInvalid') }),
+    email: emailField(t),
     password: z
       .string()
       .min(1, { message: t('validation.passwordRequired') })
@@ -52,10 +59,7 @@ function buildSignUpBaseSchema(t: TAuthTranslations) {
   return z.object({
     firstName: z.string().max(50, { message: t('validation.nameMax') }),
     lastName: z.string().max(50, { message: t('validation.nameMax') }),
-    email: z
-      .string()
-      .min(1, { message: t('validation.emailRequired') })
-      .email({ message: t('validation.emailInvalid') }),
+    email: emailField(t),
     password: z.string().min(8, { message: t('validation.passwordMin') }),
     rePassword: z
       .string()
@@ -95,10 +99,7 @@ export function createSignUpDefaultValues(
 
 export function buildForgotPasswordSchema(t: TAuthTranslations) {
   return z.object({
-    email: z
-      .string()
-      .min(1, { message: t('validation.emailRequired') })
-      .email({ message: t('validation.emailInvalid') }),
+    email: emailField(t),
   });
 }
 
@@ -148,10 +149,7 @@ export function createOtpDefaultValues(partial?: Partial<TOtpForm>): TOtpForm {
 
 export function buildVerifyOtpSchema(t: TAuthTranslations) {
   return z.object({
-    email: z
-      .string()
-      .min(1, { message: t('validation.emailRequired') })
-      .email({ message: t('validation.emailInvalid') }),
+    email: emailField(t),
     otp: z.string().length(6, { message: t('validation.otpDigits') }),
   });
 }
@@ -197,10 +195,7 @@ export function createEmailCallbackDefaultValues(
 
 function buildResetPasswordBaseSchema(t: TAuthTranslations) {
   return z.object({
-    email: z
-      .string()
-      .min(1, { message: t('validation.emailRequired') })
-      .email({ message: t('validation.emailInvalid') }),
+    email: emailField(t),
     otp: z.string().length(6, { message: t('validation.otpDigits') }),
     newPassword: z.string().min(8, { message: t('validation.passwordMin') }),
     confirmPassword: z

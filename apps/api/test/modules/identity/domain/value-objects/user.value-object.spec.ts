@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { InvalidEmailException } from '@/modules/identity/domain/exceptions/invalid-email.exception';
 import { Email } from '@/modules/identity/domain/value-objects/user.value-object';
 
 describe('Email', () => {
@@ -7,16 +8,16 @@ describe('Email', () => {
 		expect(email.value).toBe('test@example.com');
 	});
 
-	it('throws on empty string', () => {
-		expect(() => Email.create('')).toThrow('Invalid email address');
+	it('throws InvalidEmailException on empty string', () => {
+		expect(() => Email.create('')).toThrow(InvalidEmailException);
 	});
 
-	it('throws on whitespace-only string', () => {
-		expect(() => Email.create('   ')).toThrow('Invalid email address');
+	it('throws InvalidEmailException on whitespace-only string', () => {
+		expect(() => Email.create('   ')).toThrow(InvalidEmailException);
 	});
 
-	it('throws on malformed email', () => {
-		expect(() => Email.create('not-an-email')).toThrow('Invalid email address');
+	it('throws InvalidEmailException on malformed email', () => {
+		expect(() => Email.create('not-an-email')).toThrow(InvalidEmailException);
 	});
 
 	it('equals returns true for same normalized email', () => {
