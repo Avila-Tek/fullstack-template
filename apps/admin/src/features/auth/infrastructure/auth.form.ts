@@ -1,16 +1,19 @@
+import { useTranslations } from 'next-intl';
 import { z } from 'zod';
 
-const emailValidation = z
-  .string()
-  .min(1, 'El correo es obligatorio')
-  .email('Por favor ingresa un correo válido');
+export type TAuthTranslations = ReturnType<typeof useTranslations<'auth'>>;
 
-export const loginFormDefinition = z.object({
-  email: emailValidation,
-  password: z.string().min(1, 'La contraseña es obligatoria'),
-});
+export function buildLoginSchema(t: TAuthTranslations) {
+  return z.object({
+    email: z
+      .string()
+      .min(1, { message: t('validation.emailRequired') })
+      .email({ message: t('validation.emailInvalid') }),
+    password: z.string().min(1, { message: t('validation.passwordRequired') }),
+  });
+}
 
-export type TLoginForm = z.infer<typeof loginFormDefinition>;
+export type TLoginForm = z.infer<ReturnType<typeof buildLoginSchema>>;
 
 export function createLoginDefaultValues(
   partial?: Partial<TLoginForm>

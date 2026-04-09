@@ -1,7 +1,7 @@
 import { type RenderOptions, render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
-import { ReactQueryProvider } from '@/context/react-query';
+import { QueryClient as ReactQueryProvider } from '@/src/context/react-query';
 
 // // -----------------------------------------------------------------------------
 // This file re-exports everything from React Testing Library and then overrides
