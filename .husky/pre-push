@@ -1,0 +1,8 @@
+echo "Running tests for changed packages..."
+
+if git ls-remote --exit-code origin development > /dev/null 2>&1; then
+  npx turbo test --filter=...[origin/development] || exit 1
+else
+  echo "Warning: origin/development not reachable. Skipping changed-package test filter."
+  echo "Run 'npx turbo test' manually before merging."
+fi

@@ -65,6 +65,27 @@ Repo-wide rules for this Turborepo monorepo. Applies to `apps/*` and `packages/*
 
 ---
 
+## Git Hooks
+
+Three hooks are active on this repo (managed by Husky v9):
+
+| Hook | Runs on | What it checks |
+|---|---|---|
+| `pre-commit` | `git commit` | Biome format+lint on staged files; full typecheck |
+| `commit-msg` | `git commit` | Conventional commit message format |
+| `pre-push` | `git push` | Tests for packages changed vs. `origin/development` |
+
+Commit message format: `<type>[optional scope]: <description>`
+- Allowed types: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`, `revert`
+- Scope is optional and free-form: `fix(api): ...`, `feat(client): 🚀 ...`, `chore(all): ...`
+- Description is free-form — emojis and any casing are allowed
+
+**Never use `--no-verify`.** All hook checks are duplicated in CI — bypassing locally only delays the failure. If a hook blocks you, fix the underlying issue.
+
+When adding a new commit scope, also add it to `.vscode/settings.json` → `conventionalCommits.scopes`.
+
+---
+
 ## Where to look next
 
 - **apps/client** → `apps/client/CLAUDE.md`
