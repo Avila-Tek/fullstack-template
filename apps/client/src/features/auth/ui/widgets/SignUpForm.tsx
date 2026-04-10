@@ -7,12 +7,12 @@ import { useTranslations } from 'next-intl';
 import * as React from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useUser } from '@/src/shared/hooks/useUser';
-import { useSignIn } from '../../application/useCases/login.useCase';
-import { useSignUp } from '../../application/useCases/signUp.useCase';
+import { useSignIn } from '../../application/useCases/login';
+import { useSignUp } from '../../application/useCases/signUp';
 import {
   authSearchParamEnumObject,
   getRandomTagline,
-} from '../../domain/auth.constants';
+} from '../../domain/auth';
 import {
   buildSignUpSchema,
   createSignUpDefaultValues,

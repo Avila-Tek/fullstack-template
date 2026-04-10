@@ -1,6 +1,6 @@
-import type { SignUpResult } from '../../domain/auth.model';
+import type { SignUpResult } from '../../domain/auth';
 import type { TSignUpForm } from '../../infrastructure/auth.form';
-import { useSignUpMutation } from '../mutations/useSignUp.mutation';
+import { useSignUpMutation } from '../mutations/useSignUp';
 
 type SignUpUseCaseResult = {
   success: boolean;

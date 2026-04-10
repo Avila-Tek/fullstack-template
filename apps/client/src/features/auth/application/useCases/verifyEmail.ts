@@ -1,8 +1,8 @@
 import type { TEmailCallbackQuery } from '@repo/schemas';
-import type { Session } from '../../domain/auth.model';
+import type { Session } from '../../domain/auth';
 import type { TEmailCallbackForm } from '../../infrastructure/auth.form';
-import { toEmailCallbackQuery } from '../../infrastructure/auth.transform';
-import { useVerifyEmailCallbackMutation } from '../mutations/useVerifyEmail.mutation';
+import { toEmailCallbackQuery } from '../../infrastructure/auth';
+import { useVerifyEmailCallbackMutation } from '../mutations/useVerifyEmail';
 
 type VerifyEmailCallbackResult = {
   success: boolean;

@@ -1,5 +1,5 @@
 import { getAPIClient } from '@/src/lib/api';
-import { AuthServiceClass } from './auth.service';
+import { AuthServiceClass } from './auth';
 
 /**
  * Default service instance using the real API client.

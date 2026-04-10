@@ -1,6 +1,11 @@
 {
   "conventionalCommits.scopes": [
-    "api"
+    "api",
+    "client",
+    "admin",
+    "all",
+    "frontend",
+    "packages"
   ],
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "biomejs.biome",

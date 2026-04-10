@@ -8,11 +8,11 @@ import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import * as React from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
-import { useForgotPassword } from '../../application/useCases/forgotPassword.useCase';
+import { useForgotPassword } from '../../application/useCases/forgotPassword';
 import {
   authSearchParamEnumObject,
   getRandomTagline,
-} from '../../domain/auth.constants';
+} from '../../domain/auth';
 import {
   buildForgotPasswordSchema,
   createForgotPasswordDefaultValues,

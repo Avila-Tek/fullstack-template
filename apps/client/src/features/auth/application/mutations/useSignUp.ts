@@ -1,6 +1,6 @@
 import type { TSignUpInput } from '@repo/schemas';
 import { useMutation } from '@tanstack/react-query';
-import type { SignUpResult } from '../../domain/auth.model';
+import type { SignUpResult } from '../../domain/auth';
 import { AuthService } from '../../infrastructure';
 import type { TSignUpForm } from '../../infrastructure/auth.form';
 

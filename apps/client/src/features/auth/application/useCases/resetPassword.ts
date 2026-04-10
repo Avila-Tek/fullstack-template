@@ -1,7 +1,7 @@
 import type { TResetPasswordWithOtpInput } from '@repo/schemas';
 import type { TResetPasswordForm } from '../../infrastructure/auth.form';
-import { toResetPasswordInput } from '../../infrastructure/auth.transform';
-import { useResetPasswordMutation } from '../mutations/useResetPassword.mutation';
+import { toResetPasswordInput } from '../../infrastructure/auth';
+import { useResetPasswordMutation } from '../mutations/useResetPassword';
 
 type ResetPasswordResult = {
   success: boolean;

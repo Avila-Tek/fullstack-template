@@ -1,8 +1,8 @@
 import type { TCreateUserInput } from '@repo/schemas';
 import { mutationOptions } from '@tanstack/react-query';
-import type { User } from '@/src/features/userManagement/domain/user.model';
+import type { User } from '@/src/features/userManagement/domain/user';
 import { UserService } from '../../infrastructure';
-import { usersQueryKeys } from '../queries/useUsers.query';
+import { usersQueryKeys } from '../queries/useUsers';
 
 export function createUserMutationOptions() {
   return mutationOptions<User, Error, TCreateUserInput>({

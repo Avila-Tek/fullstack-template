@@ -25,8 +25,14 @@ src/modules/<feature>/
 test/               # Test files mirroring the src/ folder structure
 ```
 
+## Naming
+
+- Folders: `kebab-case`
+- Files: `kebab-case.<role>.ts` — the role suffix identifies the layer:
+
 ## Key rules
 
+- **`.env.example` must stay in sync**: any time you add, rename, or remove a `process.env.*` reference, update `apps/api/.env.example` with a matching entry and an explanatory comment. Never leave an env var undocumented.
 - **Drizzle**: inject via `@Inject(DRIZZLE_CLIENT) private db: NodePgDatabase`. No raw SQL.
 - **DTOs**: `createZodDto(schema)` + `ZodValidationPipe`. Prefer schemas from `@repo/schemas`.
 - **Guards**: protect routes with `@UseGuards(AuthGuard)`; use `@Public()` decorator to opt out.

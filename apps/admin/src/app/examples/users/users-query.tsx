@@ -1,7 +1,7 @@
 'use client';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import React from 'react';
-import { usersPaginationQueryOptions } from '@/src/features/userManagement/application/queries/useUsers.query';
+import { usersPaginationQueryOptions } from '@/src/features/userManagement/application/queries/useUsers';
 
 export function UsersQuery({
   page,

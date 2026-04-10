@@ -1,7 +1,7 @@
 import { paginationInputSchema } from '@repo/schemas';
 import React from 'react';
 import z from 'zod';
-import { usersPaginationQueryOptions } from '@/src/features/userManagement/application/queries/useUsers.query';
+import { usersPaginationQueryOptions } from '@/src/features/userManagement/application/queries/useUsers';
 import { getQueryClient } from '@/src/lib/get-query-client';
 import { UsersQuery } from './users-query';
 

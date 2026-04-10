@@ -1,5 +1,5 @@
 import { getAPIClient } from '@/src/lib/api';
-import { UserService as UserServiceClass } from './userManagement.service';
+import { UserService as UserServiceClass } from './userManagement';
 
 /**
  * Default service instance using the real API client.

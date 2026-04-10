@@ -6,12 +6,12 @@ import * as React from 'react';
 import {
   useVerifyEmailFlow,
   verifyEmailFlowStatusEnum,
-} from '../../application/useCases/verifyEmailFlow.useCase';
+} from '../../application/useCases/verifyEmailFlow';
 import {
   authSearchParamEnumObject,
   getRandomTagline,
   supabaseOtpTypeEnumObject,
-} from '../../domain/auth.constants';
+} from '../../domain/auth';
 import { AuthCard } from '../components/AuthCard';
 import { AuthHeader } from '../components/AuthHeader';
 import { CheckEmailStatus } from '../components/CheckEmailStatus';

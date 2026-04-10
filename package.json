@@ -8,7 +8,16 @@
     "format": "npx biome format --write \"**/*.{ts,tsx,md}\"",
     "format-and-lint": "biome check .",
     "format-and-lint:fix": "biome check . --write",
-    "format-and-lint:error": "biome check . --diagnostic-level=error"
+    "format-and-lint:error": "biome check . --diagnostic-level=error",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "biome check --write --no-errors-on-unmatched --files-ignore-unknown=true"
+    ],
+    "*.{json,md,css}": [
+      "biome format --write --no-errors-on-unmatched --files-ignore-unknown=true"
+    ]
   },
   "devDependencies": {
     "@biomejs/biome": "2.2.2",

@@ -2,9 +2,9 @@ import { i18n } from '@better-auth/i18n';
 import * as argon2 from 'argon2';
 import { betterAuth } from 'better-auth';
 import {
-	ADVANCED_CONFIG,
-	JWT_JWKS_CONFIG,
-	SESSION_CONFIG,
+  ADVANCED_CONFIG,
+  JWT_JWKS_CONFIG,
+  SESSION_CONFIG,
 } from './auth-config';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { APIError, createAuthMiddleware } from 'better-auth/api';
@@ -15,15 +15,18 @@ import Redis from 'ioredis';
 import { Pool } from 'pg';
 import { normalizeEmail } from '@/shared/utils/normalize-email';
 import {
-	parseDeviceName,
-	parseDeviceType,
+  parseDeviceName,
+  parseDeviceType,
 } from '@/shared/utils/user-agent-parser';
 import { googleOAuthAfterMiddlewareBody } from './hooks/google-oauth.hooks';
-import { deriveErrorType, signInAfterMiddlewareBody } from './hooks/sign-in.hooks';
+import {
+  deriveErrorType,
+  signInAfterMiddlewareBody,
+} from './hooks/sign-in.hooks';
 import { signOutSessionDeleteBefore } from './hooks/sign-out.hooks';
 import {
-	consumePendingTermsData,
-	signUpBeforeHookBody,
+  consumePendingTermsData,
+  signUpBeforeHookBody,
 } from './hooks/sign-up.hooks';
 import { AccountLockoutService } from '../security/account-lockout.service';
 import { enBetterAuthTranslations } from './i18n/en-translations';
@@ -35,15 +38,15 @@ import { validatePasswordComplexity } from '../utils/validate-password-complexit
 // Better Auth owns lifecycle of this connection; it must be available before the
 // NestJS DI container starts, which is why we cannot inject it from DrizzleModule here.
 if (!process.env.DATABASE_URL) {
-	throw new Error('DATABASE_URL is required for Better Auth');
+  throw new Error('DATABASE_URL is required for Better Auth');
 }
 
 // Dedicated Redis client for Better Auth secondary storage (session cache + rate limiting).
 // Must be created here — Better Auth initializes before the NestJS DI container.
 const redis = new Redis(process.env.REDIS_URL ?? 'redis://localhost:6379', {
-	lazyConnect: false,
-	maxRetriesPerRequest: 1,
-	enableOfflineQueue: false,
+  lazyConnect: false,
+  maxRetriesPerRequest: 1,
+  enableOfflineQueue: false,
 });
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 const db = drizzle(pool, { schema });
@@ -55,366 +58,369 @@ const parallelismArg = Number(process.env.ARGON2_PARALLELISM ?? 4);
 
 // Spec §18: store password hash in history and prune to the 5 most recent entries.
 async function appendPasswordHistory(
-	userId: string,
-	hashedPassword: string,
+  userId: string,
+  hashedPassword: string
 ): Promise<void> {
-	await db.transaction(async (tx) => {
-		await tx.insert(schema.passwordHistory).values({
-			id: crypto.randomUUID(),
-			userId,
-			hashedPassword,
-		});
+  await db.transaction(async (tx) => {
+    await tx.insert(schema.passwordHistory).values({
+      id: crypto.randomUUID(),
+      userId,
+      hashedPassword,
+    });
 
-		const history = await tx
-			.select({ id: schema.passwordHistory.id })
-			.from(schema.passwordHistory)
-			.where(eq(schema.passwordHistory.userId, userId))
-			.orderBy(desc(schema.passwordHistory.createdAt));
+    const history = await tx
+      .select({ id: schema.passwordHistory.id })
+      .from(schema.passwordHistory)
+      .where(eq(schema.passwordHistory.userId, userId))
+      .orderBy(desc(schema.passwordHistory.createdAt));
 
-		if (history.length > 5) {
-			const idsToDelete = history.slice(5).map((r) => r.id);
-			await tx
-				.delete(schema.passwordHistory)
-				.where(inArray(schema.passwordHistory.id, idsToDelete));
-		}
-	});
+    if (history.length > 5) {
+      const idsToDelete = history.slice(5).map((r) => r.id);
+      await tx
+        .delete(schema.passwordHistory)
+        .where(inArray(schema.passwordHistory.id, idsToDelete));
+    }
+  });
 }
 
 export const auth = betterAuth({
-	baseURL: process.env.BETTER_AUTH_URL ?? 'http://localhost:3002',
-	basePath: '/api/v1/auth',
-	secret: process.env.BETTER_AUTH_SECRET,
+  baseURL: process.env.BETTER_AUTH_URL ?? 'http://localhost:3000',
+  basePath: '/api/v1/auth',
+  secret: process.env.BETTER_AUTH_SECRET,
 
-	database: drizzleAdapter(db, {
-		provider: 'pg',
-		schema: {
-			user: schema.user,
-			session: schema.session,
-			account: schema.account,
-			verification: schema.verification,
-			twoFactor: schema.twoFactor,
-			jwks: schema.jwks,
-		},
-	}),
+  database: drizzleAdapter(db, {
+    provider: 'pg',
+    schema: {
+      user: schema.user,
+      session: schema.session,
+      account: schema.account,
+      verification: schema.verification,
+      twoFactor: schema.twoFactor,
+      jwks: schema.jwks,
+    },
+  }),
 
-	secondaryStorage: {
-		get: (key) => redis.get(key),
-		set: async (key, value, ttl) => {
-			await redis.set(key, value, 'EX', ttl || 86400);
-		},
-		delete: async (key) => {
-			await redis.del(key);
-		},
-	},
+  secondaryStorage: {
+    get: (key) => redis.get(key),
+    set: async (key, value, ttl) => {
+      await redis.set(key, value, 'EX', ttl || 86400);
+    },
+    delete: async (key) => {
+      await redis.del(key);
+    },
+  },
 
-	user: {
-		additionalFields: {
-			normalizedEmail: {
-				type: 'string',
-				required: true,
-				input: false,
-			},
-			twoFactorEnabled: {
-				type: 'boolean',
-				required: true,
-				defaultValue: false,
-				input: false,
-			},
-			termsAcceptedVersion: {
-				type: 'string',
-				required: true,
-				defaultValue: '',
-				input: false,
-			},
-			termsAcceptedAt: {
-				type: 'date',
-				required: true,
-				input: false,
-			},
-		},
-	},
+  user: {
+    additionalFields: {
+      normalizedEmail: {
+        type: 'string',
+        required: true,
+        input: false,
+      },
+      twoFactorEnabled: {
+        type: 'boolean',
+        required: true,
+        defaultValue: false,
+        input: false,
+      },
+      termsAcceptedVersion: {
+        type: 'string',
+        required: true,
+        defaultValue: '',
+        input: false,
+      },
+      termsAcceptedAt: {
+        type: 'date',
+        required: true,
+        input: false,
+      },
+    },
+  },
 
-	emailAndPassword: {
-		enabled: true,
-		requireEmailVerification: true,
-		password: {
-			hash: async (password: string): Promise<string> => {
-				const { valid } = validatePasswordComplexity(password);
-				if (!valid) throw new APIError('BAD_REQUEST', { message: 'INVALID_PASSWORD' });
-				return argon2.hash(password, {
-					type: argon2.argon2id,
-					memoryCost: memoryCostArg,
-					timeCost: timeCostArg,
-					parallelism: parallelismArg,
-				});
-			},
-			verify: ({
-				hash,
-				password,
-			}: {
-				hash: string;
-				password: string;
-			}): Promise<boolean> => argon2.verify(hash, password),
-		},
-		sendResetPassword: async ({
-			user,
-			url,
-		}: {
-			user: { email: string };
-			url: string;
-		}) => {
-			// TODO: integrate shared Postmark email service
-			void user.email;
-			void url;
-		},
-	},
+  emailAndPassword: {
+    enabled: true,
+    requireEmailVerification: true,
+    password: {
+      hash: async (password: string): Promise<string> => {
+        const { valid } = validatePasswordComplexity(password);
+        if (!valid)
+          throw new APIError('BAD_REQUEST', { message: 'INVALID_PASSWORD' });
+        return argon2.hash(password, {
+          type: argon2.argon2id,
+          memoryCost: memoryCostArg,
+          timeCost: timeCostArg,
+          parallelism: parallelismArg,
+        });
+      },
+      verify: ({
+        hash,
+        password,
+      }: {
+        hash: string;
+        password: string;
+      }): Promise<boolean> => argon2.verify(hash, password),
+    },
+    sendResetPassword: async ({
+      user,
+      url,
+    }: {
+      user: { email: string };
+      url: string;
+    }) => {
+      // TODO: integrate shared Postmark email service
+      void user.email;
+      void url;
+    },
+  },
 
-	trustedOrigins: [
-		process.env.CLIENT_URL ?? 'http://localhost:4200',
-		process.env.ADMIN_URL ?? 'http://localhost:3000',
-	],
+  trustedOrigins: [
+    process.env.CLIENT_URL ?? 'http://localhost:4200',
+    process.env.ADMIN_URL ?? 'http://localhost:3000',
+  ],
 
-	socialProviders: {
-		google: {
-			clientId: process.env.GOOGLE_CLIENT_ID ?? '',
-			clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? '',
-		},
-	},
+  socialProviders: {
+    google: {
+      clientId: process.env.GOOGLE_CLIENT_ID ?? '',
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? '',
+    },
+  },
 
-	account: {
-		accountLinking: {
-			enabled: true,
-			trustedProviders: ['google'],
-		},
-	},
+  account: {
+    accountLinking: {
+      enabled: true,
+      trustedProviders: ['google'],
+    },
+  },
 
-	rateLimit: {
-		enabled: true,
-		window: 60,
-		max: 10,
-		storage: 'secondary-storage',
-	},
+  rateLimit: {
+    enabled: true,
+    window: 60,
+    max: 10,
+    storage: 'secondary-storage',
+  },
 
-	plugins: [
-		jwt({
-			jwks: JWT_JWKS_CONFIG,
-			jwt: {
-				issuer: process.env.BETTER_AUTH_URL ?? 'http://localhost:3002',
-				audience: [process.env.CLIENT_URL ?? 'http://localhost:4200'],
-				expirationTime: '15 minutes',
-				definePayload: ({ user, session }) => ({
-					email: user.email,
-					emailVerified: user.emailVerified,
-					sid: session.id,
-					scope: '',
-				}),
-			},
-		}),
-		twoFactor({
-			issuer: process.env.BETTER_AUTH_URL ?? 'http://localhost:3002',
-			otpOptions: {
-				period: 30,
-				digits: 6,
-			},
-		}),
-		i18n({
-			defaultLocale: 'en',
-			detection: ['header'],
-			translations: {
-				en: enBetterAuthTranslations,
-				es: esBetterAuthTranslations,
-			},
-		}),
-	],
+  plugins: [
+    jwt({
+      jwks: JWT_JWKS_CONFIG,
+      jwt: {
+        issuer: process.env.BETTER_AUTH_URL ?? 'http://localhost:3000',
+        audience: [process.env.CLIENT_URL ?? 'http://localhost:4200'],
+        expirationTime: '15 minutes',
+        definePayload: ({ user, session }) => ({
+          email: user.email,
+          emailVerified: user.emailVerified,
+          sid: session.id,
+          scope: '',
+        }),
+      },
+    }),
+    twoFactor({
+      issuer: process.env.BETTER_AUTH_URL ?? 'http://localhost:3000',
+      otpOptions: {
+        period: 30,
+        digits: 6,
+      },
+    }),
+    i18n({
+      defaultLocale: 'en',
+      detection: ['header'],
+      translations: {
+        en: enBetterAuthTranslations,
+        es: esBetterAuthTranslations,
+      },
+    }),
+  ],
 
-	session: SESSION_CONFIG,
+  session: SESSION_CONFIG,
 
-	advanced: {
-		useSecureCookies: process.env.NODE_ENV === 'production',
-		...ADVANCED_CONFIG,
-	},
+  advanced: {
+    useSecureCookies: process.env.NODE_ENV === 'production',
+    ...ADVANCED_CONFIG,
+  },
 
-	emailVerification: {
-		sendVerificationEmail: async ({
-			user,
-			url,
-		}: {
-			user: { email: string };
-			url: string;
-		}) => {
-			// TODO: integrate shared Postmark email service
-			void user.email;
-			void url;
-		},
-		afterEmailVerification: async (user: { id: string }) => {
-			await db
-				.update(schema.user)
-				.set({ emailVerified: true })
-				.where(eq(schema.user.id, user.id));
-		},
-		sendOnSignUp: true,
-	},
+  emailVerification: {
+    sendVerificationEmail: async ({
+      user,
+      url,
+    }: {
+      user: { email: string };
+      url: string;
+    }) => {
+      // TODO: integrate shared Postmark email service
+      void user.email;
+      void url;
+    },
+    afterEmailVerification: async (user: { id: string }) => {
+      await db
+        .update(schema.user)
+        .set({ emailVerified: true })
+        .where(eq(schema.user.id, user.id));
+    },
+    sendOnSignUp: true,
+  },
 
-	hooks: {
-		before: createAuthMiddleware(async (ctx) => {
-			const result = await signUpBeforeHookBody(ctx);
-			if (result !== undefined) return result;
+  hooks: {
+    before: createAuthMiddleware(async (ctx) => {
+      const result = await signUpBeforeHookBody(ctx);
+      if (result !== undefined) return result;
 
-			if (ctx.path === '/sign-in/email') {
-				const email = (ctx.body as Record<string, unknown>)?.email;
-				if (typeof email === 'string' && await accountLockout.isLocked(email)) {
-					throw new APIError('TOO_MANY_REQUESTS', {
-						message: 'ACCOUNT_TEMPORARILY_LOCKED',
-					});
-				}
-			}
-		}),
-		after: createAuthMiddleware(async (ctx) => {
-			await signInAfterMiddlewareBody(ctx);
-			await googleOAuthAfterMiddlewareBody(ctx);
+      if (ctx.path === '/sign-in/email') {
+        const email = (ctx.body as Record<string, unknown>)?.email;
+        if (
+          typeof email === 'string' &&
+          (await accountLockout.isLocked(email))
+        ) {
+          throw new APIError('TOO_MANY_REQUESTS', {
+            message: 'ACCOUNT_TEMPORARILY_LOCKED',
+          });
+        }
+      }
+    }),
+    after: createAuthMiddleware(async (ctx) => {
+      await signInAfterMiddlewareBody(ctx);
+      await googleOAuthAfterMiddlewareBody(ctx);
 
-			if (ctx.path === '/sign-in/email') {
-				const email = (ctx.body as Record<string, unknown>)?.email;
-				if (typeof email === 'string') {
-					const returned = ctx.context.returned as
-						| Record<string, unknown>
-						| undefined;
-					const userId = (
-						returned?.user as Record<string, unknown> | undefined
-					)?.id;
-					if (typeof userId === 'string') {
-						await accountLockout.recordSuccess(email);
-					} else if (deriveErrorType(returned) === 'invalid_credentials') {
-						await accountLockout.recordFailure(email);
-					}
-				}
-			}
-		}),
-	},
+      if (ctx.path === '/sign-in/email') {
+        const email = (ctx.body as Record<string, unknown>)?.email;
+        if (typeof email === 'string') {
+          const returned = ctx.context.returned as
+            | Record<string, unknown>
+            | undefined;
+          const userId = (returned?.user as Record<string, unknown> | undefined)
+            ?.id;
+          if (typeof userId === 'string') {
+            await accountLockout.recordSuccess(email);
+          } else if (deriveErrorType(returned) === 'invalid_credentials') {
+            await accountLockout.recordFailure(email);
+          }
+        }
+      }
+    }),
+  },
 
-	databaseHooks: {
-		user: {
-			create: {
-				before: async (user) => {
-					const normalized = normalizeEmail(user.email);
+  databaseHooks: {
+    user: {
+      create: {
+        before: async (user) => {
+          const normalized = normalizeEmail(user.email);
 
-					const existing = await db
-						.select({ id: schema.user.id })
-						.from(schema.user)
-						.where(eq(schema.user.normalizedEmail, normalized))
-						.limit(1);
+          const existing = await db
+            .select({ id: schema.user.id })
+            .from(schema.user)
+            .where(eq(schema.user.normalizedEmail, normalized))
+            .limit(1);
 
-					if (existing.length > 0) {
-						return false;
-					}
+          if (existing.length > 0) {
+            return false;
+          }
 
-					const correlationId = (user as Record<string, unknown>)
-						._signupCorrelationId;
-					const termsEntry =
-						typeof correlationId === 'string'
-							? consumePendingTermsData(correlationId)
-							: undefined;
+          const correlationId = (user as Record<string, unknown>)
+            ._signupCorrelationId;
+          const termsEntry =
+            typeof correlationId === 'string'
+              ? consumePendingTermsData(correlationId)
+              : undefined;
 
-					return {
-						data: {
-							...user,
-							normalizedEmail: normalized,
-							twoFactorEnabled: false,
-							termsAcceptedVersion: termsEntry?.resolvedTermsVersion ?? '',
-							termsAcceptedAt: termsEntry?.termsAcceptedAt ?? new Date(),
-						},
-					};
-				},
-			},
-		},
+          return {
+            data: {
+              ...user,
+              normalizedEmail: normalized,
+              twoFactorEnabled: false,
+              termsAcceptedVersion: termsEntry?.resolvedTermsVersion ?? '',
+              termsAcceptedAt: termsEntry?.termsAcceptedAt ?? new Date(),
+            },
+          };
+        },
+      },
+    },
 
-		session: {
-			create: {
-				after: async (session) => {
-					const ua = session.userAgent ?? '';
-					const ip = session.ipAddress ?? '';
-					const deviceName = parseDeviceName(ua);
+    session: {
+      create: {
+        after: async (session) => {
+          const ua = session.userAgent ?? '';
+          const ip = session.ipAddress ?? '';
+          const deviceName = parseDeviceName(ua);
 
-					const [existing] = await db
-						.select({ id: schema.device.id })
-						.from(schema.device)
-						.where(
-							and(
-								eq(schema.device.userId, session.userId),
-								eq(schema.device.userAgent, ua),
-								eq(schema.device.ipAddress, ip),
-							),
-						)
-						.limit(1);
+          const [existing] = await db
+            .select({ id: schema.device.id })
+            .from(schema.device)
+            .where(
+              and(
+                eq(schema.device.userId, session.userId),
+                eq(schema.device.userAgent, ua),
+                eq(schema.device.ipAddress, ip)
+              )
+            )
+            .limit(1);
 
-					if (existing) {
-						await db
-							.update(schema.device)
-							.set({ lastLoginAt: new Date() })
-							.where(eq(schema.device.id, existing.id));
-					} else {
-						await db.insert(schema.device).values({
-							id: crypto.randomUUID(),
-							userId: session.userId,
-							deviceName,
-							deviceType: parseDeviceType(ua),
-							userAgent: ua,
-							ipAddress: ip,
-						});
-					}
+          if (existing) {
+            await db
+              .update(schema.device)
+              .set({ lastLoginAt: new Date() })
+              .where(eq(schema.device.id, existing.id));
+          } else {
+            await db.insert(schema.device).values({
+              id: crypto.randomUUID(),
+              userId: session.userId,
+              deviceName,
+              deviceType: parseDeviceType(ua),
+              userAgent: ua,
+              ipAddress: ip,
+            });
+          }
 
-					await db.insert(schema.loginAuditLog).values({
-						id: crypto.randomUUID(),
-						userId: session.userId,
-						ipAddress: ip,
-						userAgent: ua,
-						deviceName,
-						success: true,
-					});
-				},
-			},
-			delete: {
-				before: signOutSessionDeleteBefore,
-			},
-		},
+          await db.insert(schema.loginAuditLog).values({
+            id: crypto.randomUUID(),
+            userId: session.userId,
+            ipAddress: ip,
+            userAgent: ua,
+            deviceName,
+            success: true,
+          });
+        },
+      },
+      delete: {
+        before: signOutSessionDeleteBefore,
+      },
+    },
 
-		account: {
-			create: {
-				after: async (account) => {
-					if (account.providerId === 'credential' && account.password) {
-						await appendPasswordHistory(account.userId, account.password);
-					}
+    account: {
+      create: {
+        after: async (account) => {
+          if (account.providerId === 'credential' && account.password) {
+            await appendPasswordHistory(account.userId, account.password);
+          }
 
-					const TRUSTED_PROVIDERS = ['google'];
-					if (TRUSTED_PROVIDERS.includes(account.providerId)) {
-						const [userRow] = await db
-							.select({ email: schema.user.email })
-							.from(schema.user)
-							.where(eq(schema.user.id, account.userId))
-							.limit(1);
+          const TRUSTED_PROVIDERS = ['google'];
+          if (TRUSTED_PROVIDERS.includes(account.providerId)) {
+            const [userRow] = await db
+              .select({ email: schema.user.email })
+              .from(schema.user)
+              .where(eq(schema.user.id, account.userId))
+              .limit(1);
 
-						if (userRow) {
-							await db
-								.update(schema.account)
-								.set({ providerEmail: userRow.email })
-								.where(eq(schema.account.id, account.id));
-						}
+            if (userRow) {
+              await db
+                .update(schema.account)
+                .set({ providerEmail: userRow.email })
+                .where(eq(schema.account.id, account.id));
+            }
 
-						await db
-							.update(schema.user)
-							.set({ emailVerified: true })
-							.where(eq(schema.user.id, account.userId));
-					}
-				},
-			},
-			update: {
-				after: async (account) => {
-					if (account.providerId !== 'credential' || !account.password) return;
-					await appendPasswordHistory(account.userId, account.password);
-				},
-			},
-		},
-	},
+            await db
+              .update(schema.user)
+              .set({ emailVerified: true })
+              .where(eq(schema.user.id, account.userId));
+          }
+        },
+      },
+      update: {
+        after: async (account) => {
+          if (account.providerId !== 'credential' || !account.password) return;
+          await appendPasswordHistory(account.userId, account.password);
+        },
+      },
+    },
+  },
 });
 
 export type AppAuth = typeof auth;

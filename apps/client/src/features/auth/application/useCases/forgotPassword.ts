@@ -1,6 +1,6 @@
 import type { TForgotPasswordInput } from '@repo/schemas';
 import type { TForgotPasswordForm } from '../../infrastructure/auth.form';
-import { useForgotPasswordMutation } from '../mutations/useForgotPassword.mutation';
+import { useForgotPasswordMutation } from '../mutations/useForgotPassword';
 
 type ForgotPasswordResult = {
   success: boolean;

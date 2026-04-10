@@ -1,7 +1,7 @@
 import type { TSignInInput } from '@repo/schemas';
-import type { Session } from '../../domain/auth.model';
+import type { Session } from '../../domain/auth';
 import type { TLoginForm } from '../../infrastructure/auth.form';
-import { useSignInMutation } from '../mutations/useLogin.mutation';
+import { useSignInMutation } from '../mutations/useLogin';
 
 type SignInResult = {
   success: boolean;

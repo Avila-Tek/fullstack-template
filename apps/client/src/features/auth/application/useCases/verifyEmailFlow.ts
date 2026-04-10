@@ -4,11 +4,11 @@ import type {
   TEmailCallbackForm,
   TVerifyOtpForm,
 } from '../../infrastructure/auth.form';
-import { useSendOtpMutation } from '../mutations/useSendOtp.mutation';
-import { useVerifyEmailCallbackMutation } from '../mutations/useVerifyEmail.mutation';
-import { useVerifyOtpMutation } from '../mutations/useVerifyOtp.mutation';
-import { verifyEmailCallbackUseCase } from './verifyEmail.useCase';
-import { verifyOtpUseCase } from './verifyOtp.useCase';
+import { useSendOtpMutation } from '../mutations/useSendOtp';
+import { useVerifyEmailCallbackMutation } from '../mutations/useVerifyEmail';
+import { useVerifyOtpMutation } from '../mutations/useVerifyOtp';
+import { verifyEmailCallbackUseCase } from './verifyEmail';
+import { verifyOtpUseCase } from './verifyOtp';
 
 // Status enum definitions
 export const verifyEmailFlowStatus = [

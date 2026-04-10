@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import * as React from 'react';
 import { useForm } from 'react-hook-form';
-import { useSignInMutation } from '@/src/features/auth/application/mutations/useLogin.mutation';
+import { useSignInMutation } from '@/src/features/auth/application/mutations/useLogin';
 import {
   buildLoginSchema,
   createLoginDefaultValues,

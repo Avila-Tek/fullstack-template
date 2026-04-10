@@ -1,6 +1,6 @@
 import type { TSendOtpInput } from '@repo/schemas';
 import type { TSendOtpForm } from '../../infrastructure/auth.form';
-import { useSendOtpMutation } from '../mutations/useSendOtp.mutation';
+import { useSendOtpMutation } from '../mutations/useSendOtp';
 
 type SendOtpResult = {
   success: boolean;

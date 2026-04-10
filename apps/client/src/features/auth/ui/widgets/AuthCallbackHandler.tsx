@@ -6,7 +6,7 @@ import * as React from 'react';
 import {
   oauthCallbackStatusEnum,
   useOAuthCallback,
-} from '../../application/useCases/oauthCallback.useCase';
+} from '../../application/useCases/oauthCallback';
 import { AuthCard } from '../components/AuthCard';
 import { AuthHeader } from '../components/AuthHeader';
 import { StatusDisplay } from '../components/StatusDisplay';

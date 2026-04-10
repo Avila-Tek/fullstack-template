@@ -9,7 +9,7 @@ import * as React from 'react';
 import {
   evaluatePasswordStrength,
   type TPasswordStrength,
-} from '../../domain/auth.logic';
+} from '../../domain/auth';
 
 const STRENGTH_COLOR_MAP: Record<TPasswordStrength, string> = {
   weak: 'bg-error-secondary',

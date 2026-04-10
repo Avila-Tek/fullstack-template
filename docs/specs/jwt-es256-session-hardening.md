@@ -119,7 +119,7 @@ jwt({
     gracePeriod: 60 * 60 * 24 * 7,       // 7 days — old key still valid for verification
   },
   jwt: {
-    issuer: process.env.BETTER_AUTH_URL ?? 'http://localhost:3002',
+    issuer: process.env.BETTER_AUTH_URL ?? 'http://localhost:3000',
     audience: [process.env.CLIENT_URL ?? 'http://localhost:4200'],
     expirationTime: '15 minutes',
     definePayload: ({ user, session }) => ({
@@ -248,14 +248,14 @@ interface IdentityJwtPayload extends JWTPayload {
 }
 
 const JWKS_URL = new URL(
-  `${process.env.BETTER_AUTH_URL ?? 'http://localhost:3002'}/api/v1/auth/.well-known/jwks.json`,
+  `${process.env.BETTER_AUTH_URL ?? 'http://localhost:3000'}/api/v1/auth/.well-known/jwks.json`,
 );
 
 const jwks = createRemoteJWKSet(JWKS_URL);
 
 export async function verifyIdentityJwt(token: string): Promise<IdentityJwtPayload> {
   const { payload } = await jwtVerify(token, jwks, {
-    issuer: process.env.BETTER_AUTH_URL ?? 'http://localhost:3002',
+    issuer: process.env.BETTER_AUTH_URL ?? 'http://localhost:3000',
     audience: process.env.CLIENT_URL ?? 'http://localhost:4200',
     algorithms: ['ES256'],
   });

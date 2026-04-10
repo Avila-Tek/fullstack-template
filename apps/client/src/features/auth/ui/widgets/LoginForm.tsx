@@ -6,8 +6,8 @@ import { useTranslations } from 'next-intl';
 import * as React from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useUser } from '@/src/shared/hooks/useUser';
-import { useSignIn } from '../../application/useCases/login.useCase';
-import { getRandomTagline } from '../../domain/auth.constants';
+import { useSignIn } from '../../application/useCases/login';
+import { getRandomTagline } from '../../domain/auth';
 import {
   buildLoginSchema,
   createLoginDefaultValues,

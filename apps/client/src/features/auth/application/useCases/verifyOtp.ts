@@ -1,7 +1,7 @@
 import type { TVerifyOtpInput } from '@repo/schemas';
-import type { Session } from '../../domain/auth.model';
+import type { Session } from '../../domain/auth';
 import type { TVerifyOtpForm } from '../../infrastructure/auth.form';
-import { useVerifyOtpMutation } from '../mutations/useVerifyOtp.mutation';
+import { useVerifyOtpMutation } from '../mutations/useVerifyOtp';
 
 type VerifyOtpResult = {
   success: boolean;
