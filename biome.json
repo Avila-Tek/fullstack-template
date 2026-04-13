@@ -120,6 +120,6 @@
       "quoteStyle": "single",
       "attributePosition": "auto"
     },
-    "globals": ["React", "JSX", "jest", "cy"]
+    "globals": ["React", "JSX", "jest", "cy", "vi"]
   }
 }

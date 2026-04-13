@@ -1,4 +1,3 @@
-import { describe, expect, it } from '@jest/globals';
 import { buildLoginSchema, type TAuthTranslations } from '../auth.form';
 
 const t = (key: string): string => `translated:${key}`;

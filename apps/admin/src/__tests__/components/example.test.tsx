@@ -1,4 +1,3 @@
-import { describe, expect, it } from '@jest/globals';
 import { createLoginDefaultValues } from '@/src/features/auth/infrastructure/auth.form';
 
 describe('createLoginDefaultValues', () => {

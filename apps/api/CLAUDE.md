@@ -39,6 +39,7 @@ test/               # Test files mirroring the src/ folder structure
 - **Response envelope**: all responses are wrapped automatically; use `@SkipApiResponse()` on routes that return raw bodies (e.g. health checks).
 - **Rate limiting**: global `ThrottlerGuard` is applied via `APP_GUARD`; default 100 req / 60 s in production.
 - **No `any`**, no `console.log` in module files, no domain logic in adapters.
+- **Absolute imports** via `@/` (avoid deep relative paths).
 
 ## Error handling & i18n
 

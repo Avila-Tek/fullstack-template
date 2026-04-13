@@ -49,6 +49,7 @@ src/features/<feature>/
 - **Absolute imports** via `@/` (avoid deep relative paths).
 - **No `any` / `as any`**.
 - Keep feature code **inside its feature**; don't import one feature from another.
+- **UI components from `@repo/ui` only** — every interactive or visual element that has a shadcn equivalent must come from `packages/ui`. Never use raw `<input>`, `<button>`, `<label>`, `<a>`, `<textarea>`, `<select>`, `<h1>`–`<h6>`, `<p>`, `<span>` (as a styled atom), etc. directly in feature UI files. Use `<Input>`, `<Button>`, `<Label>`, Next.js `<Link>`, `<Textarea>`, `<Select>`, `<Typography>`, etc. from `@repo/ui` instead. Layout HTML (`<div>`, `<section>`, `<form>`, `<main>`, `<nav>`, etc.) is fine. If a needed component is not yet in `packages/ui`, add it first: `npx shadcn@latest add <component> --cwd packages/ui`. Full component list: https://ui.shadcn.com/llms.txt. Full rule: `docs/specs/SPEC-ui-component-enforcement.md`.
 
 ## Tests
 

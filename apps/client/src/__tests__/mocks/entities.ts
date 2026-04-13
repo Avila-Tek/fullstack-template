@@ -22,7 +22,6 @@
  * const userWithCustomEmail = mockUser({ email: 'newemail@example.com' });
  */
 
-// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 export function mockUser(initialValue: Partial<any> = {}): any {
   return {
     email: 'juanperez@example.com',
@@ -33,7 +32,6 @@ export function mockUser(initialValue: Partial<any> = {}): any {
   };
 }
 
-// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 export function mockPhone(initialValue: Partial<any> = {}): any {
   return {
     code: '+34', // Default country code for Spain

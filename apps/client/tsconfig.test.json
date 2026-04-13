@@ -1,0 +1,16 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "types": ["vitest/globals", "node"],
+    "moduleResolution": "node"
+  },
+  "include": [
+    "vitest-env.d.ts",
+    "vitest.setup.ts",
+    "src/__tests__/**/*.ts",
+    "src/__tests__/**/*.tsx",
+    "src/**/__tests__/**/*.ts",
+    "src/**/__tests__/**/*.tsx"
+  ],
+  "exclude": ["node_modules"]
+}
