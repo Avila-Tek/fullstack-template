@@ -21,6 +21,7 @@
 	},
 	"dependencies": {
 		"@better-auth/drizzle-adapter": "^1.6.0",
+		"@better-auth/i18n": "^1.6.2",
 		"@nestjs/common": "^11.1.14",
 		"@nestjs/core": "^11.1.14",
 		"@nestjs/jwt": "^11.0.2",
