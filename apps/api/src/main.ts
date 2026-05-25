@@ -1,42 +1,44 @@
-// import 'tsconfig-paths/register';
+// Sentry MUST be the first import so it instruments before NestJS loads
+import './instrument.js';
 import 'reflect-metadata';
-import helmet from 'helmet';
+
 import { NestFactory } from '@nestjs/core';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { AppModule } from './app.module';
-import { ZodValidationPipe } from './shared/pipes/zodValidationPipe';
-// import { DomainErrorFilter } from './modules/shared/platform/web/DomainErrorFilter';
+import type { NestExpressApplication } from '@nestjs/platform-express';
+import { Logger } from 'nestjs-pino';
+import helmet from 'helmet';
 
-async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+import { AppModule } from './app.module.js';
+import { env } from './env.js';
+import { setupSwagger } from './infrastructure/swagger/swagger.setup.js';
+import { ZodValidationPipe } from './shared/pipes/zodValidationPipe.js';
 
-  app.useGlobalPipes(new ZodValidationPipe());
+async function bootstrap(): Promise<void> {
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+    // Suppress default NestJS logger — nestjs-pino takes over
+    bufferLogs: true,
+  });
 
-  // app.useGlobalFilters(new DomainErrorFilter());
-  app.use(
-    helmet({
-      contentSecurityPolicy: false,
-    })
-  );
+  // ── Structured logging ──────────────────────────────────────────────────────
+  app.useLogger(app.get(Logger));
+  app.flushLogs();
 
+  // ── Security headers ────────────────────────────────────────────────────────
+  app.use(helmet());
+
+  // ── CORS ────────────────────────────────────────────────────────────────────
   app.enableCors({
-    origin: [process.env.CORS],
+    origin: env.CLIENT_URL,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     credentials: true,
   });
 
-  // app.useGlobalFilters(new DomainErrorFilter());
+  // ── Global validation pipe ──────────────────────────────────────────────────
+  app.useGlobalPipes(new ZodValidationPipe());
 
-  const config = new DocumentBuilder()
-    .setTitle('API')
-    .setDescription('API documentation')
-    .setVersion('1.0')
-    .addBearerAuth()
-    .build();
+  // ── Swagger (dev only) ──────────────────────────────────────────────────────
+  setupSwagger(app);
 
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api/docs', app, document);
-
-  await app.listen(process.env.PORT ?? 8080);
+  await app.listen(env.PORT);
 }
+
 bootstrap();

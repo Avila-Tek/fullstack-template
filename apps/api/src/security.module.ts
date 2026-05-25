@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
+import { env } from './env.js';
 
 @Module({
   imports: [
@@ -9,8 +10,8 @@ import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
         throttlers: [
           {
             name: 'global',
-            ttl: 60_000,
-            limit: process.env.NODE_ENV === 'production' ? 100 : 1000,
+            ttl: env.RATE_LIMIT_GLOBAL_WINDOW_MS,
+            limit: env.RATE_LIMIT_GLOBAL_MAX,
           },
         ],
       }),
