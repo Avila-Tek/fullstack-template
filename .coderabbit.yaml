@@ -1,0 +1,32 @@
+version: "2"
+
+reviews:
+  path_instructions:
+    - path: "apps/api/**"
+      instructions: |
+        Architecture rules (enforced — flag any violation as a blocking comment):
+
+        1. No CQRS buses across module boundaries.
+           CommandBus and QueryBus are intra-module only. Never use them to query or command another NestJS module.
+           Cross-module data access must go through an injected Application Facade port.
+
+        2. Never export a RepositoryPort to another module.
+           Modules must export only Application Facade ports (`*FacadePort`) that expose a minimal, stable contract.
+           Downstream modules must not import or depend on another module's persistence abstractions.
+
+        3. Side-effects must use EventEmitter2, not direct module imports.
+           Any fire-and-forget work (emails, notifications, audit logs, webhooks) must be emitted as a domain event
+           via @nestjs/event-emitter and handled in a listener inside the responsible module.
+           Use-cases must not import EmailModule or any other side-effect module.
+
+        4. Module dependency direction must follow the allowed hierarchy:
+             auth → user
+             members → profiles, email
+             invitations → region, profiles, email
+             recipients → profiles, region
+           Any dependency that reverses this order or introduces a cycle is a blocking violation.
+
+        5. Concrete adapters must never be exported from a module.
+           Only abstract ports (application or facade) are part of a module's public API.
+
+        Full rules in: apps/api/docs/agent/ARCHITECTURE.md

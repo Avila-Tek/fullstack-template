@@ -1,21 +1,29 @@
 {
-  "name": "@repo/utils",
+  "name": "@zoom/utils",
   "version": "0.0.0",
   "private": true,
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
   "files": [
     "dist"
   ],
   "scripts": {
     "dev": "tsup --watch",
-    "build": "tsup"
+    "build": "tsup",
+    "test": "vitest run"
   },
   "devDependencies": {
-    "@repo/typescript-config": "*",
+    "@zoom/typescript-config": "*",
     "@types/node": "24.3.0",
     "tsup": "8.5.0",
-    "typescript": "5.9.2"
+    "vitest": "^4.0.18"
   }
 }
