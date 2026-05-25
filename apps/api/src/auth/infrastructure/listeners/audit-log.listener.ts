@@ -4,7 +4,7 @@ import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 import { createHash } from 'node:crypto';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { DRIZZLE_CLIENT } from '@infra/database/drizzle.constants.js';
-import { authAuditLog } from '@/auth/infrastructure/persistence/audit-log.schema.js';
+import { authAuditLog } from '@/auth/infrastructure/persistence/auth.schema.js';
 import type { AuthEvent } from '@/auth/application/events/auth.events.js';
 
 function sha256(value: string): string {

@@ -6,7 +6,7 @@ import {
   PasswordHistoryRepositoryPort,
   type PasswordHistoryEntry,
 } from '@/auth/application/ports/out/password-history.repository.port.js';
-import { passwordHistory } from './password-history.schema.js';
+import { passwordHistory } from './auth.schema.js';
 
 @Injectable()
 export class DrizzlePasswordHistoryAdapter extends PasswordHistoryRepositoryPort {
