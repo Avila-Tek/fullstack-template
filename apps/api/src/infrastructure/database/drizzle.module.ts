@@ -2,8 +2,9 @@ import { Global, Module } from '@nestjs/common';
 import { drizzle, type NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';
 import { env } from '../../env';
+import { DRIZZLE_CLIENT } from './drizzle.constants';
 
-export const DRIZZLE_CLIENT = Symbol('DRIZZLE_CLIENT');
+export { DRIZZLE_CLIENT };
 
 @Global()
 @Module({
