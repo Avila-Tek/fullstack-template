@@ -166,7 +166,7 @@ export class UsersModule {}
 
 ```typescript
 // Añadir al scope de Sentry por request:
-Sentry.setTag('service', env.APP_NAME);
+Sentry.setTag('service', env.SERVICE_NAME);   // SERVICE_NAME del estándar Avila Tek
 Sentry.setTag('env', env.NODE_ENV);
 Sentry.setTag('correlation_id', req.correlationId);
 ```
@@ -188,19 +188,46 @@ export class SentryUserInterceptor implements NestInterceptor {
 }
 ```
 
-### `auth-metrics.ts`
+### `auth-metrics.ts` — patrón ports & adapters (estándar Avila Tek)
+
+> **Avila Tek Observability Standard:** `@opentelemetry/api` **nunca** se importa en la capa de aplicación o dominio. Define un puerto en application y la implementación OTel va en infrastructure.
+
+**Puerto — application layer** (sin dependencia de OTel):
 
 ```typescript
-// OTel counter: auth_events_total
-// labels: event (sign_in, sign_up, ...), provider (email, google), error_type (optional)
-// Incrementado por AuditLogListener al procesar cada auth.* event
-const authEventsCounter = meter.createCounter('auth_events_total', {
-  description: 'Total auth events',
+// src/auth/application/ports/auth-telemetry.port.ts
+export interface AuthTelemetryPort {
+  recordAuthEvent(event: string, provider: string, errorType?: string): void;
+}
+```
+
+**Adaptador OTel — infrastructure layer** (único archivo que importa `@opentelemetry/api`):
+
+```typescript
+// src/auth/infrastructure/telemetry/otel-auth-telemetry.adapter.ts
+import { metrics } from '@opentelemetry/api';
+
+const meter = metrics.getMeter('fullstack-api');
+const authEventsCounter = meter.createCounter('auth.events.total', {
+  description: 'Total auth events by type, provider and error',
 });
 
-// En AuditLogListener:
-authEventsCounter.add(1, { event: event.type, provider: event.provider ?? 'email' });
+export class OtelAuthTelemetryAdapter implements AuthTelemetryPort {
+  recordAuthEvent(event: string, provider: string, errorType?: string): void {
+    authEventsCounter.add(1, {
+      'auth.event': event,      // sign_in, sign_up, sign_out, ...
+      'auth.provider': provider, // email, google, github
+      ...(errorType ? { 'error.type': errorType } : {}),
+    });
+  }
+}
 ```
+
+**Nombre de métrica** sigue el estándar Avila Tek: `{namespace}.{subject}.{measure}` → `auth.events.total` (no `auth_events_total` con guiones bajos).
+
+**`AuditLogListener`** recibe `AuthTelemetryPort` por constructor injection y llama `this.telemetry.recordAuthEvent(event.type, event.provider ?? 'email')`.
+
+**Tests sin OTel:** reemplazar el adaptador por un spy que implementa `AuthTelemetryPort` sin imports de OTel.
 
 ### `BetterAuthVirtualController`
 
@@ -259,9 +286,10 @@ Con F7 todos los health indicators están activos:
 - [ ] El código de error real (no `INTERNAL_ERROR`) aparece en Sentry para ≥500
 
 ### Métricas
-- [ ] `auth_events_total{event="sign_in"}` se incrementa en cada login exitoso
-- [ ] `auth_events_total{event="sign_up"}` se incrementa en cada registro
+- [ ] `auth.events.total{auth.event="sign_in"}` se incrementa en cada login exitoso
+- [ ] `auth.events.total{auth.event="sign_up"}` se incrementa en cada registro
 - [ ] Métricas accesibles via OTLP (si `OTEL_EXPORTER_OTLP_ENDPOINT` configurado)
+- [ ] `@opentelemetry/api` no aparece en ningún `import` fuera de `infrastructure/telemetry/`
 
 ### Swagger
 - [ ] `/api/docs` accesible en development y staging

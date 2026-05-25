@@ -15,8 +15,8 @@
 | Action | Path | Responsibility |
 |---|---|---|
 | Create | `apps/api/src/env.ts` | Zod schema for all env vars |
-| Create | `apps/api/src/instrument.ts` | Sentry init only (with `beforeSend` 4xx filter); first import in `main.ts` |
-| Create | `apps/api/src/telemetry.ts` | OTel SDK (traces + metrics + logs + resources + SIGTERM); second import in `main.ts` |
+| Create | `apps/api/src/instrument.ts` | Sentry init only (with `beforeSend` 4xx filter); imported at top of `main.ts` |
+| Create | `apps/api/src/infrastructure/telemetry/otel.ts` | OTel SDK (traces + metrics + logs + resources + SIGTERM); loaded via `--require` before `main.ts` |
 | Rewrite | `apps/api/src/main.ts` | Bootstrap: Fastify adapter, Pino, Helmet, CORS, Swagger |
 | Create | `apps/api/src/shared/domain-exception.ts` | Base `DomainException` class |
 | Rewrite | `apps/api/src/app.module.ts` | Clean up deleted imports; wire new infra modules + global providers |
@@ -66,10 +66,12 @@ npm install -w apps/api \
   @opentelemetry/sdk-node \
   @opentelemetry/api \
   @opentelemetry/auto-instrumentations-node \
-  @opentelemetry/exporter-trace-otlp-grpc \
-  @opentelemetry/exporter-logs-otlp-grpc \
-  @opentelemetry/exporter-metrics-otlp-grpc \
+  @opentelemetry/exporter-trace-otlp-http \
+  @opentelemetry/exporter-metrics-otlp-http \
+  @opentelemetry/exporter-logs-otlp-http \
+  @opentelemetry/sdk-logs \
   @opentelemetry/resources \
+  @opentelemetry/semantic-conventions \
   pino-opentelemetry-transport \
   @sentry/nestjs
 ```
@@ -86,7 +88,33 @@ npm install -w apps/api --save-dev pino-pretty
 npm uninstall -w apps/api @nestjs/platform-express @types/express
 ```
 
-- [ ] **Step 4: Verify package.json has the new deps**
+- [ ] **Step 4: Update `package.json` scripts to load OTel via `--require`**
+
+The Avila Tek observability standard requires OTel to be loaded via `--require` flag (not via `import` inside `main.ts`) to guarantee instrumentation runs before any module loads.
+
+Open `apps/api/package.json` and replace the `scripts` block:
+
+```json
+"scripts": {
+  "build": "nest build ./src",
+  "format": "npx @biomejs/biome format --write",
+  "start": "node --require ./dist/infrastructure/telemetry/otel.js dist/main.js",
+  "dev": "NODE_OPTIONS='--require ./src/infrastructure/telemetry/otel.ts' nest start --watch",
+  "start:debug": "NODE_OPTIONS='--require ./src/infrastructure/telemetry/otel.ts' nest start --debug --watch",
+  "start:prod": "node -r tsconfig-paths/register --require ./dist/infrastructure/telemetry/otel.js dist/main.js",
+  "lint": "npx @biomejs/biome lint --write",
+  "test": "vitest",
+  "test:watch": "vitest --watch",
+  "test:coverage": "vitest run --coverage",
+  "test:e2e": "vitest run test",
+  "check:types": "tsc --noEmit"
+}
+```
+
+> Note: `NODE_OPTIONS='--require ...'` passes the flag to the NestJS CLI's spawned Node process.
+> Also adds `check:types` script referenced in `apps/api/CLAUDE.md`.
+
+- [ ] **Step 5: Verify package.json has the new deps**
 
 ```bash
 cat apps/api/package.json | grep -E "fastify|ioredis|zod|pino|terminus|opentelemetry|sentry"
@@ -94,11 +122,11 @@ cat apps/api/package.json | grep -E "fastify|ioredis|zod|pino|terminus|opentelem
 
 Expected: all new packages appear, `@nestjs/platform-express` is gone.
 
-- [ ] **Step 5: Commit**
+- [ ] **Step 6: Commit**
 
 ```bash
 git add apps/api/package.json package-lock.json
-git commit -m "chore(api): add fastify, ioredis, zod, pino, otel, sentry deps"
+git commit -m "chore(api): deps + --require OTel loading per observability standard"
 ```
 
 ---
@@ -120,30 +148,31 @@ import { describe, it, expect } from 'vitest';
 import { envSchema } from '../env';
 
 describe('envSchema', () => {
+  const baseValid = {
+    SERVICE_NAME: 'fullstack-api',
+    DATABASE_URL: 'postgresql://postgres:postgres@localhost:5432/db',
+    REDIS_URL: 'redis://localhost:6379',
+    BETTER_AUTH_SECRET: 'a'.repeat(32),
+    BETTER_AUTH_URL: 'http://localhost:3000',
+    API_BASE_URL: 'http://localhost:3000',
+    CLIENT_URL: 'http://localhost:5173',
+    EMAIL_FROM: 'noreply@example.com',
+  };
+
   it('fails when DATABASE_URL is missing', () => {
     expect(() =>
-      envSchema.parse({
-        DATABASE_URL: undefined,
-        REDIS_URL: 'redis://localhost:6379',
-        BETTER_AUTH_SECRET: 'a'.repeat(32),
-        BETTER_AUTH_URL: 'http://localhost:3000',
-        API_BASE_URL: 'http://localhost:3000',
-        CLIENT_URL: 'http://localhost:5173',
-        EMAIL_FROM: 'noreply@example.com',
-      }),
+      envSchema.parse({ ...baseValid, DATABASE_URL: undefined }),
+    ).toThrow();
+  });
+
+  it('fails when SERVICE_NAME is missing (observability standard: required)', () => {
+    expect(() =>
+      envSchema.parse({ ...baseValid, SERVICE_NAME: undefined }),
     ).toThrow();
   });
 
   it('applies defaults when optional vars are absent', () => {
-    const result = envSchema.parse({
-      DATABASE_URL: 'postgresql://postgres:postgres@localhost:5432/db',
-      REDIS_URL: 'redis://localhost:6379',
-      BETTER_AUTH_SECRET: 'a'.repeat(32),
-      BETTER_AUTH_URL: 'http://localhost:3000',
-      API_BASE_URL: 'http://localhost:3000',
-      CLIENT_URL: 'http://localhost:5173',
-      EMAIL_FROM: 'noreply@example.com',
-    });
+    const result = envSchema.parse(baseValid);
     expect(result.NODE_ENV).toBe('development');
     expect(result.PORT).toBe(3000);
     expect(result.ARGON2_MEMORY_COST).toBe(65536);
@@ -151,33 +180,18 @@ describe('envSchema', () => {
     expect(result.GOOGLE_ENABLED).toBe(false);
     expect(result.CAPTCHA_ENABLED).toBe(false);
     expect(result.LOG_LEVEL).toBe('info');
+    expect(result.SERVICE_VERSION).toBe('0.0.0');
+    expect(result.SERVICE_NAMESPACE).toBe('default');
   });
 
   it('rejects BETTER_AUTH_SECRET shorter than 32 chars', () => {
     expect(() =>
-      envSchema.parse({
-        DATABASE_URL: 'postgresql://postgres:postgres@localhost:5432/db',
-        REDIS_URL: 'redis://localhost:6379',
-        BETTER_AUTH_SECRET: 'short',
-        BETTER_AUTH_URL: 'http://localhost:3000',
-        API_BASE_URL: 'http://localhost:3000',
-        CLIENT_URL: 'http://localhost:5173',
-        EMAIL_FROM: 'noreply@example.com',
-      }),
+      envSchema.parse({ ...baseValid, BETTER_AUTH_SECRET: 'short' }),
     ).toThrow();
   });
 
   it('coerces numeric strings', () => {
-    const result = envSchema.parse({
-      DATABASE_URL: 'postgresql://postgres:postgres@localhost:5432/db',
-      REDIS_URL: 'redis://localhost:6379',
-      BETTER_AUTH_SECRET: 'a'.repeat(32),
-      BETTER_AUTH_URL: 'http://localhost:3000',
-      API_BASE_URL: 'http://localhost:3000',
-      CLIENT_URL: 'http://localhost:5173',
-      EMAIL_FROM: 'noreply@example.com',
-      PORT: '4000',
-    });
+    const result = envSchema.parse({ ...baseValid, PORT: '4000' });
     expect(result.PORT).toBe(4000);
   });
 });
@@ -243,8 +257,14 @@ export const envSchema = z.object({
   CAPTCHA_ENABLED: z.coerce.boolean().default(false),
   CAPTCHA_PROVIDER: z.enum(['cloudflare', 'google']).default('cloudflare'),
 
+  // ── Observability — per Avila Tek observability standard ──────────────────
+  // SERVICE_NAME is mandatory: {project}-{domain} format, e.g. "fullstack-api"
+  // Process must refuse to start if absent (no default).
+  SERVICE_NAME: z.string().min(1),
+  SERVICE_VERSION: z.string().default('0.0.0'),
+  SERVICE_NAMESPACE: z.string().default('default'),
+
   OTEL_EXPORTER_OTLP_ENDPOINT: z.string().url().optional(),
-  OTEL_SERVICE_NAME: z.string().optional(),
   SENTRY_DSN: z.string().optional(),
   GIT_SHA: z.string().optional(),
 
@@ -266,6 +286,13 @@ APP_NAME=MyApp
 COOKIE_PREFIX=app
 API_BASE_URL=http://localhost:3000
 CLIENT_URL=http://localhost:5173
+
+# ── Service identity (Avila Tek observability standard — REQUIRED) ──────────
+# Format: {project}-{domain} e.g. spacars-api, kaizen-admin
+# SERVICE_NAME has NO default — the app refuses to start if it is missing.
+SERVICE_NAME=fullstack-api
+SERVICE_VERSION=0.0.0
+SERVICE_NAMESPACE=default
 
 # ── Database ─────────────────────────────────────────────────────────────────
 DATABASE_URL=postgresql://postgres:postgres@localhost:5432/myapp
@@ -322,8 +349,8 @@ CAPTCHA_PROVIDER=cloudflare
 LOG_LEVEL=info
 
 # ── Observability (optional) ─────────────────────────────────────────────────
-# OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4317
-# OTEL_SERVICE_NAME=my-api
+# Point to your local otel-collector (see docs/04-infrastructure/otel-collector.md)
+# OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4318
 # SENTRY_DSN=
 # GIT_SHA=
 ```
@@ -1418,19 +1445,21 @@ git commit -m "feat(api): add DatabaseHealthIndicator and HealthModule"
 
 ---
 
-## Task 13 — `instrument.ts`, `telemetry.ts`, `pino.config.ts`, `swagger.setup.ts`
+## Task 13 — `instrument.ts`, `otel.ts`, `pino.config.ts`, `swagger.setup.ts`
 
 Configuration files. No unit tests — correctness verified in Task 16 (smoke).
 
 **Files:**
 - Create: `apps/api/src/instrument.ts`
-- Create: `apps/api/src/telemetry.ts`
+- Create: `apps/api/src/infrastructure/telemetry/otel.ts`
 - Create: `apps/api/src/infrastructure/telemetry/pino.config.ts`
 - Create: `apps/api/src/infrastructure/swagger/swagger.setup.ts`
 
-> **Why two files?** `instrument.ts` initializes Sentry (must be truly first — Sentry patches error
-> handling at import time). `telemetry.ts` initializes OTel SDK (must be before NestJS code, but
-> after Sentry). Keeping them separate makes each file's purpose obvious and matches zoom-reference.
+> **Why two files + `--require`?**
+> `instrument.ts` (Sentry) — imported at top of `main.ts`.
+> `otel.ts` (OTel SDK) — loaded via `NODE_OPTIONS='--require'` in package.json scripts so it runs
+> before any module is loaded, even before `main.ts` starts executing. This is the Avila Tek
+> observability standard requirement: OTel must patch Node.js internals before any framework loads.
 
 - [ ] **Step 1: Create `instrument.ts` (Sentry only)**
 
@@ -1467,46 +1496,62 @@ if (SENTRY_DSN) {
 }
 ```
 
-- [ ] **Step 2: Create `telemetry.ts` (OTel SDK only)**
+- [ ] **Step 2: Create `apps/api/src/infrastructure/telemetry/otel.ts` (OTel SDK only)**
+
+> Loaded via `--require` (already configured in Task 1). Never import this file manually.
 
 ```typescript
-// telemetry.ts — OpenTelemetry SDK.
-// MUST be imported before any NestJS/application code (second import in main.ts).
+// src/infrastructure/telemetry/otel.ts
+// Loaded via --require BEFORE main.ts. Do not import this file.
 import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node';
-import { OTLPLogExporter } from '@opentelemetry/exporter-logs-otlp-grpc';
-import { OTLPMetricExporter } from '@opentelemetry/exporter-metrics-otlp-grpc';
-import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-grpc';
+import { OTLPLogExporter } from '@opentelemetry/exporter-logs-otlp-http';
+import { OTLPMetricExporter } from '@opentelemetry/exporter-metrics-otlp-http';
+import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
 import { resourceFromAttributes } from '@opentelemetry/resources';
-import { SimpleLogRecordProcessor } from '@opentelemetry/sdk-logs';
+import { BatchLogRecordProcessor } from '@opentelemetry/sdk-logs';
 import { PeriodicExportingMetricReader } from '@opentelemetry/sdk-metrics';
 import { NodeSDK } from '@opentelemetry/sdk-node';
+import {
+  ATTR_DEPLOYMENT_ENVIRONMENT_NAME,
+  ATTR_SERVICE_NAME,
+  ATTR_SERVICE_VERSION,
+} from '@opentelemetry/semantic-conventions';
 
-const OTEL_ENDPOINT = process.env.OTEL_EXPORTER_OTLP_ENDPOINT;
-const SERVICE_NAME =
-  process.env.OTEL_SERVICE_NAME ?? process.env.APP_NAME ?? 'api';
+// SERVICE_NAME has no default — env.ts enforces it is set before the app boots.
+const resource = resourceFromAttributes({
+  [ATTR_SERVICE_NAME]: process.env.SERVICE_NAME!,
+  [ATTR_SERVICE_VERSION]: process.env.SERVICE_VERSION ?? '0.0.0',
+  [ATTR_DEPLOYMENT_ENVIRONMENT_NAME]: process.env.NODE_ENV ?? 'development',
+  'service.namespace': process.env.SERVICE_NAMESPACE ?? 'default',
+});
 
 // Build SDK config — exporters only added when OTLP endpoint is configured.
 // Without an endpoint the SDK still starts (auto-instrumentation is active),
-// but nothing is exported (effectively a no-op tracer for local dev).
+// but nothing is exported (no-op for local dev without a collector).
 const sdkConfig: ConstructorParameters<typeof NodeSDK>[0] = {
-  resource: resourceFromAttributes({ 'service.name': SERVICE_NAME }),
+  resource,
   instrumentations: [
     getNodeAutoInstrumentations({
       // pino-opentelemetry-transport already exports logs over OTLP.
       // Enabling the pino instrumentation too would double-count every log record.
       '@opentelemetry/instrumentation-pino': { enabled: false },
-      // fs instrumentation generates enormous trace noise (module loading etc.)
+      // fs instrumentation generates enormous span noise during module loading.
       '@opentelemetry/instrumentation-fs': { enabled: false },
     }),
   ],
 };
 
+const OTEL_ENDPOINT = process.env.OTEL_EXPORTER_OTLP_ENDPOINT;
+
 if (OTEL_ENDPOINT) {
+  // All three signal types export to the same collector endpoint.
+  // The collector routes to Tempo (traces), Prometheus (metrics), Loki (logs).
   sdkConfig.traceExporter = new OTLPTraceExporter({ url: OTEL_ENDPOINT });
   sdkConfig.metricReader = new PeriodicExportingMetricReader({
     exporter: new OTLPMetricExporter({ url: OTEL_ENDPOINT }),
+    exportIntervalMillis: 15_000,
   });
-  sdkConfig.logRecordProcessor = new SimpleLogRecordProcessor(
+  sdkConfig.logRecordProcessor = new BatchLogRecordProcessor(
     new OTLPLogExporter({ url: OTEL_ENDPOINT }),
   );
 }
@@ -1514,12 +1559,10 @@ if (OTEL_ENDPOINT) {
 const sdk = new NodeSDK(sdkConfig);
 sdk.start();
 
-// Graceful shutdown — flush pending spans/metrics/logs before the process exits.
-process.on('SIGTERM', () => {
-  sdk
-    .shutdown()
-    .then(() => process.exit(0))
-    .catch(() => process.exit(1));
+// Graceful shutdown — flush all pending spans, metrics, and log records.
+process.on('SIGTERM', async () => {
+  await sdk.shutdown();
+  process.exit(0);
 });
 ```
 
@@ -1528,11 +1571,20 @@ process.on('SIGTERM', () => {
 ```typescript
 import { trace } from '@opentelemetry/api';
 import type { Params } from 'nestjs-pino';
+import pino from 'pino';
 import { env } from '../../env';
 
 export const pinoConfig: Params = {
   pinoHttp: {
     level: env.LOG_LEVEL,
+    // Avila Tek standard: emit string level labels, not numeric codes (30 → "info")
+    formatters: {
+      level(label: string) {
+        return { level: label };
+      },
+    },
+    // Avila Tek standard: ISO 8601 timestamps required for Loki ingestion
+    timestamp: pino.stdTimeFunctions.isoTime,
     // Production: ship logs to OTel collector via pino-opentelemetry-transport
     //   → logs appear in Loki/Grafana alongside traces.
     // Development: pretty-print to stdout.
@@ -1562,7 +1614,7 @@ export const pinoConfig: Params = {
       const span = trace.getActiveSpan();
       const ctx = span?.spanContext();
       return {
-        service: env.APP_NAME,
+        service: env.SERVICE_NAME,
         env: env.NODE_ENV,
         traceId: ctx?.traceId ?? '',
         spanId: ctx?.spanId ?? '',
@@ -1572,9 +1624,17 @@ export const pinoConfig: Params = {
       ignore: (req) =>
         req.url === '/health' || req.url === '/health/ready',
     },
+    // Avila Tek standard: censor (not remove) sensitive fields so they appear
+    // as '[REDACTED]' in Loki rather than disappearing silently.
     redact: {
-      paths: ['req.headers.authorization', 'req.headers.cookie'],
-      remove: true,
+      paths: [
+        'req.headers.authorization',
+        'req.headers.cookie',
+        '*.password',
+        '*.token',
+        '*.secret',
+      ],
+      censor: '[REDACTED]',
     },
   },
 };
@@ -1609,10 +1669,10 @@ export function setupSwagger(app: INestApplication): void {
 
 ```bash
 git add apps/api/src/instrument.ts \
-  apps/api/src/telemetry.ts \
+  apps/api/src/infrastructure/telemetry/otel.ts \
   apps/api/src/infrastructure/telemetry/pino.config.ts \
   apps/api/src/infrastructure/swagger/swagger.setup.ts
-git commit -m "feat(api): add Sentry instrument.ts, OTel telemetry.ts, pino config, swagger setup"
+git commit -m "feat(api): add Sentry instrument.ts, OTel otel.ts, pino config, swagger setup"
 ```
 
 ---
@@ -1625,10 +1685,10 @@ git commit -m "feat(api): add Sentry instrument.ts, OTel telemetry.ts, pino conf
 - [ ] **Step 1: Rewrite `main.ts`**
 
 ```typescript
-// 1. Sentry MUST be first — patches Node.js error handling at import time.
+// Sentry MUST be first import — patches Node.js error handling at load time.
+// OTel SDK is loaded BEFORE this file via --require (package.json scripts),
+// so no import needed here. Do not add "import './infrastructure/telemetry/otel'".
 import './instrument';
-// 2. OTel SDK MUST be before any NestJS/app imports — instruments HTTP, DB, etc.
-import './telemetry';
 
 import { NestFactory } from '@nestjs/core';
 import {
@@ -1906,7 +1966,7 @@ All spec requirements covered:
 | Redis connects, `redis.ping()` → `PONG` | Task 5 |
 | `npx turbo typecheck` passes | Task 16 |
 | `npx turbo lint` passes | Task 16 |
-| `instrument.ts` is first import, `telemetry.ts` is second | Task 14 |
+| `instrument.ts` is first import; OTel loaded via `--require` (not via import) | Task 14 |
 | Sentry no-op if `SENTRY_DSN` not set | Task 13 |
 | Sentry `beforeSend` drops all 4xx errors (no noise) | Task 13 |
 | OTel SDK starts even without endpoint (no-op locally) | Task 13 |
@@ -1917,3 +1977,14 @@ All spec requirements covered:
 | Swagger only in non-production | Task 13 |
 | `helmet` with `contentSecurityPolicy: false` | Task 14 |
 | `ThrottlerModule` uses `env.ts` vars | Task 15 |
+| **Avila Tek Observability Standard compliance** | |
+| `SERVICE_NAME` required, no default — process fails if absent | Task 2 |
+| All 4 mandatory OTel resource attrs present: `service.name`, `service.version`, `service.namespace`, `deployment.environment` | Task 13 |
+| OTel uses HTTP exporters (`otlp-http`, port 4318) — not gRPC | Task 13 |
+| `BatchLogRecordProcessor` (not Simple) + `exportIntervalMillis: 15_000` | Task 13 |
+| OTel semantic-conventions constants (`ATTR_SERVICE_NAME`, etc.) | Task 13 |
+| Pino `formatters.level` emits string labels (`"info"` not `30`) | Task 13 |
+| Pino `timestamp: pino.stdTimeFunctions.isoTime` (ISO 8601) | Task 13 |
+| Pino `redact.censor: '[REDACTED]'` covers `*.password`, `*.token`, `*.secret` | Task 13 |
+| Sentry `beforeSend` drops 4xx — no noise for client errors | Task 13 |
+| `@opentelemetry/api` only imported in infrastructure adapters (never domain/application) | Task 13 |
