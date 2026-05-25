@@ -2,11 +2,11 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Build the base infrastructure layer — Zod env validation, Fastify adapter, Drizzle, Redis, health checks, exception filters, API response interceptor, correlation ID middleware, OTel, Pino, and Swagger. At the end the API boots, responds to health checks, and has all infrastructure pieces that F2–F7 depend on.
+**Goal:** Build the base infrastructure layer — Zod env validation, Drizzle, Redis, health checks, exception filters, API response interceptor, correlation ID middleware, OTel, Pino, and Swagger. At the end the API boots, responds to health checks, and has all infrastructure pieces that F2–F7 depend on.
 
 **Architecture:** Hexagonal without CQRS. Infrastructure modules (`DrizzleModule`, `RedisModule`, `HealthModule`) are global (`@Global()`). Exception filters, interceptors, and middleware are registered in `AppModule` providers list. Domain stays framework-free.
 
-**Tech Stack:** NestJS 11 + `@nestjs/platform-fastify`, Drizzle ORM + `pg`, ioredis, Zod v4, Pino + `nestjs-pino` + `pino-opentelemetry-transport`, `@opentelemetry/sdk-node` (traces + metrics + logs), `@sentry/nestjs`, `@nestjs/terminus`, `@fastify/helmet`.
+**Tech Stack:** NestJS 11 + `@nestjs/platform-express` (Express adapter — default), Drizzle ORM + `pg`, ioredis, Zod v4, Pino + `nestjs-pino` + `pino-opentelemetry-transport`, `@opentelemetry/sdk-node` (traces + metrics + logs), `@sentry/nestjs`, `@nestjs/terminus`, `helmet`.
 
 ---
 
@@ -55,10 +55,8 @@
 Run from the repo root:
 ```bash
 npm install -w apps/api \
-  @nestjs/platform-fastify \
-  fastify \
-  @fastify/helmet \
   zod \
+  helmet \
   ioredis \
   nestjs-pino \
   pino-http \
@@ -76,19 +74,15 @@ npm install -w apps/api \
   @sentry/nestjs
 ```
 
+`@nestjs/platform-express` and `@types/express` are kept — we stay on the Express adapter (default).
+
 - [ ] **Step 2: Install dev dependencies**
 
 ```bash
 npm install -w apps/api --save-dev pino-pretty
 ```
 
-- [ ] **Step 3: Remove Express adapter**
-
-```bash
-npm uninstall -w apps/api @nestjs/platform-express @types/express
-```
-
-- [ ] **Step 4: Update `package.json` scripts to load OTel via `--require`**
+- [ ] **Step 3: Update `package.json` scripts to load OTel via `--require`**
 
 The Avila Tek observability standard requires OTel to be loaded via `--require` flag (not via `import` inside `main.ts`) to guarantee instrumentation runs before any module loads.
 
@@ -114,19 +108,19 @@ Open `apps/api/package.json` and replace the `scripts` block:
 > Note: `NODE_OPTIONS='--require ...'` passes the flag to the NestJS CLI's spawned Node process.
 > Also adds `check:types` script referenced in `apps/api/CLAUDE.md`.
 
-- [ ] **Step 5: Verify package.json has the new deps**
+- [ ] **Step 4: Verify package.json has the new deps**
 
 ```bash
-cat apps/api/package.json | grep -E "fastify|ioredis|zod|pino|terminus|opentelemetry|sentry"
+cat apps/api/package.json | grep -E "helmet|ioredis|zod|pino|terminus|opentelemetry|sentry"
 ```
 
-Expected: all new packages appear, `@nestjs/platform-express` is gone.
+Expected: all new packages appear. `@nestjs/platform-express` must still be present.
 
-- [ ] **Step 6: Commit**
+- [ ] **Step 5: Commit**
 
 ```bash
 git add apps/api/package.json package-lock.json
-git commit -m "chore(api): deps + --require OTel loading per observability standard"
+git commit -m "chore(api): add deps (helmet, ioredis, pino, otel, sentry) + --require OTel loading"
 ```
 
 ---
@@ -1651,8 +1645,8 @@ export function setupSwagger(app: INestApplication): void {
   if (env.NODE_ENV === 'production') return;
 
   const config = new DocumentBuilder()
-    .setTitle(env.APP_NAME)
-    .setDescription(`${env.APP_NAME} API`)
+    .setTitle(env.SERVICE_NAME)
+    .setDescription(`${env.SERVICE_NAME} API`)
     .setVersion('1.0')
     .addBearerAuth({ type: 'http', scheme: 'bearer', bearerFormat: 'JWT' }, 'JWT')
     .addCookieAuth('session_token')
@@ -1691,31 +1685,25 @@ git commit -m "feat(api): add Sentry instrument.ts, OTel otel.ts, pino config, s
 import './instrument';
 
 import { NestFactory } from '@nestjs/core';
-import {
-  FastifyAdapter,
-  type NestFastifyApplication,
-} from '@nestjs/platform-fastify';
-import fastifyHelmet from '@fastify/helmet';
+import type { NestExpressApplication } from '@nestjs/platform-express';
+import helmet from 'helmet';
 import { Logger } from 'nestjs-pino';
 import { ZodValidationPipe } from './shared/pipes/zodValidationPipe';
 import { AppModule } from './app.module';
 import { env } from './env';
-import { pinoConfig } from './infrastructure/telemetry/pino.config';
 import { setupSwagger } from './infrastructure/swagger/swagger.setup';
 
 async function bootstrap(): Promise<void> {
-  const app = await NestFactory.create<NestFastifyApplication>(
-    AppModule,
-    new FastifyAdapter({ logger: false }), // Pino handled by nestjs-pino
-    { bufferLogs: true },
-  );
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+    bufferLogs: true,
+  });
 
   // Use Pino as NestJS logger
   app.useLogger(app.get(Logger));
   app.flushLogs();
 
-  // Security headers (CSP disabled so Swagger UI loads in dev)
-  await app.register(fastifyHelmet, { contentSecurityPolicy: false });
+  // Security headers
+  app.use(helmet());
 
   // CORS
   app.enableCors({
@@ -1749,7 +1737,7 @@ bootstrap().catch((err: unknown) => {
 
 ```bash
 git add apps/api/src/main.ts
-git commit -m "feat(api): rewrite main.ts — Sentry+OTel first, Fastify, Pino, Helmet, CORS, Swagger"
+git commit -m "feat(api): rewrite main.ts — Sentry first, Express, Pino, helmet, CORS, Swagger"
 ```
 
 ---
@@ -1975,7 +1963,7 @@ All spec requirements covered:
 | Pino `mixin` injects `traceId`/`spanId` on every log line | Task 13 |
 | `@SkipApiResponse()` decorator bypasses response wrapper | Task 10 |
 | Swagger only in non-production | Task 13 |
-| `helmet` with `contentSecurityPolicy: false` | Task 14 |
+| `helmet()` middleware added via `app.use()` | Task 14 |
 | `ThrottlerModule` uses `env.ts` vars | Task 15 |
 | **Avila Tek Observability Standard compliance** | |
 | `SERVICE_NAME` required, no default — process fails if absent | Task 2 |
