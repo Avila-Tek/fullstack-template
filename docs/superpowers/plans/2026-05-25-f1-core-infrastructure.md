@@ -6,7 +6,7 @@
 
 **Architecture:** Hexagonal without CQRS. Infrastructure modules (`DrizzleModule`, `RedisModule`, `HealthModule`) are global (`@Global()`). Exception filters, interceptors, and middleware are registered in `AppModule` providers list. Domain stays framework-free.
 
-**Tech Stack:** NestJS 11 + `@nestjs/platform-fastify`, Drizzle ORM + `pg`, ioredis, Zod v4, Pino + `nestjs-pino`, `@opentelemetry/sdk-node`, `@sentry/nestjs`, `@nestjs/terminus`, `@fastify/helmet`.
+**Tech Stack:** NestJS 11 + `@nestjs/platform-fastify`, Drizzle ORM + `pg`, ioredis, Zod v4, Pino + `nestjs-pino` + `pino-opentelemetry-transport`, `@opentelemetry/sdk-node` (traces + metrics + logs), `@sentry/nestjs`, `@nestjs/terminus`, `@fastify/helmet`.
 
 ---
 
@@ -15,7 +15,8 @@
 | Action | Path | Responsibility |
 |---|---|---|
 | Create | `apps/api/src/env.ts` | Zod schema for all env vars |
-| Create | `apps/api/src/instrument.ts` | OTel SDK init + optional Sentry; first import in `main.ts` |
+| Create | `apps/api/src/instrument.ts` | Sentry init only (with `beforeSend` 4xx filter); first import in `main.ts` |
+| Create | `apps/api/src/telemetry.ts` | OTel SDK (traces + metrics + logs + resources + SIGTERM); second import in `main.ts` |
 | Rewrite | `apps/api/src/main.ts` | Bootstrap: Fastify adapter, Pino, Helmet, CORS, Swagger |
 | Create | `apps/api/src/shared/domain-exception.ts` | Base `DomainException` class |
 | Rewrite | `apps/api/src/app.module.ts` | Clean up deleted imports; wire new infra modules + global providers |
@@ -26,6 +27,7 @@
 | Create | `apps/api/src/infrastructure/filters/http-exception.filter.ts` | `HttpException` → standard shape |
 | Create | `apps/api/src/infrastructure/filters/domain-exception.filter.ts` | `DomainException` → mapper + i18n |
 | Create | `apps/api/src/infrastructure/interceptors/api-response.interceptor.ts` | Wrap success → `{ success, code, data }` |
+| Create | `apps/api/src/infrastructure/interceptors/skip-api-response.decorator.ts` | `@SkipApiResponse()` to opt out of the wrapper |
 | Create | `apps/api/src/infrastructure/middleware/correlation-id.middleware.ts` | `x-correlation-id` in/out + OTel baggage |
 | Create | `apps/api/src/infrastructure/i18n/domain-messages.ts` | Empty catalog (AUTH_* added in F2) |
 | Create | `apps/api/src/infrastructure/mapping/domain-to-http.mapper.ts` | Empty map, defaults to 422 |
@@ -65,6 +67,10 @@ npm install -w apps/api \
   @opentelemetry/api \
   @opentelemetry/auto-instrumentations-node \
   @opentelemetry/exporter-trace-otlp-grpc \
+  @opentelemetry/exporter-logs-otlp-grpc \
+  @opentelemetry/exporter-metrics-otlp-grpc \
+  @opentelemetry/resources \
+  pino-opentelemetry-transport \
   @sentry/nestjs
 ```
 
@@ -144,6 +150,7 @@ describe('envSchema', () => {
     expect(result.CAPTCHA_PROVIDER).toBe('cloudflare');
     expect(result.GOOGLE_ENABLED).toBe(false);
     expect(result.CAPTCHA_ENABLED).toBe(false);
+    expect(result.LOG_LEVEL).toBe('info');
   });
 
   it('rejects BETTER_AUTH_SECRET shorter than 32 chars', () => {
@@ -237,7 +244,11 @@ export const envSchema = z.object({
   CAPTCHA_PROVIDER: z.enum(['cloudflare', 'google']).default('cloudflare'),
 
   OTEL_EXPORTER_OTLP_ENDPOINT: z.string().url().optional(),
+  OTEL_SERVICE_NAME: z.string().optional(),
   SENTRY_DSN: z.string().optional(),
+  GIT_SHA: z.string().optional(),
+
+  LOG_LEVEL: z.enum(['debug', 'info', 'warn', 'error']).default('info'),
 });
 
 export type Env = z.infer<typeof envSchema>;
@@ -307,9 +318,14 @@ CAPTCHA_ENABLED=false
 CAPTCHA_PROVIDER=cloudflare
 # CAPTCHA_SECRET_KEY=
 
+# ── Logging ───────────────────────────────────────────────────────────────────
+LOG_LEVEL=info
+
 # ── Observability (optional) ─────────────────────────────────────────────────
 # OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4317
+# OTEL_SERVICE_NAME=my-api
 # SENTRY_DSN=
+# GIT_SHA=
 ```
 
 - [ ] **Step 5: Run tests — verify they pass**
@@ -966,33 +982,55 @@ git commit -m "feat(api): add DomainExceptionFilter using mapper + i18n"
 
 ---
 
-## Task 10 — `ApiResponseInterceptor`
+## Task 10 — `SkipApiResponse` decorator + `ApiResponseInterceptor`
 
 **Files:**
+- Create: `apps/api/src/infrastructure/interceptors/skip-api-response.decorator.ts`
 - Create: `apps/api/src/infrastructure/interceptors/api-response.interceptor.ts`
 - Create: `apps/api/src/test/infrastructure/interceptors/api-response.interceptor.test.ts`
 
-- [ ] **Step 1: Write failing tests**
+- [ ] **Step 1: Create `skip-api-response.decorator.ts` (no test needed — one-liner)**
+
+```typescript
+// apps/api/src/infrastructure/interceptors/skip-api-response.decorator.ts
+import { SetMetadata } from '@nestjs/common';
+
+export const SKIP_API_RESPONSE = 'skipApiResponse';
+
+/** Apply to a controller or handler to bypass the ApiResponseInterceptor wrapper. */
+export const SkipApiResponse = () => SetMetadata(SKIP_API_RESPONSE, true);
+```
+
+- [ ] **Step 2: Write failing tests**
 
 ```typescript
 // apps/api/src/test/infrastructure/interceptors/api-response.interceptor.test.ts
 import { describe, it, expect, vi } from 'vitest';
 import { ExecutionContext, CallHandler } from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
 import { of, lastValueFrom } from 'rxjs';
 import { ApiResponseInterceptor } from '../../../infrastructure/interceptors/api-response.interceptor';
+import { SKIP_API_RESPONSE } from '../../../infrastructure/interceptors/skip-api-response.decorator';
 
-function buildContext(): ExecutionContext {
+function buildContext(skipValue?: boolean): ExecutionContext {
   return {
     switchToHttp: () => ({
       getResponse: () => ({ statusCode: 200 }),
     }),
+    getHandler: () => ({}),
+    getClass: () => ({}),
   } as unknown as ExecutionContext;
 }
 
-describe('ApiResponseInterceptor', () => {
-  const interceptor = new ApiResponseInterceptor();
+function buildReflector(skip = false): Reflector {
+  return {
+    getAllAndOverride: vi.fn().mockReturnValue(skip),
+  } as unknown as Reflector;
+}
 
+describe('ApiResponseInterceptor', () => {
   it('wraps a plain value in the standard success shape', async () => {
+    const interceptor = new ApiResponseInterceptor(buildReflector(false));
     const handler: CallHandler = { handle: () => of({ id: 1, name: 'Alice' }) };
     const result = await lastValueFrom(interceptor.intercept(buildContext(), handler));
 
@@ -1006,6 +1044,7 @@ describe('ApiResponseInterceptor', () => {
   });
 
   it('wraps null in the standard success shape', async () => {
+    const interceptor = new ApiResponseInterceptor(buildReflector(false));
     const handler: CallHandler = { handle: () => of(null) };
     const result = await lastValueFrom(interceptor.intercept(buildContext(), handler));
 
@@ -1019,22 +1058,31 @@ describe('ApiResponseInterceptor', () => {
   });
 
   it('does not double-wrap already-shaped responses', async () => {
+    const interceptor = new ApiResponseInterceptor(buildReflector(false));
     const alreadyShaped = { success: true, code: 200, data: 'hello', error: null, message: null };
     const handler: CallHandler = { handle: () => of(alreadyShaped) };
     const result = await lastValueFrom(interceptor.intercept(buildContext(), handler));
-
     expect(result).toEqual(alreadyShaped);
+  });
+
+  it('passes through raw response when @SkipApiResponse() is set', async () => {
+    const interceptor = new ApiResponseInterceptor(buildReflector(true));
+    const raw = [1, 2, 3];
+    const handler: CallHandler = { handle: () => of(raw) };
+    const result = await lastValueFrom(interceptor.intercept(buildContext(true), handler));
+    // Should be the raw array, NOT wrapped
+    expect(result).toEqual(raw);
   });
 });
 ```
 
-- [ ] **Step 2: Run — verify fail**
+- [ ] **Step 3: Run — verify fail**
 
 ```bash
 npm -C apps/api test -- --reporter=verbose src/test/infrastructure/interceptors/api-response.interceptor.test.ts
 ```
 
-- [ ] **Step 3: Create `api-response.interceptor.ts`**
+- [ ] **Step 4: Create `api-response.interceptor.ts`**
 
 ```typescript
 import {
@@ -1043,8 +1091,10 @@ import {
   Injectable,
   NestInterceptor,
 } from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { SKIP_API_RESPONSE } from './skip-api-response.decorator';
 
 interface ApiResponse<T> {
   success: boolean;
@@ -1064,13 +1114,27 @@ function isAlreadyShaped(value: unknown): value is ApiResponse<unknown> {
 }
 
 @Injectable()
-export class ApiResponseInterceptor<T> implements NestInterceptor<T, ApiResponse<T>> {
-  intercept(context: ExecutionContext, next: CallHandler<T>): Observable<ApiResponse<T>> {
+export class ApiResponseInterceptor<T>
+  implements NestInterceptor<T, ApiResponse<T> | T>
+{
+  constructor(private readonly reflector: Reflector) {}
+
+  intercept(
+    context: ExecutionContext,
+    next: CallHandler<T>,
+  ): Observable<ApiResponse<T> | T> {
+    const skip = this.reflector.getAllAndOverride<boolean>(SKIP_API_RESPONSE, [
+      context.getHandler(),
+      context.getClass(),
+    ]);
+
+    if (skip) return next.handle();
+
     const res = context.switchToHttp().getResponse<{ statusCode: number }>();
 
     return next.handle().pipe(
       map((data) => {
-        if (isAlreadyShaped(data)) return data as ApiResponse<T>;
+        if (isAlreadyShaped(data)) return data;
         return {
           success: true,
           code: res.statusCode ?? 200,
@@ -1084,20 +1148,20 @@ export class ApiResponseInterceptor<T> implements NestInterceptor<T, ApiResponse
 }
 ```
 
-- [ ] **Step 4: Run — verify pass**
+- [ ] **Step 5: Run — verify pass**
 
 ```bash
 npm -C apps/api test -- --reporter=verbose src/test/infrastructure/interceptors/api-response.interceptor.test.ts
 ```
 
-Expected: `PASS` — 3 tests.
+Expected: `PASS` — 4 tests.
 
-- [ ] **Step 5: Commit**
+- [ ] **Step 6: Commit**
 
 ```bash
-git add apps/api/src/infrastructure/interceptors/api-response.interceptor.ts \
+git add apps/api/src/infrastructure/interceptors/ \
   apps/api/src/test/infrastructure/interceptors/api-response.interceptor.test.ts
-git commit -m "feat(api): add ApiResponseInterceptor wrapping success responses"
+git commit -m "feat(api): add SkipApiResponse decorator and ApiResponseInterceptor"
 ```
 
 ---
@@ -1354,71 +1418,159 @@ git commit -m "feat(api): add DatabaseHealthIndicator and HealthModule"
 
 ---
 
-## Task 13 — `instrument.ts`, `pino.config.ts`, `swagger.setup.ts`
+## Task 13 — `instrument.ts`, `telemetry.ts`, `pino.config.ts`, `swagger.setup.ts`
 
-These are configuration files with no separate unit tests. Correctness verified in Task 16 (smoke).
+Configuration files. No unit tests — correctness verified in Task 16 (smoke).
 
 **Files:**
 - Create: `apps/api/src/instrument.ts`
+- Create: `apps/api/src/telemetry.ts`
 - Create: `apps/api/src/infrastructure/telemetry/pino.config.ts`
 - Create: `apps/api/src/infrastructure/swagger/swagger.setup.ts`
 
-- [ ] **Step 1: Create `instrument.ts`**
+> **Why two files?** `instrument.ts` initializes Sentry (must be truly first — Sentry patches error
+> handling at import time). `telemetry.ts` initializes OTel SDK (must be before NestJS code, but
+> after Sentry). Keeping them separate makes each file's purpose obvious and matches zoom-reference.
+
+- [ ] **Step 1: Create `instrument.ts` (Sentry only)**
 
 ```typescript
-// MUST be the very first import in main.ts — before any NestJS or app imports.
-// OTel must instrument Node.js modules before they are loaded.
-import { NodeSDK } from '@opentelemetry/sdk-node';
-import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node';
-import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-grpc';
-import { BatchSpanProcessor } from '@opentelemetry/sdk-trace-base';
+// instrument.ts — Sentry init ONLY.
+// MUST be the very first import in main.ts (before telemetry.ts and any NestJS code).
+import type { ErrorEvent, EventHint } from '@sentry/nestjs';
 import * as Sentry from '@sentry/nestjs';
 
-const OTEL_ENDPOINT = process.env.OTEL_EXPORTER_OTLP_ENDPOINT;
 const SENTRY_DSN = process.env.SENTRY_DSN;
 const NODE_ENV = process.env.NODE_ENV ?? 'development';
+const GIT_SHA = process.env.GIT_SHA;
 
-// Optional Sentry init (no-op if DSN not set)
 if (SENTRY_DSN) {
   Sentry.init({
     dsn: SENTRY_DSN,
     environment: NODE_ENV,
-    tracesSampleRate: 1.0,
+    release: GIT_SHA,
+    tracesSampleRate: 0.1,
+    // Only send server errors (≥500) to Sentry.
+    // Expected client errors (4xx) are business-as-usual, not Sentry noise.
+    beforeSend(event: ErrorEvent, hint: EventHint): ErrorEvent | null {
+      const err = hint?.originalException as {
+        status?: number;
+        response?: { status?: number };
+      } | null;
+      const status = err?.status ?? err?.response?.status;
+      if (typeof status === 'number' && status < 500) {
+        return null;
+      }
+      return event;
+    },
   });
 }
+```
 
-// OTel SDK — no-op exporter if OTLP endpoint not configured
-const sdk = new NodeSDK({
-  ...(OTEL_ENDPOINT && {
-    spanProcessors: [
-      new BatchSpanProcessor(new OTLPTraceExporter({ url: OTEL_ENDPOINT })),
-    ],
-  }),
+- [ ] **Step 2: Create `telemetry.ts` (OTel SDK only)**
+
+```typescript
+// telemetry.ts — OpenTelemetry SDK.
+// MUST be imported before any NestJS/application code (second import in main.ts).
+import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node';
+import { OTLPLogExporter } from '@opentelemetry/exporter-logs-otlp-grpc';
+import { OTLPMetricExporter } from '@opentelemetry/exporter-metrics-otlp-grpc';
+import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-grpc';
+import { resourceFromAttributes } from '@opentelemetry/resources';
+import { SimpleLogRecordProcessor } from '@opentelemetry/sdk-logs';
+import { PeriodicExportingMetricReader } from '@opentelemetry/sdk-metrics';
+import { NodeSDK } from '@opentelemetry/sdk-node';
+
+const OTEL_ENDPOINT = process.env.OTEL_EXPORTER_OTLP_ENDPOINT;
+const SERVICE_NAME =
+  process.env.OTEL_SERVICE_NAME ?? process.env.APP_NAME ?? 'api';
+
+// Build SDK config — exporters only added when OTLP endpoint is configured.
+// Without an endpoint the SDK still starts (auto-instrumentation is active),
+// but nothing is exported (effectively a no-op tracer for local dev).
+const sdkConfig: ConstructorParameters<typeof NodeSDK>[0] = {
+  resource: resourceFromAttributes({ 'service.name': SERVICE_NAME }),
   instrumentations: [
     getNodeAutoInstrumentations({
+      // pino-opentelemetry-transport already exports logs over OTLP.
+      // Enabling the pino instrumentation too would double-count every log record.
+      '@opentelemetry/instrumentation-pino': { enabled: false },
+      // fs instrumentation generates enormous trace noise (module loading etc.)
       '@opentelemetry/instrumentation-fs': { enabled: false },
     }),
   ],
-});
+};
 
+if (OTEL_ENDPOINT) {
+  sdkConfig.traceExporter = new OTLPTraceExporter({ url: OTEL_ENDPOINT });
+  sdkConfig.metricReader = new PeriodicExportingMetricReader({
+    exporter: new OTLPMetricExporter({ url: OTEL_ENDPOINT }),
+  });
+  sdkConfig.logRecordProcessor = new SimpleLogRecordProcessor(
+    new OTLPLogExporter({ url: OTEL_ENDPOINT }),
+  );
+}
+
+const sdk = new NodeSDK(sdkConfig);
 sdk.start();
+
+// Graceful shutdown — flush pending spans/metrics/logs before the process exits.
+process.on('SIGTERM', () => {
+  sdk
+    .shutdown()
+    .then(() => process.exit(0))
+    .catch(() => process.exit(1));
+});
 ```
 
-- [ ] **Step 2: Create `pino.config.ts`**
+- [ ] **Step 3: Create `pino.config.ts`**
 
 ```typescript
+import { trace } from '@opentelemetry/api';
 import type { Params } from 'nestjs-pino';
 import { env } from '../../env';
 
 export const pinoConfig: Params = {
   pinoHttp: {
-    level: env.NODE_ENV === 'production' ? 'info' : 'debug',
+    level: env.LOG_LEVEL,
+    // Production: ship logs to OTel collector via pino-opentelemetry-transport
+    //   → logs appear in Loki/Grafana alongside traces.
+    // Development: pretty-print to stdout.
     transport:
       env.NODE_ENV !== 'production'
         ? { target: 'pino-pretty', options: { colorize: true, singleLine: true } }
-        : undefined,
+        : { target: 'pino-opentelemetry-transport' },
+    serializers: {
+      req: (req: {
+        method: string;
+        url: string;
+        headers?: Record<string, string>;
+        remoteAddress?: string;
+      }) => ({
+        method: req.method,
+        path: req.url,
+        // correlationId is attached by CorrelationIdMiddleware before this serializer runs
+        correlationId: (req as Record<string, unknown>).correlationId,
+        sourceIp: req.headers?.['x-forwarded-for'] ?? req.remoteAddress ?? '',
+      }),
+      res: (res: { statusCode: number }) => ({
+        statusCode: res.statusCode,
+      }),
+    },
+    // Inject active OTel trace context so every log line is correlatable to a span.
+    mixin: () => {
+      const span = trace.getActiveSpan();
+      const ctx = span?.spanContext();
+      return {
+        service: env.APP_NAME,
+        env: env.NODE_ENV,
+        traceId: ctx?.traceId ?? '',
+        spanId: ctx?.spanId ?? '',
+      };
+    },
     autoLogging: {
-      ignore: (req) => req.url === '/health',
+      ignore: (req) =>
+        req.url === '/health' || req.url === '/health/ready',
     },
     redact: {
       paths: ['req.headers.authorization', 'req.headers.cookie'],
@@ -1428,7 +1580,7 @@ export const pinoConfig: Params = {
 };
 ```
 
-- [ ] **Step 3: Create `swagger.setup.ts`**
+- [ ] **Step 4: Create `swagger.setup.ts`**
 
 ```typescript
 import type { INestApplication } from '@nestjs/common';
@@ -1453,13 +1605,14 @@ export function setupSwagger(app: INestApplication): void {
 }
 ```
 
-- [ ] **Step 4: Commit**
+- [ ] **Step 5: Commit**
 
 ```bash
 git add apps/api/src/instrument.ts \
+  apps/api/src/telemetry.ts \
   apps/api/src/infrastructure/telemetry/pino.config.ts \
   apps/api/src/infrastructure/swagger/swagger.setup.ts
-git commit -m "feat(api): add OTel instrument.ts, pino config, swagger setup helper"
+git commit -m "feat(api): add Sentry instrument.ts, OTel telemetry.ts, pino config, swagger setup"
 ```
 
 ---
@@ -1472,8 +1625,10 @@ git commit -m "feat(api): add OTel instrument.ts, pino config, swagger setup hel
 - [ ] **Step 1: Rewrite `main.ts`**
 
 ```typescript
-// instrument.ts MUST be the first import — OTel patches Node modules at startup.
+// 1. Sentry MUST be first — patches Node.js error handling at import time.
 import './instrument';
+// 2. OTel SDK MUST be before any NestJS/app imports — instruments HTTP, DB, etc.
+import './telemetry';
 
 import { NestFactory } from '@nestjs/core';
 import {
@@ -1534,7 +1689,7 @@ bootstrap().catch((err: unknown) => {
 
 ```bash
 git add apps/api/src/main.ts
-git commit -m "feat(api): rewrite main.ts — Fastify adapter, Pino, Helmet, CORS, Swagger"
+git commit -m "feat(api): rewrite main.ts — Sentry+OTel first, Fastify, Pino, Helmet, CORS, Swagger"
 ```
 
 ---
@@ -1751,8 +1906,14 @@ All spec requirements covered:
 | Redis connects, `redis.ping()` → `PONG` | Task 5 |
 | `npx turbo typecheck` passes | Task 16 |
 | `npx turbo lint` passes | Task 16 |
-| `instrument.ts` is first import in `main.ts` | Task 14 |
-| Sentry no-op if `SENTRY_DSN` not set | Task 13, 7 |
+| `instrument.ts` is first import, `telemetry.ts` is second | Task 14 |
+| Sentry no-op if `SENTRY_DSN` not set | Task 13 |
+| Sentry `beforeSend` drops all 4xx errors (no noise) | Task 13 |
+| OTel SDK starts even without endpoint (no-op locally) | Task 13 |
+| SIGTERM handler flushes pending spans/metrics/logs | Task 13 |
+| Pino ships logs via `pino-opentelemetry-transport` in prod | Task 13 |
+| Pino `mixin` injects `traceId`/`spanId` on every log line | Task 13 |
+| `@SkipApiResponse()` decorator bypasses response wrapper | Task 10 |
 | Swagger only in non-production | Task 13 |
 | `helmet` with `contentSecurityPolicy: false` | Task 14 |
 | `ThrottlerModule` uses `env.ts` vars | Task 15 |

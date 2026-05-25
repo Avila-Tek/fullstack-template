@@ -26,7 +26,8 @@ Construir la infraestructura base de la API: env con Zod, Drizzle configurado co
 ```
 apps/api/src/
 ├── env.ts                                      ← Zod schema completo (todas las vars de .env.example)
-├── instrument.ts                               ← OTel SDK init; importado antes que todo en main.ts
+├── instrument.ts                               ← Sentry init ONLY (con beforeSend 4xx filter); primer import en main.ts
+├── telemetry.ts                                ← OTel SDK (traces + metrics + logs + resources + SIGTERM); segundo import
 ├── main.ts                                     ← reescribir: loadEnv(), Helmet, CORS, Pino logger,
 │                                                  ZodValidationPipe, Swagger (non-prod), bootstrap
 │
@@ -52,7 +53,8 @@ apps/api/src/
 │   │   └── domain-exception.filter.ts         ← DomainException → DomainToHttpMapper + i18n
 │   │
 │   ├── interceptors/
-│   │   └── api-response.interceptor.ts        ← wraps { success: true, code: 200, data, ... }
+│   │   ├── api-response.interceptor.ts        ← wraps { success: true, code: 200, data, ... }
+│   │   └── skip-api-response.decorator.ts     ← @SkipApiResponse() para excluir del wrapper
 │   │
 │   ├── middleware/
 │   │   └── correlation-id.middleware.ts       ← x-correlation-id header in/out + OTel baggage
@@ -130,7 +132,11 @@ const envSchema = z.object({
   CAPTCHA_PROVIDER: z.enum(['cloudflare', 'google']).default('cloudflare'),
 
   OTEL_EXPORTER_OTLP_ENDPOINT: z.string().url().optional(),
+  OTEL_SERVICE_NAME: z.string().optional(),
   SENTRY_DSN: z.string().optional(),
+  GIT_SHA: z.string().optional(),
+
+  LOG_LEVEL: z.enum(['debug', 'info', 'warn', 'error']).default('info'),
 });
 
 export const env = envSchema.parse(process.env);
@@ -210,8 +216,12 @@ configure(consumer: MiddlewareConsumer) {
 
 ## Notas de implementación
 
-- `instrument.ts` debe importarse como primera línea de `main.ts` (antes de cualquier import de NestJS) para que OTel instrumenta correctamente.
-- Si `OTEL_EXPORTER_OTLP_ENDPOINT` no está configurado, OTel no exporta (no-op exporter). Si `SENTRY_DSN` no está configurado, `Sentry.init()` no se llama — degradación graceful, la app arranca igual.
+- **Orden de imports en `main.ts`:** `instrument.ts` PRIMERO (Sentry), luego `telemetry.ts` (OTel), luego NestJS. Sentry parchea el manejo de errores de Node.js al importar; OTel debe instrumentar los módulos HTTP/DB antes de que NestJS los cargue.
+- **`instrument.ts` (Sentry):** Solo se llama `Sentry.init()` si `SENTRY_DSN` está configurado. El `beforeSend` descarta todos los errores 4xx — solo 5xx van a Sentry. Errores de dominio (422) y HTTP (4xx) son esperados, no son bugs. `GIT_SHA` se usa como `release` para correlacionar errores con deploys.
+- **`telemetry.ts` (OTel):** El SDK arranca siempre (auto-instrumentación activa localmente). Los exporters OTLP solo se configuran cuando `OTEL_EXPORTER_OTLP_ENDPOINT` está presente. El handler de `SIGTERM` hace graceful flush antes de que el proceso muera. `pino-opentelemetry-transport` deshabilitado en las auto-instrumentaciones para evitar duplicar logs.
+- **`pino.config.ts`:** En producción usa `pino-opentelemetry-transport` para enviar logs al collector OTel. En development usa `pino-pretty`. El `mixin` inyecta `traceId`/`spanId` del span OTel activo en cada línea de log — esto permite correlacionar logs con traces en Loki/Grafana.
+- **`@SkipApiResponse()`:** Aplicar a controladores o handlers que devuelven su propio formato (e.g., `@nestjs/terminus` health checks que tienen formato propio).
+- Si `OTEL_EXPORTER_OTLP_ENDPOINT` no está configurado, OTel no exporta (no-op).
 - `Swagger` solo se configura si `NODE_ENV !== 'production'`.
 - `helmet` con `contentSecurityPolicy: false` — requerido para que Swagger UI cargue en desarrollo; los scripts inline de Swagger UI violan CSP por defecto.
 - `sameSite: 'lax'` en cookies — **no sobreescribir** el default de Better-Auth.
