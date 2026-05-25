@@ -1,3 +1,4 @@
+import type { IncomingMessage } from 'node:http';
 import type { Params } from 'nestjs-pino';
 import { env } from '../../env.js';
 
@@ -25,8 +26,8 @@ export const pinoConfig: Params = {
         },
 
     // Attach correlation-id to every log line
-    customProps(req: Record<string, unknown>) {
-      return { correlationId: req['correlationId'] };
+    customProps(req: IncomingMessage) {
+      return { correlationId: (req as IncomingMessage & { correlationId?: string }).correlationId };
     },
 
     // Redact sensitive fields

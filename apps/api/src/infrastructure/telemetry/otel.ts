@@ -12,17 +12,16 @@ import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentation
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
 import { OTLPMetricExporter } from '@opentelemetry/exporter-metrics-otlp-http';
 import { PeriodicExportingMetricReader } from '@opentelemetry/sdk-metrics';
-import { Resource } from '@opentelemetry/resources';
+import { resourceFromAttributes } from '@opentelemetry/resources';
 import { ATTR_SERVICE_NAME, ATTR_SERVICE_VERSION } from '@opentelemetry/semantic-conventions';
 
-// env is safe to import here — this file is required AFTER Node is up
-// but we use process.env directly to avoid circular imports during bootstrap.
-const serviceName = process.env['SERVICE_NAME'] ?? 'unknown-service';
-const serviceVersion = process.env['SERVICE_VERSION'] ?? '0.0.0';
-const serviceNamespace = process.env['SERVICE_NAMESPACE'] ?? 'default';
-const otlpEndpoint = process.env['OTEL_EXPORTER_OTLP_ENDPOINT'];
+// Use process.env directly — avoid circular import at bootstrap time (env.ts parses process.env too)
+const serviceName = process.env.SERVICE_NAME ?? 'unknown-service';
+const serviceVersion = process.env.SERVICE_VERSION ?? '0.0.0';
+const serviceNamespace = process.env.SERVICE_NAMESPACE ?? 'default';
+const otlpEndpoint = process.env.OTEL_EXPORTER_OTLP_ENDPOINT;
 
-const resource = new Resource({
+const resource = resourceFromAttributes({
   [ATTR_SERVICE_NAME]: serviceName,
   [ATTR_SERVICE_VERSION]: serviceVersion,
   'service.namespace': serviceNamespace,
