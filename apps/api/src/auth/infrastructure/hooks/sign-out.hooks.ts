@@ -1,7 +1,7 @@
 import { createAuthMiddleware } from 'better-auth/api';
 import type { EventEmitter2 } from '@nestjs/event-emitter';
-import type Redis from 'ioredis';
-import { AuthSignedOutEvent } from '@/auth/application/events/auth.events.js';
+import type { Redis } from 'ioredis';
+import { AuthSignedOutEvent } from '../../application/events/auth.events.js';
 
 export function createSignOutAfterHook(deps: { redis: Redis; eventEmitter: EventEmitter2 }) {
   return createAuthMiddleware(async (ctx) => {

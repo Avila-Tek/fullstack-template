@@ -5,19 +5,20 @@ import { betterAuth } from 'better-auth';
 import { createAuthMiddleware } from 'better-auth/api';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
-import type Redis from 'ioredis';
+import type { Redis } from 'ioredis';
 import { and, eq, ne } from 'drizzle-orm';
-import { DRIZZLE_CLIENT } from '@infra/database/drizzle.constants.js';
-import { REDIS_CLIENT } from '@infra/redis/redis.constants.js';
-import { BruteForcePort } from '@/auth/application/ports/out/brute-force.port.js';
-import { CaptchaPort } from '@/auth/application/ports/out/captcha.port.js';
-import { EmailPort } from '@/auth/application/ports/out/email.port.js';
-import { Argon2HashAdapter } from '@/auth/infrastructure/adapters/argon2-hash.adapter.js';
-import { session, user } from '@/auth/infrastructure/persistence/auth.schema.js';
-import { createSignUpBeforeHook, createSignUpAfterHook } from '@/auth/infrastructure/hooks/sign-up.hooks.js';
-import { createSignInBeforeHook, createSignInAfterHook } from '@/auth/infrastructure/hooks/sign-in.hooks.js';
-import { createSignOutAfterHook } from '@/auth/infrastructure/hooks/sign-out.hooks.js';
-import { env } from '@/env.js';
+import { DRIZZLE_CLIENT } from '../../../infrastructure/database/drizzle.constants.js';
+import { REDIS_CLIENT } from '../../../infrastructure/redis/redis.constants.js';
+import { BruteForcePort } from '../../application/ports/out/brute-force.port.js';
+import { CaptchaPort } from '../../application/ports/out/captcha.port.js';
+import { EmailPort } from '../../application/ports/out/email.port.js';
+import { Argon2HashAdapter } from '../adapters/argon2-hash.adapter.js';
+import * as authSchema from '../persistence/auth.schema.js';
+import { session, user } from '../persistence/auth.schema.js';
+import { createSignUpBeforeHook, createSignUpAfterHook } from '../hooks/sign-up.hooks.js';
+import { createSignInBeforeHook, createSignInAfterHook } from '../hooks/sign-in.hooks.js';
+import { createSignOutAfterHook } from '../hooks/sign-out.hooks.js';
+import { env } from '../../../env.js';
 
 @Injectable()
 export class BetterAuthService implements OnModuleInit {
@@ -57,7 +58,7 @@ export class BetterAuthService implements OnModuleInit {
       basePath: '/api/v1/auth',
       secret: env.BETTER_AUTH_SECRET,
 
-      database: drizzleAdapter(db as never, { provider: 'pg' }),
+      database: drizzleAdapter(db as never, { provider: 'pg', schema: authSchema }),
 
       secondaryStorage: {
         get: (key) => redis.get(key),
@@ -94,6 +95,7 @@ export class BetterAuthService implements OnModuleInit {
         },
         sendOnSignUp: true,
         autoSignInAfterVerification: true,
+        callbackURL: `${env.CLIENT_URL}/auth/email-verified`,
       },
 
       socialProviders: {
@@ -155,8 +157,8 @@ export class BetterAuthService implements OnModuleInit {
           await createSignInBeforeHook({ bruteForce: bruteForcePort })(ctx);
         }),
         after: createAuthMiddleware(async (ctx) => {
-          await createSignUpAfterHook({ eventEmitter })(ctx);
-          await createSignInAfterHook({ bruteForce: bruteForcePort, eventEmitter })(ctx);
+          await createSignUpAfterHook({ eventEmitter, logger: this.logger })(ctx);
+          await createSignInAfterHook({ bruteForce: bruteForcePort, eventEmitter, logger: this.logger })(ctx);
           await createSignOutAfterHook({ redis, eventEmitter })(ctx);
         }),
       },

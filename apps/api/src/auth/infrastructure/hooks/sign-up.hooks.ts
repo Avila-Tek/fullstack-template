@@ -1,7 +1,8 @@
 import { createAuthMiddleware, APIError } from 'better-auth/api';
 import type { EventEmitter2 } from '@nestjs/event-emitter';
-import type { CaptchaPort } from '@/auth/application/ports/out/captcha.port.js';
-import { AuthSignedUpEvent } from '@/auth/application/events/auth.events.js';
+import type { PinoLogger } from 'nestjs-pino';
+import type { CaptchaPort } from '../../application/ports/out/captcha.port.js';
+import { AuthSignedUpEvent } from '../../application/events/auth.events.js';
 
 export function createSignUpBeforeHook(deps: { captchaPort: CaptchaPort }) {
   return createAuthMiddleware(async (ctx) => {
@@ -25,7 +26,7 @@ export function createSignUpBeforeHook(deps: { captchaPort: CaptchaPort }) {
   });
 }
 
-export function createSignUpAfterHook(deps: { eventEmitter: EventEmitter2 }) {
+export function createSignUpAfterHook(deps: { eventEmitter: EventEmitter2; logger: PinoLogger }) {
   return createAuthMiddleware(async (ctx) => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     if ((ctx as any).path !== '/sign-up/email') return;
@@ -34,6 +35,9 @@ export function createSignUpAfterHook(deps: { eventEmitter: EventEmitter2 }) {
     const context = (ctx as any).context;
     const user = context?.user;
     if (!user) return;
+
+    // Schema standard: attach userId to the request log context for all subsequent logs
+    deps.logger.assign({ userId: user.id });
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const req = (ctx as any).request;
