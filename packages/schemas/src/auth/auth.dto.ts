@@ -1,197 +1,149 @@
 import { getEnumObjectFromArray } from '@repo/utils';
 import { z } from 'zod';
-import { userSchema } from '../users/user.schema';
 
-// Auth Search Params
-export const authSearchParam = ['token_hash', 'type'] as const;
+// ── Auth search params (BA token-link flow) ──────────────────────────────────
+
+export const authSearchParam = [
+  'token', // BA email verification / password reset token
+  'email',
+  'reset',
+] as const;
 export type TAuthSearchParamEnum = (typeof authSearchParam)[number];
-export const authSearchParamEnumObject =
-  getEnumObjectFromArray(authSearchParam);
+export const authSearchParamEnumObject = getEnumObjectFromArray(authSearchParam);
 
-// Sign In Input
-const signInInput = z.object({
-  email: z.email(),
-  password: z.string().min(8),
+// ── Better Auth raw response shapes ─────────────────────────────────────────
+
+/**
+ * Raw user object returned by the Better Auth session endpoint.
+ * Core fields are always present; extended fields (firstName, lastName, etc.)
+ * are returned when the server adds them via the user plugin.
+ */
+export const betterAuthUserSchema = z.object({
+  id:            z.string(),
+  email:         z.string().email(),
+  name:          z.string(),
+  emailVerified: z.boolean(),
+  image:         z.string().nullable().optional(),
+  createdAt:     z.coerce.date(),
+  updatedAt:     z.coerce.date(),
+  // Extended fields from our custom user table (optional — added in later phases)
+  firstName:  z.string().nullable().optional(),
+  lastName:   z.string().nullable().optional(),
+  timezone:   z.string().optional(),
+  status:     z.enum(['active', 'inactive']).optional(),
 });
 
-const signInResponse = z.discriminatedUnion('success', [
-  z.object({
-    success: z.literal(true),
-    data: z.object({
-      user: userSchema,
-      accessToken: z.string(),
-      refreshToken: z.string(),
-    }),
-  }),
-  z.object({ success: z.literal(false), error: z.string() }),
-]);
+export type TBetterAuthUser = z.output<typeof betterAuthUserSchema>;
 
-export type TSignInInput = z.infer<typeof signInInput>;
-export type TSignInResponse = z.infer<typeof signInResponse>;
-
-// JWT User Payload
-const jwtUserPayload = z.object({
-  id: z.string(),
+/**
+ * Raw session object returned by the Better Auth session endpoint.
+ */
+export const betterAuthSessionSchema = z.object({
+  id:         z.string(),
+  userId:     z.string(),
+  expiresAt:  z.coerce.date(),
+  token:      z.string().optional(),
+  ipAddress:  z.string().nullable().optional(),
+  userAgent:  z.string().nullable().optional(),
+  createdAt:  z.coerce.date().optional(),
+  updatedAt:  z.coerce.date().optional(),
 });
 
-export type JwtUserPayload = z.infer<typeof jwtUserPayload>;
+export type TBetterAuthSession = z.output<typeof betterAuthSessionSchema>;
 
-// Sign Up Input
-const signUpInput = z.object({
-  email: z.email(),
-  password: z.string().min(8),
-  rePassword: z.string().min(8),
-  firstName: z.string().optional(),
-  lastName: z.string().optional(),
+/**
+ * Shape of `authClient.getSession()` success response.
+ */
+export const getSessionResponseSchema = z.object({
+  session: betterAuthSessionSchema,
+  user:    betterAuthUserSchema,
 });
 
-const signUpResponse = z.discriminatedUnion('success', [
-  z.object({
-    success: z.literal(true),
-    data: z.object({
-      user: userSchema.nullable(),
-      requiresEmailConfirmation: z.boolean(),
-    }),
-  }),
-  z.object({ success: z.literal(false), error: z.string() }),
-]);
+export type TGetSessionResponse = z.output<typeof getSessionResponseSchema>;
 
-export type TSignUpInput = z.infer<typeof signUpInput>;
-export type TSignUpResponse = z.infer<typeof signUpResponse>;
+// ── Service input schemas ────────────────────────────────────────────────────
 
-// Email Callback Query
-const emailCallbackQuery = z.object({
-  token_hash: z.string(),
-  type: z.string(),
+export const signInEmailInputSchema = z.object({
+  email:       z.string().email(),
+  password:    z.string().min(8),
+  callbackURL: z.string().optional(),
 });
 
-export type TEmailCallbackQuery = z.infer<typeof emailCallbackQuery>;
+export type TSignInEmailInput = z.infer<typeof signInEmailInputSchema>;
 
-// Email Callback Response
-const emailCallbackResponse = z.discriminatedUnion('success', [
-  z.object({
-    success: z.literal(true),
-    data: z.object({
-      user: userSchema,
-      accessToken: z.string(),
-      refreshToken: z.string(),
-    }),
-  }),
-  z.object({ success: z.literal(false), error: z.string() }),
-]);
-
-export type TEmailCallbackResponse = z.infer<typeof emailCallbackResponse>;
-
-// Send OTP Input
-const sendOtpInput = z.object({
-  email: z.email(),
+export const signUpEmailInputSchema = z.object({
+  email:       z.string().email(),
+  password:    z.string().min(8),
+  name:        z.string().min(1),
+  callbackURL: z.string().optional(),
 });
 
-export type TSendOtpInput = z.infer<typeof sendOtpInput>;
+export type TSignUpEmailInput = z.infer<typeof signUpEmailInputSchema>;
 
-// Verify OTP Input
-const verifyOtpInput = z.object({
-  email: z.email(),
-  otp: z.string().length(6),
+export const forgotPasswordInputSchema = z.object({
+  email:      z.string().email(),
+  /** Defaults to '/auth/reset-password' when omitted */
+  redirectTo: z.string().optional(),
 });
 
-export type TVerifyOtpInput = z.infer<typeof verifyOtpInput>;
+export type TForgotPasswordInput = z.infer<typeof forgotPasswordInputSchema>;
 
-// Verify OTP Response
-const verifyOtpResponse = z.discriminatedUnion('success', [
-  z.object({
-    success: z.literal(true),
-    data: z.object({
-      user: userSchema,
-      accessToken: z.string(),
-      refreshToken: z.string(),
-    }),
-  }),
-  z.object({ success: z.literal(false), error: z.string() }),
-]);
-
-export type TVerifyOtpResponse = z.infer<typeof verifyOtpResponse>;
-
-// Sign Out Input
-const signOutInput = z.object({});
-
-export type TSignOutInput = z.infer<typeof signOutInput>;
-
-// Forgot Password Input
-const forgotPasswordInput = z.object({
-  email: z.email(),
-});
-
-export type TForgotPasswordInput = z.infer<typeof forgotPasswordInput>;
-
-// Reset Password Input
-const resetPasswordInput = z.object({
-  email: z.email(),
-  otp: z.string().length(6),
+export const resetPasswordInputSchema = z.object({
   newPassword: z.string().min(8),
+  /** Token from the password-reset email link (required at runtime) */
+  token:       z.string(),
 });
 
-export type TResetPasswordInput = z.infer<typeof resetPasswordInput>;
+export type TResetPasswordInput = z.infer<typeof resetPasswordInputSchema>;
 
-// Google OAuth Input
-const googleAuthInput = z.object({
-  callbackUrl: z.string().url().optional(),
+export const verifyEmailInputSchema = z.object({
+  token: z.string(),
 });
 
-export type TGoogleAuthInput = z.infer<typeof googleAuthInput>;
+export type TVerifyEmailInput = z.infer<typeof verifyEmailInputSchema>;
 
-// Get Session Response (OAuth callback)
-const getSessionResponse = z.discriminatedUnion('success', [
-  z.object({
-    success: z.literal(true),
-    data: z.object({
-      user: userSchema,
-      accessToken: z.string(),
-      refreshToken: z.string(),
-    }),
-  }),
-  z.object({ success: z.literal(false), error: z.string() }),
-]);
+export const sendVerificationEmailInputSchema = z.object({
+  email:       z.string().email(),
+  callbackURL: z.string().optional(),
+});
 
-export type TGetSessionResponse = z.infer<typeof getSessionResponse>;
+export type TSendVerificationEmailInput = z.infer<typeof sendVerificationEmailInputSchema>;
 
-// Current User Response (with subscription)
-const currentUserResponse = z.discriminatedUnion('success', [
-  z.object({
-    success: z.literal(true),
-    data: userSchema,
-  }),
-  z.object({ success: z.literal(false), error: z.string() }),
-]);
+const oauthProviders = ['google', 'github', 'microsoft', 'apple'] as const;
+export type TOAuthProvider = (typeof oauthProviders)[number];
 
-export type TCurrentUserResponse = z.infer<typeof currentUserResponse>;
+export const signInSocialInputSchema = z.object({
+  provider:    z.enum(oauthProviders),
+  callbackURL: z.string().optional(),
+});
+
+export type TSignInSocialInput = z.infer<typeof signInSocialInputSchema>;
+
+// ── Service output schemas ───────────────────────────────────────────────────
+
+export const signUpResultSchema = z.object({
+  requiresEmailVerification: z.literal(true),
+});
+
+export type TSignUpResult = z.infer<typeof signUpResultSchema>;
+
+// ── Grouped export ───────────────────────────────────────────────────────────
 
 export const authDTO = Object.freeze({
-  // Sign In
-  signInInput,
-  signInResponse,
-  jwtUserPayload,
-  // Sign Up
-  signUpInput,
-  signUpResponse,
-  // Email Callback
-  emailCallbackQuery,
-  emailCallbackResponse,
-  // Send OTP
-  sendOtpInput,
-  // Verify OTP
-  verifyOtpInput,
-  verifyOtpResponse,
-  // Sign Out
-  signOutInput,
-  // Current User
-  currentUserResponse,
-  // Forgot Password
-  forgotPasswordInput,
-  // Reset Password
-  resetPasswordInput,
-  // Google OAuth
-  googleAuthInput,
-  // Get Session (OAuth callback)
-  getSessionResponse,
+  // Search params
+  authSearchParamEnumObject,
+  // Raw BA shapes
+  betterAuthUserSchema,
+  betterAuthSessionSchema,
+  getSessionResponseSchema,
+  // Inputs
+  signInEmailInputSchema,
+  signUpEmailInputSchema,
+  forgotPasswordInputSchema,
+  resetPasswordInputSchema,
+  verifyEmailInputSchema,
+  sendVerificationEmailInputSchema,
+  signInSocialInputSchema,
+  // Outputs
+  signUpResultSchema,
 });

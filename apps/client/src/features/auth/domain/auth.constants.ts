@@ -1,14 +1,8 @@
 import { getEnumObjectFromArray } from '@repo/utils';
+import { authSearchParamEnumObject } from '@repo/schemas';
 
-export const authSearchParam = [
-  'token_hash',
-  'type',
-  'email',
-  'reset',
-] as const;
-export type TAuthSearchParamEnum = (typeof authSearchParam)[number];
-export const authSearchParamEnumObject =
-  getEnumObjectFromArray(authSearchParam);
+export { authSearchParamEnumObject };
+export type { TAuthSearchParamEnum } from '@repo/schemas';
 
 export const authTaglines: Record<TAuthPageTypeEnum, Array<string>> = {
   login: [
@@ -52,8 +46,3 @@ export const authPageType = [
 ] as const;
 export type TAuthPageTypeEnum = (typeof authPageType)[number];
 export const authPageTypeEnumObject = getEnumObjectFromArray(authPageType);
-
-export const supabaseOtpType = ['email'] as const;
-export type TSupabaseOtpType = (typeof supabaseOtpType)[number];
-export const supabaseOtpTypeEnumObject =
-  getEnumObjectFromArray(supabaseOtpType);

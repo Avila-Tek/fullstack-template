@@ -1,88 +1,41 @@
-import type {
-  TEmailCallbackQuery,
-  TResetPasswordInput,
-  TRole,
+import {
+  betterAuthUserSchema,
+  getSessionResponseSchema,
+  type TBetterAuthUser,
+  type TGetSessionResponse,
 } from '@repo/schemas';
-import type { Role, Session, SignUpResult, User } from '../domain/auth.model';
-import type { TEmailCallbackForm, TResetPasswordForm } from './auth.form';
-import type {
-  AuthSessionDto,
-  AuthUserDto,
-  SignUpResultDto,
-} from './auth.interfaces';
+import type { Session, User } from '../domain/auth.model';
 
 /**
- * Transforms a Role DTO from the API to the domain model
+ * Parse the raw Better Auth user payload through Zod and return a domain User.
+ * Throws a ZodError if the shape doesn't match (detects API contract drift early).
  */
-export function toRoleDomain(dto: TRole | null | undefined): Role | null {
-  if (!dto) return null;
+export function toUserDomain(raw: unknown): User {
+  const dto: TBetterAuthUser = betterAuthUserSchema.parse(raw);
   return {
-    id: dto.id,
-    code: dto.code,
-    name: dto.name,
-    permissions: dto.permissions,
+    id:            dto.id,
+    email:         dto.email,
+    name:          dto.name,
+    emailVerified: dto.emailVerified,
+    image:         dto.image ?? null,
+    createdAt:     dto.createdAt,
+    updatedAt:     dto.updatedAt,
+    // Extended fields — present only when the server sends them
+    firstName:  dto.firstName ?? null,
+    lastName:   dto.lastName ?? null,
+    timezone:   dto.timezone,
+    status:     dto.status,
   };
 }
 
 /**
- * Transforms a User DTO from the API to the domain model
+ * Parse the raw Better Auth getSession response through Zod and return a domain Session.
  */
-export function toUserDomain(dto: AuthUserDto): User {
+export function toSessionDomain(raw: unknown): Session {
+  const dto: TGetSessionResponse = getSessionResponseSchema.parse(raw);
   return {
-    id: dto.id,
-    email: dto.email,
-    firstName: dto.firstName,
-    lastName: dto.lastName,
-    timezone: dto.timezone,
-    status: dto.status,
-    role: toRoleDomain(dto.role),
-    createdAt: dto.createdAt ? new Date(dto.createdAt) : new Date(),
-    updatedAt: dto.updatedAt ? new Date(dto.updatedAt) : new Date(),
-  };
-}
-
-/**
- * Transforms a Session DTO from the API to the domain model
- */
-export function toSessionDomain(dto: AuthSessionDto): Session {
-  return {
-    user: toUserDomain(dto.user),
-    accessToken: dto.accessToken,
-    refreshToken: dto.refreshToken,
-  };
-}
-
-/**
- * Transforms a SignUp result DTO from the API to the domain model
- */
-export function toSignUpResultDomain(dto: SignUpResultDto): SignUpResult {
-  return {
-    user: dto.user ? toUserDomain(dto.user) : null,
-    requiresEmailConfirmation: dto.requiresEmailConfirmation,
-  };
-}
-
-/**
- * Transforms form data to API query (tokenHash → token_hash)
- */
-export function toEmailCallbackQuery(
-  form: TEmailCallbackForm
-): TEmailCallbackQuery {
-  return {
-    token_hash: form.tokenHash,
-    type: form.type,
-  };
-}
-
-/**
- * Transforms form data to API input (removes confirmPassword)
- */
-export function toResetPasswordInput(
-  form: TResetPasswordForm
-): TResetPasswordInput {
-  return {
-    email: form.email,
-    otp: form.otp,
-    newPassword: form.newPassword,
+    sessionId: dto.session.id,
+    expiresAt: dto.session.expiresAt,
+    user:      toUserDomain(dto.user),
   };
 }
