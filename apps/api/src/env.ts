@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 export const envSchema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
-  PORT: z.coerce.number().default(3000),
+  PORT: z.coerce.number().default(8080),
   API_BASE_URL: z.string().url(),
   CLIENT_URL: z.string().url(),
   APP_NAME: z.string().default('MyApp'),
@@ -39,6 +39,8 @@ export const envSchema = z.object({
   EMAIL_SMTP_PORT: z.coerce.number().default(587),
   EMAIL_SMTP_USER: z.string().optional(),
   EMAIL_SMTP_PASS: z.string().optional(),
+  EMAIL_PROVIDER: z.enum(['smtp', 'postmark']).default('smtp'),
+  POSTMARK_API_KEY: z.string().optional(),
 
   OTP_TTL_SECONDS: z.coerce.number().default(300),
   OTP_MAX_ATTEMPTS: z.coerce.number().default(5),
