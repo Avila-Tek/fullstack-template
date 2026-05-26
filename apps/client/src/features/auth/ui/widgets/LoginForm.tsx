@@ -15,7 +15,7 @@ import {
   createLoginDefaultValues,
   loginFormDefinition,
   type TLoginForm,
-} from '../../infrastructure/auth.form';
+} from '../../domain/auth.form';
 import { AuthCard } from '../components/AuthCard';
 import { AuthDivider } from '../components/AuthDivider';
 import { AuthHeader } from '../components/AuthHeader';
@@ -28,7 +28,7 @@ export function LoginForm() {
   );
 
   const signIn = useSignIn();
-  const { setSession, refetchUser } = useUser();
+  const { refetchUser } = useUser();
 
   const methods = useForm<TLoginForm>({
     defaultValues: createLoginDefaultValues(),
@@ -36,16 +36,11 @@ export function LoginForm() {
   });
 
   async function onSubmit(data: TLoginForm) {
-    if (signIn.isPending) {
-      return;
-    }
+    if (signIn.isPending) return;
     const result = await signIn.mutateAsync(data);
-    if (result.success && result.session) {
-      // Store session (accessToken) in localStorage and cookies
-      setSession(result.session);
-      // Refetch user data from UserContext (which includes subscription)
+    if (result.success) {
+      // BA sets the session cookie server-side; invalidate client cache then redirect.
       await refetchUser();
-      // Redirect based on subscription status
     }
   }
 

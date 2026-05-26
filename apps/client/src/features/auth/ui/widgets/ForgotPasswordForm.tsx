@@ -4,26 +4,23 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@repo/ui/components/button';
 import { ArrowLeft, Mail } from 'lucide-react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import * as React from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useForgotPassword } from '../../application/useCases/forgotPassword.useCase';
 import {
   authPageTypeEnumObject,
-  authSearchParamEnumObject,
   getRandomTagline,
 } from '../../domain/auth.constants';
 import {
   createForgotPasswordDefaultValues,
   forgotPasswordFormDefinition,
   type TForgotPasswordForm,
-} from '../../infrastructure/auth.form';
+} from '../../domain/auth.form';
 import { AuthCard } from '../components/AuthCard';
 import { AuthHeader } from '../components/AuthHeader';
 import { ForgotPasswordFormContent } from '../components/ForgotPasswordFormContent';
 
 export function ForgotPasswordForm() {
-  const router = useRouter();
   const [tagline] = React.useState(() =>
     getRandomTagline(authPageTypeEnumObject.forgotPassword)
   );
@@ -47,14 +44,6 @@ export function ForgotPasswordForm() {
       setEmailSent(true);
     }
     setDisabled(false);
-  }
-
-  function handleGoToResetPassword() {
-    const email = methods.getValues('email');
-    const emailParam = encodeURIComponent(email);
-    router.push(
-      `/reset-password?${authSearchParamEnumObject.email}=${emailParam}`
-    );
   }
 
   const header = (
@@ -83,24 +72,16 @@ export function ForgotPasswordForm() {
               Revisa tu bandeja de entrada
             </h3>
             <p className="text-sm txt-tertiary-600 leading-relaxed">
-              Enviamos un código de verificación a{' '}
+              Enviamos un enlace de restablecimiento a{' '}
               <span className="font-medium txt-primary-900">
                 {methods.getValues('email')}
               </span>
             </p>
           </div>
           <Button
-            className="w-full h-11 rounded-xl mt-2"
-            onClick={handleGoToResetPassword}
-          >
-            Ingresar código
-          </Button>
-          <Button
             variant="outline"
             className="w-full h-11 rounded-xl"
-            onClick={() => {
-              setEmailSent(false);
-            }}
+            onClick={() => setEmailSent(false)}
           >
             Intentar con otro correo
           </Button>

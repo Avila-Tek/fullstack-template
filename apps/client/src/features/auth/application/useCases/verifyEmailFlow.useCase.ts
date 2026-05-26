@@ -1,16 +1,10 @@
+'use client';
+
 import { getEnumObjectFromArray } from '@repo/utils';
 import * as React from 'react';
-import type {
-  TEmailCallbackForm,
-  TVerifyOtpForm,
-} from '../../infrastructure/auth.form';
-import { useSendOtpMutation } from '../mutations/useSendOtp.mutation';
-import { useVerifyEmailCallbackMutation } from '../mutations/useVerifyEmail.mutation';
-import { useVerifyOtpMutation } from '../mutations/useVerifyOtp.mutation';
-import { verifyEmailCallbackUseCase } from './verifyEmail.useCase';
-import { verifyOtpUseCase } from './verifyOtp.useCase';
+import { useMutation } from '@tanstack/react-query';
+import { AuthService } from '../../infrastructure';
 
-// Status enum definitions
 export const verifyEmailFlowStatus = [
   'pending',
   'verifying',
@@ -23,67 +17,45 @@ export const verifyEmailFlowStatusEnum = getEnumObjectFromArray(
 );
 
 export function useVerifyEmailFlow() {
-  const [status, setStatus] = React.useState<TVerifyEmailFlowStatus>(
-    verifyEmailFlowStatusEnum.pending
-  );
+  const [status, setStatus] =
+    React.useState<TVerifyEmailFlowStatus>(verifyEmailFlowStatusEnum.pending);
   const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
   const hasVerified = React.useRef(false);
 
-  const verifyEmailCallbackMutation = useVerifyEmailCallbackMutation();
-  const verifyOtpMutation = useVerifyOtpMutation();
-  const sendOtpMutation = useSendOtpMutation();
+  const verifyMutation = useMutation({
+    mutationKey: ['auth', 'verifyEmail'],
+    mutationFn: (token: string) => AuthService.verifyEmail({ token }),
+  });
+
+  const resendMutation = useMutation({
+    mutationKey: ['auth', 'sendVerificationEmail'],
+    mutationFn: (email: string) => AuthService.sendVerificationEmail(email),
+  });
 
   const verifyWithToken = React.useCallback(
-    async (input: TEmailCallbackForm): Promise<void> => {
-      if (hasVerified.current) {
-        return;
-      }
+    async (token: string): Promise<void> => {
+      if (hasVerified.current) return;
       hasVerified.current = true;
       setStatus(verifyEmailFlowStatusEnum.verifying);
 
-      const result = await verifyEmailCallbackUseCase(input, {
-        verifyEmailCallback: verifyEmailCallbackMutation.mutateAsync,
-      });
-
-      if (result.success) {
+      try {
+        await verifyMutation.mutateAsync(token);
         setStatus(verifyEmailFlowStatusEnum.success);
-      } else {
+      } catch (e) {
         setErrorMessage(
-          verifyEmailCallbackMutation.error?.message ??
-            'Este enlace puede haber expirado.'
+          e instanceof Error ? e.message : 'Este enlace puede haber expirado.'
         );
         setStatus(verifyEmailFlowStatusEnum.error);
       }
     },
-    [verifyEmailCallbackMutation]
+    [verifyMutation]
   );
 
-  const verifyWithOtp = React.useCallback(
-    async (input: TVerifyOtpForm): Promise<void> => {
-      setStatus(verifyEmailFlowStatusEnum.verifying);
-
-      const result = await verifyOtpUseCase(input, {
-        verifyOtp: verifyOtpMutation.mutateAsync,
-      });
-
-      if (result.success) {
-        setStatus(verifyEmailFlowStatusEnum.success);
-      } else {
-        setErrorMessage(
-          verifyOtpMutation.error?.message ??
-            'Este código puede haber expirado. No te preocupes, intenta de nuevo.'
-        );
-        setStatus(verifyEmailFlowStatusEnum.error);
-      }
-    },
-    [verifyOtpMutation]
-  );
-
-  const resendOtp = React.useCallback(
+  const resendVerificationEmail = React.useCallback(
     async (email: string): Promise<void> => {
-      await sendOtpMutation.mutateAsync({ email });
+      await resendMutation.mutateAsync(email);
     },
-    [sendOtpMutation]
+    [resendMutation]
   );
 
   const resetFlow = React.useCallback(() => {
@@ -96,12 +68,9 @@ export function useVerifyEmailFlow() {
     status,
     errorMessage,
     verifyWithToken,
-    verifyWithOtp,
-    resendOtp,
+    resendVerificationEmail,
     resetFlow,
-    isVerifyingToken: verifyEmailCallbackMutation.isPending,
-    isVerifyingOtp: verifyOtpMutation.isPending,
-    isResendingOtp: sendOtpMutation.isPending,
-    otpError: verifyOtpMutation.error,
+    isVerifying: verifyMutation.isPending,
+    isResending: resendMutation.isPending,
   };
 }

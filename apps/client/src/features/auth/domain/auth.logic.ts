@@ -7,7 +7,7 @@ import type { Session } from './auth.model';
  */
 export function isSessionValid(session: Session | null): session is Session {
   if (!session) return false;
-  return !!session.accessToken && !!session.user;
+  return !!session.sessionId && !!session.user;
 }
 
 /**

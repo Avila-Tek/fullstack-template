@@ -10,7 +10,6 @@ import {
   authPageTypeEnumObject,
   authSearchParamEnumObject,
   getRandomTagline,
-  supabaseOtpTypeEnumObject,
 } from '../../domain/auth.constants';
 import { AuthCard } from '../components/AuthCard';
 import { AuthHeader } from '../components/AuthHeader';
@@ -18,15 +17,12 @@ import { CheckEmailStatus } from '../components/CheckEmailStatus';
 import { VerifyErrorStatus } from '../components/VerifyErrorStatus';
 import { VerifyingStatus } from '../components/VerifyingStatus';
 import { VerifySuccessStatus } from '../components/VerifySuccessStatus';
-import { OtpVerificationForm } from './OtpVerificationForm';
 
 export function VerifyEmailForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const tokenHash = searchParams.get(authSearchParamEnumObject.token_hash);
-  const type =
-    searchParams.get(authSearchParamEnumObject.type) ??
-    supabaseOtpTypeEnumObject.email;
+  // BA uses a single `token` query param for email verification
+  const token = searchParams.get(authSearchParamEnumObject.token);
   const email = searchParams.get(authSearchParamEnumObject.email);
   const [tagline] = React.useState(() =>
     getRandomTagline(authPageTypeEnumObject.verifyEmail)
@@ -36,22 +32,18 @@ export function VerifyEmailForm() {
     status,
     errorMessage,
     verifyWithToken,
-    verifyWithOtp,
-    resendOtp,
+    resendVerificationEmail,
     resetFlow,
-    isVerifyingOtp,
-    isResendingOtp,
-    otpError,
+    isVerifying,
+    isResending,
   } = useVerifyEmailFlow();
 
-  // Flujo Supabase: verificar automáticamente con token_hash
+  // Auto-verify when token is present in URL
   React.useEffect(() => {
-    if (tokenHash) {
-      verifyWithToken({ tokenHash, type });
+    if (token) {
+      void verifyWithToken(token);
     }
-  }, [tokenHash, type, verifyWithToken]);
-
-  const isOtpFlow = !tokenHash && email;
+  }, [token, verifyWithToken]);
 
   const header = (
     <AuthHeader
@@ -62,14 +54,14 @@ export function VerifyEmailForm() {
       }
       subtitle={
         status === verifyEmailFlowStatusEnum.success
-          ? 'Bienvenido a HabitFlow'
+          ? 'Bienvenido'
           : tagline
       }
     />
   );
 
   const renderContent = () => {
-    if (status === verifyEmailFlowStatusEnum.verifying) {
+    if (status === verifyEmailFlowStatusEnum.verifying || isVerifying) {
       return <VerifyingStatus />;
     }
 
@@ -82,7 +74,7 @@ export function VerifyEmailForm() {
         <VerifyErrorStatus
           message={
             errorMessage ??
-            'Este enlace o código puede haber expirado. No te preocupes, intenta de nuevo.'
+            'Este enlace puede haber expirado. No te preocupes, intenta de nuevo.'
           }
           onRetry={resetFlow}
           onBack={() => router.push('/login')}
@@ -90,20 +82,17 @@ export function VerifyEmailForm() {
       );
     }
 
-    if (isOtpFlow) {
-      return (
-        <OtpVerificationForm
-          email={email}
-          onSubmit={(otp) => verifyWithOtp({ email, otp })}
-          onResend={() => resendOtp(email)}
-          isVerifying={isVerifyingOtp}
-          isResending={isResendingOtp}
-          error={otpError}
-        />
-      );
-    }
-
-    return <CheckEmailStatus onAction={() => router.push('/login')} />;
+    // No token in URL — show "check your email" state with optional resend
+    return (
+      <CheckEmailStatus
+        actionLabel={email ? (isResending ? 'Enviando...' : 'Reenviar enlace') : 'Volver al inicio'}
+        onAction={
+          email
+            ? () => void resendVerificationEmail(email)
+            : () => router.push('/login')
+        }
+      />
+    );
   };
 
   return <AuthCard header={header}>{renderContent()}</AuthCard>;

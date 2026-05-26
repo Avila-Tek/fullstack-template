@@ -1,10 +1,11 @@
-import type { TSignUpInput } from '@repo/schemas';
 import { useMutation } from '@tanstack/react-query';
-import type { SignUpResult } from '../../domain/auth.model';
 import { AuthService } from '../../infrastructure';
+import type { SignUpInput } from '../../domain/auth.model';
+
+export type SignUpResult = { requiresEmailVerification: true };
 
 export function useSignUpMutation() {
-  return useMutation<SignUpResult, Error, TSignUpInput>({
+  return useMutation<SignUpResult, Error, SignUpInput>({
     mutationKey: ['auth', 'signUp'],
     mutationFn: (input) => AuthService.signUp(input),
   });

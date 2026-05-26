@@ -1,11 +1,10 @@
 import { getEnumObjectFromArray } from '@repo/utils';
 
 /**
- * Auth domain models - frontend-friendly shapes
- * Aligned with backend schema (Better Auth + Supabase)
+ * Auth domain models — aligned with Better Auth session endpoint response.
  *
- * NOTE: Form types are defined in infrastructure/auth.dto.ts
- * API input/output types come from @repo/schemas
+ * Form types live in domain/auth.form.ts
+ * Service input/output contracts are re-exported from @repo/schemas below.
  */
 
 export const userStatus = ['active', 'inactive'] as const;
@@ -22,22 +21,37 @@ export interface Role {
   permissions: string[];
 }
 
+/**
+ * Application User — aligned with Better Auth's session endpoint response.
+ *
+ * Core fields (always present): id, email, name, emailVerified, image, createdAt, updatedAt.
+ * Extended fields (optional until backend adds them in F3/F7): firstName, lastName, etc.
+ */
 export interface User {
   id: string;
   email: string;
-  firstName: string | null;
-  lastName: string | null;
-  timezone?: string;
-  status: TUserStatusEnum;
-  role: Role | null;
+  /** Full display name returned by Better Auth */
+  name: string;
+  emailVerified: boolean;
+  image?: string | null;
   createdAt: Date;
   updatedAt: Date;
+  // Extended fields — optional until backend adds them
+  firstName?: string | null;
+  lastName?: string | null;
+  timezone?: string;
+  status?: TUserStatusEnum;
+  role?: Role | null;
 }
 
+/**
+ * Active session — cookie-based (Better Auth).
+ * No JWT tokens are stored in JS. The session is maintained via an HTTPOnly cookie.
+ */
 export interface Session {
   user: User;
-  accessToken: string;
-  refreshToken: string;
+  sessionId: string;
+  expiresAt: Date;
 }
 
 export interface AuthError {
@@ -50,18 +64,22 @@ export type AuthState =
   | { status: 'loading' }
   | { status: 'authenticated'; session: Session };
 
-/**
- * Response types
- */
+// ── Service input/output contracts ──────────────────────────────────────────
+// Sourced from @repo/schemas (single source of truth for endpoint shapes).
 
-export interface SignUpResult {
-  user: User | null;
-  requiresEmailConfirmation: boolean;
-}
+export type {
+  TForgotPasswordInput as ForgetPasswordInput,
+  TResetPasswordInput as ResetPasswordInput,
+  TSendVerificationEmailInput as SendVerificationEmailInput,
+  TSignInEmailInput as SignInInput,
+  TSignInSocialInput as SignInSocialInput,
+  TSignUpEmailInput as SignUpInput,
+  TSignUpResult as SignUpResult,
+  TVerifyEmailInput as VerifyEmailInput,
+} from '@repo/schemas';
 
-/**
- * Permission check utilities
- */
+// ── Permission utilities ────────────────────────────────────────────────────
+
 export function hasPermission(
   user: User | null | undefined,
   permissionCode: string

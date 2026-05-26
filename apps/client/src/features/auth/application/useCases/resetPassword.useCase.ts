@@ -1,37 +1,37 @@
-import type { TResetPasswordInput } from '@repo/schemas';
-import type { TResetPasswordForm } from '../../infrastructure/auth.form';
-import { toResetPasswordInput } from '../../infrastructure/auth.transform';
+import type { TResetPasswordForm } from '../../domain/auth.form';
+import type { ResetPasswordInput } from '../../domain/auth.model';
 import { useResetPasswordMutation } from '../mutations/useResetPassword.mutation';
 
-type ResetPasswordResult = {
-  success: boolean;
-};
+type ResetPasswordResult =
+  | { success: true }
+  | { success: false; message: string };
 
 type Dependencies = {
-  resetPassword: (data: TResetPasswordInput) => Promise<void>;
+  resetPassword: (data: ResetPasswordInput) => Promise<void>;
 };
 
 export async function resetPasswordUseCase(
-  input: TResetPasswordForm,
+  input: TResetPasswordForm & { token: string },
   deps: Dependencies
 ): Promise<ResetPasswordResult> {
   try {
-    await deps.resetPassword(toResetPasswordInput(input));
+    await deps.resetPassword({ newPassword: input.newPassword, token: input.token });
     return { success: true };
-  } catch {
-    return { success: false };
+  } catch (e) {
+    const message = e instanceof Error ? e.message : 'Password reset failed';
+    return { success: false, message };
   }
 }
 
 export function useResetPassword() {
-  const resetPasswordMutation = useResetPasswordMutation();
+  const mutation = useResetPasswordMutation();
 
   return {
-    mutateAsync: (input: TResetPasswordForm) =>
+    mutateAsync: (input: TResetPasswordForm & { token: string }) =>
       resetPasswordUseCase(input, {
-        resetPassword: resetPasswordMutation.mutateAsync,
+        resetPassword: mutation.mutateAsync,
       }),
-    isPending: resetPasswordMutation.isPending,
-    error: resetPasswordMutation.error,
+    isPending: mutation.isPending,
+    error:     mutation.error,
   };
 }

@@ -5,8 +5,6 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import * as React from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
-import { useUser } from '@/src/shared/hooks/useUser';
-import { useSignIn } from '../../application/useCases/login.useCase';
 import { useSignUp } from '../../application/useCases/signUp.useCase';
 import {
   authPageTypeEnumObject,
@@ -17,7 +15,7 @@ import {
   createSignUpDefaultValues,
   signUpFormDefinition,
   type TSignUpForm,
-} from '../../infrastructure/auth.form';
+} from '../../domain/auth.form';
 import { AuthCard } from '../components/AuthCard';
 import { AuthDivider } from '../components/AuthDivider';
 import { AuthHeader } from '../components/AuthHeader';
@@ -31,8 +29,6 @@ export function SignUpForm() {
   );
 
   const signUp = useSignUp();
-  const signIn = useSignIn();
-  const { refetchUser } = useUser();
 
   const methods = useForm<TSignUpForm>({
     defaultValues: createSignUpDefaultValues(),
@@ -40,33 +36,16 @@ export function SignUpForm() {
   });
 
   async function onSubmit(data: TSignUpForm) {
-    if (signUp.isPending || signIn.isPending) {
-      return;
-    }
+    if (signUp.isPending) return;
 
     const result = await signUp.mutateAsync(data);
 
-    if (result.success) {
-      if (result.result?.requiresEmailConfirmation) {
-        const emailParam = encodeURIComponent(data.email);
-        router.push(
-          `/verify-email?${authSearchParamEnumObject.email}=${emailParam}`
-        );
-      } else if (result.result?.user) {
-        // Auto sign-in after successful signup
-        const signInResult = await signIn.mutateAsync({
-          email: data.email,
-          password: data.password,
-        });
-
-        if (signInResult.success && signInResult.session) {
-          // Refetch user data from UserContext (which includes subscription)
-          await refetchUser();
-          // Redirect based on subscription status
-          const redirectUrl = '/dashboard';
-          router.push(redirectUrl);
-        }
-      }
+    if (result.success && result.result?.requiresEmailVerification) {
+      // BA always requires email verification — redirect to check-email page
+      const emailParam = encodeURIComponent(data.email);
+      router.push(
+        `/verify-email?${authSearchParamEnumObject.email}=${emailParam}`
+      );
     }
   }
 

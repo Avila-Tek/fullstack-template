@@ -5,8 +5,8 @@ import { Button } from '@repo/ui/components/button';
 import { AuthService } from '../../infrastructure';
 
 export function GoogleLoginButton() {
-  function handleGoogleLogin() {
-    window.location.href = AuthService.getGoogleAuthUrl();
+  async function handleGoogleLogin() {
+    await AuthService.signInWithGoogle();
   }
 
   return (

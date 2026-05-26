@@ -7,7 +7,7 @@ import type {
   SignUpInput,
   SignUpResult,
   VerifyEmailInput,
-} from './auth.interfaces';
+} from '../domain/auth.model';
 import { toSessionDomain } from './auth.transform';
 
 /**

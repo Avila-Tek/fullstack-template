@@ -10,7 +10,7 @@ import {
 import { Input } from '@repo/ui/components/input';
 import Link from 'next/link';
 import { useFormContext } from 'react-hook-form';
-import type { TLoginForm } from '../../infrastructure/auth.form';
+import type { TLoginForm } from '../../domain/auth.form';
 import { FormError } from './FormError';
 import { LoadingButton } from './LoadingButton';
 import { PasswordInput } from './PasswordInput';

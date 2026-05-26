@@ -9,7 +9,7 @@ import {
 } from '@repo/ui/components/form';
 import { Input } from '@repo/ui/components/input';
 import { useFormContext } from 'react-hook-form';
-import type { TForgotPasswordForm } from '../../infrastructure/auth.form';
+import type { TForgotPasswordForm } from '../../domain/auth.form';
 import { FormError } from './FormError';
 import { LoadingButton } from './LoadingButton';
 

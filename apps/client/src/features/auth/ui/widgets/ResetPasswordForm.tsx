@@ -16,7 +16,7 @@ import {
   createResetPasswordDefaultValues,
   resetPasswordFormDefinition,
   type TResetPasswordForm,
-} from '../../infrastructure/auth.form';
+} from '../../domain/auth.form';
 import { AuthCard } from '../components/AuthCard';
 import { AuthHeader } from '../components/AuthHeader';
 import { ResetPasswordFormContent } from '../components/ResetPasswordFormContent';
@@ -24,7 +24,8 @@ import { ResetPasswordFormContent } from '../components/ResetPasswordFormContent
 export function ResetPasswordForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const email = searchParams.get(authSearchParamEnumObject.email) ?? '';
+  // BA sends the reset token as a query param in the email link
+  const token = searchParams.get(authSearchParamEnumObject.token) ?? '';
   const [tagline] = React.useState(() =>
     getRandomTagline(authPageTypeEnumObject.forgotPassword)
   );
@@ -33,16 +34,14 @@ export function ResetPasswordForm() {
   const resetPassword = useResetPassword();
 
   const methods = useForm<TResetPasswordForm>({
-    defaultValues: createResetPasswordDefaultValues({ email }),
+    defaultValues: createResetPasswordDefaultValues(),
     resolver: zodResolver(resetPasswordFormDefinition),
   });
 
   async function onSubmit(data: TResetPasswordForm) {
-    if (disabled) {
-      return;
-    }
+    if (disabled) return;
     setDisabled(true);
-    const result = await resetPassword.mutateAsync(data);
+    const result = await resetPassword.mutateAsync({ ...data, token });
     if (result.success) {
       router.push(`/login?${authSearchParamEnumObject.reset}=success`);
     }
@@ -61,13 +60,12 @@ export function ResetPasswordForm() {
     </Link>
   );
 
-  if (!email) {
+  if (!token) {
     return (
       <AuthCard header={header} footer={footer}>
         <div className="text-center py-4">
           <p className="text-sm txt-tertiary-600">
-            No se proporcionó un correo electrónico. Por favor, inicia el
-            proceso de recuperación nuevamente.
+            Enlace de restablecimiento inválido. Por favor, solicita uno nuevo.
           </p>
         </div>
       </AuthCard>
@@ -81,7 +79,6 @@ export function ResetPasswordForm() {
           <ResetPasswordFormContent
             disabled={disabled}
             error={resetPassword.error}
-            email={email}
           />
         </form>
       </FormProvider>
