@@ -153,7 +153,7 @@ export class BetterAuthService implements OnModuleInit {
 
       hooks: {
         before: createAuthMiddleware(async (ctx) => {
-          await createSignUpBeforeHook({ captchaPort, db })(ctx);
+          await createSignUpBeforeHook({ captchaPort })(ctx);
           await createSignInBeforeHook({ bruteForce: bruteForcePort })(ctx);
         }),
         after: createAuthMiddleware(async (ctx) => {
