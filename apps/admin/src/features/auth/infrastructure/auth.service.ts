@@ -1,4 +1,5 @@
 import { authClient } from '@repo/auth';
+import { betterAuthErrorMessage } from '../domain/auth.errors';
 import type { Session } from '../domain/auth.model';
 import type { SignInInput } from '../domain/auth.model';
 import { toSessionDomain } from './auth.transform';
@@ -15,7 +16,9 @@ export class AuthServiceClass {
       password: input.password,
     });
     if (result.error || !result.data) {
-      throw new Error(result.error?.message ?? 'Sign in failed');
+      throw new Error(
+        betterAuthErrorMessage(result.error?.code, result.error?.message, 'Error al iniciar sesión.')
+      );
     }
     // BA sets session cookie on sign-in; fetch full session for domain mapping.
     const sessionResult = await authClient.getSession();
@@ -28,7 +31,9 @@ export class AuthServiceClass {
   async signOut(): Promise<void> {
     const result = await authClient.signOut();
     if (result.error) {
-      throw new Error(result.error.message ?? 'Sign out failed');
+      throw new Error(
+        betterAuthErrorMessage(result.error.code, result.error.message, 'Error al cerrar sesión.')
+      );
     }
   }
 }

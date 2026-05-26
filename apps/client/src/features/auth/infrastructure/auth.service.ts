@@ -1,4 +1,5 @@
 import { authClient } from '@repo/auth';
+import { betterAuthErrorMessage } from '../domain/auth.errors';
 import type { Session } from '../domain/auth.model';
 import type {
   ForgetPasswordInput,
@@ -27,7 +28,9 @@ export class AuthServiceClass {
       callbackURL: input.callbackURL,
     });
     if (result.error || !result.data) {
-      throw new Error(result.error?.message ?? 'Sign in failed');
+      throw new Error(
+        betterAuthErrorMessage(result.error?.code, result.error?.message, 'Error al iniciar sesión.')
+      );
     }
     // BA sets the session cookie on sign-in; fetch the full session for domain mapping.
     const sessionResult = await authClient.getSession();
@@ -45,7 +48,9 @@ export class AuthServiceClass {
       callbackURL: input.callbackURL,
     });
     if (result.error) {
-      throw new Error(result.error.message ?? 'Sign up failed');
+      throw new Error(
+        betterAuthErrorMessage(result.error.code, result.error.message, 'Error al crear la cuenta.')
+      );
     }
     return { requiresEmailVerification: true };
   }
@@ -53,7 +58,9 @@ export class AuthServiceClass {
   async signOut(): Promise<void> {
     const result = await authClient.signOut();
     if (result.error) {
-      throw new Error(result.error.message ?? 'Sign out failed');
+      throw new Error(
+        betterAuthErrorMessage(result.error.code, result.error.message, 'Error al cerrar sesión.')
+      );
     }
   }
 
@@ -64,7 +71,9 @@ export class AuthServiceClass {
       redirectTo: input.redirectTo ?? '/auth/reset-password',
     });
     if (result.error) {
-      throw new Error(result.error.message ?? 'Failed to send reset email');
+      throw new Error(
+        betterAuthErrorMessage(result.error.code, result.error.message, 'Error al enviar el correo de restablecimiento.')
+      );
     }
   }
 
@@ -75,7 +84,9 @@ export class AuthServiceClass {
       token:       input.token,
     });
     if (result.error) {
-      throw new Error(result.error.message ?? 'Password reset failed');
+      throw new Error(
+        betterAuthErrorMessage(result.error.code, result.error.message, 'Error al restablecer la contraseña.')
+      );
     }
   }
 
@@ -83,7 +94,9 @@ export class AuthServiceClass {
   async verifyEmail(input: VerifyEmailInput): Promise<void> {
     const result = await authClient.verifyEmail({ query: { token: input.token } });
     if (result.error) {
-      throw new Error(result.error.message ?? 'Email verification failed');
+      throw new Error(
+        betterAuthErrorMessage(result.error.code, result.error.message, 'Error al verificar el correo.')
+      );
     }
   }
 
@@ -94,7 +107,9 @@ export class AuthServiceClass {
       callbackURL: '/auth/email-verified',
     });
     if (result.error) {
-      throw new Error(result.error.message ?? 'Failed to send verification email');
+      throw new Error(
+        betterAuthErrorMessage(result.error.code, result.error.message, 'Error al enviar el correo de verificación.')
+      );
     }
   }
 
@@ -105,7 +120,9 @@ export class AuthServiceClass {
       callbackURL: callbackURL ?? '/auth/callback',
     });
     if (result.error) {
-      throw new Error(result.error.message ?? 'Google sign-in failed');
+      throw new Error(
+        betterAuthErrorMessage(result.error.code, result.error.message, 'Error al iniciar sesión con Google.')
+      );
     }
   }
 }
