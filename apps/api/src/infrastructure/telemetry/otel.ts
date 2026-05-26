@@ -1,12 +1,14 @@
 /**
  * OpenTelemetry SDK bootstrap.
  *
- * This file MUST be loaded via --require / NODE_OPTIONS before any other
- * module so that auto-instrumentation patches land before NestJS initialises.
- *
- * In dev:  NODE_OPTIONS='--require ./src/infrastructure/telemetry/otel.ts' nest start --watch
+ * In dev:  imported at the top of main.ts (SDK starts without full auto-instrumentation)
  * In prod: node --require ./dist/infrastructure/telemetry/otel.js dist/main.js
+ *          (preloaded so patches apply before any module loads)
  */
+
+// Load .env before anything else — env.ts parses process.env at import time
+import 'dotenv/config';
+
 import { NodeSDK } from '@opentelemetry/sdk-node';
 import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node';
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
@@ -25,6 +27,8 @@ const resource = resourceFromAttributes({
   [ATTR_SERVICE_NAME]: serviceName,
   [ATTR_SERVICE_VERSION]: serviceVersion,
   'service.namespace': serviceNamespace,
+  // Schema standard: deployment.environment is a required resource attribute
+  'deployment.environment': process.env.NODE_ENV ?? 'development',
 });
 
 const traceExporter = otlpEndpoint ? new OTLPTraceExporter({ url: `${otlpEndpoint}/v1/traces` }) : undefined;
