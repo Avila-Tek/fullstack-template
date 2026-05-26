@@ -1,0 +1,22 @@
+server:
+  http_listen_port: 3200
+
+distributor:
+  receivers:
+    otlp:
+      protocols:
+        grpc:
+          endpoint: 0.0.0.0:4317  # standard OTLP gRPC — must differ from Tempo's own gRPC server (9095)
+        http:
+          endpoint: 0.0.0.0:4318  # standard OTLP HTTP
+
+storage:
+  trace:
+    backend: local
+    local:
+      path: /tmp/tempo/blocks
+
+# Retention: keep traces for 72 hours in local development
+compactor:
+  compaction:
+    block_retention: 72h

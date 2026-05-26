@@ -1,0 +1,86 @@
+# OpenTelemetry Collector — local development configuration
+# Receives OTLP (gRPC + HTTP), processes, and exports to Loki / Prometheus / Tempo.
+
+extensions:
+  # Health check endpoint — curl http://localhost:13133/
+  health_check:
+    endpoint: 0.0.0.0:13133
+
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+
+processors:
+  # Batches spans/logs/metrics before exporting — reduces network overhead
+  batch:
+    timeout: 5s
+    send_batch_size: 1000
+
+  # Adds resource attributes to all telemetry — useful for environment-level labeling
+  resource:
+    attributes:
+      - key: collector.version
+        value: "0.102.0"
+        action: insert
+
+  # Memory limiter — prevents the Collector from OOM-killing under high load
+  memory_limiter:
+    check_interval: 1s
+    limit_mib: 512
+    spike_limit_mib: 128
+
+exporters:
+  # Logs → Loki
+  loki:
+    endpoint: http://loki:3100/loki/api/v1/push
+    default_labels_enabled:
+      exporter: false
+      job: true
+    tls:
+      insecure: true
+
+  # Metrics → Prometheus (remote write)
+  prometheusremotewrite:
+    endpoint: http://prometheus:9090/api/v1/write
+    tls:
+      insecure: true
+
+  # Traces → Tempo (OTLP/HTTP — use otlphttp exporter, not otlp which is gRPC-only)
+  otlphttp/tempo:
+    endpoint: http://tempo:4318
+    tls:
+      insecure: true
+
+  # Debug exporter — prints telemetry to stdout (disable in production)
+  debug:
+    verbosity: basic
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [memory_limiter, batch]
+      exporters: [otlphttp/tempo]
+
+    metrics:
+      receivers: [otlp]
+      processors: [memory_limiter, batch]
+      exporters: [prometheusremotewrite]
+
+    logs:
+      receivers: [otlp]
+      processors: [memory_limiter, batch, resource]
+      exporters: [loki]
+
+  extensions: [health_check]
+
+  telemetry:
+    logs:
+      level: warn   # Collector's own log level — set to warn to reduce noise
+    metrics:
+      level: basic
+      address: 0.0.0.0:8889   # Prometheus scrapes self-metrics here
