@@ -1,31 +1,33 @@
+import { authClient } from '@repo/auth';
 import type { User } from '@repo/auth';
-import type { UserSession } from '../domain/currentUser.model';
-import type {
-  CurrentUserApi,
-  CurrentUserDto,
-  SessionDto,
-} from './currentUser.interfaces';
 import {
-  toCurrentUserDomain,
-  toUserSessionDomain,
-} from './currentUser.transform';
+  betterAuthUserSchema,
+} from '@repo/schemas';
 
+/**
+ * CurrentUserServiceClass fetches the authenticated user from Better Auth.
+ * The BA session endpoint returns both the session and user — we parse the
+ * user through Zod to catch API contract drift early.
+ */
 export class CurrentUserServiceClass {
-  constructor(private api: CurrentUserApi) {}
-
   async getCurrentUser(): Promise<User> {
-    const result = await this.api.getCurrentUser();
-    if (!result.success) {
-      throw new Error(result.error);
+    const result = await authClient.getSession();
+    if (!result.data?.user) {
+      throw new Error('Not authenticated');
     }
-    return toCurrentUserDomain(result.data as CurrentUserDto);
-  }
-
-  async getSession(): Promise<UserSession> {
-    const result = await this.api.getSession();
-    if (!result.success) {
-      throw new Error(result.error);
-    }
-    return toUserSessionDomain(result.data as SessionDto);
+    const dto = betterAuthUserSchema.parse(result.data.user);
+    return {
+      id:            dto.id,
+      email:         dto.email,
+      name:          dto.name,
+      emailVerified: dto.emailVerified,
+      image:         dto.image ?? null,
+      createdAt:     dto.createdAt,
+      updatedAt:     dto.updatedAt,
+      firstName:     dto.firstName ?? null,
+      lastName:      dto.lastName ?? null,
+      timezone:      dto.timezone,
+      status:        dto.status,
+    };
   }
 }

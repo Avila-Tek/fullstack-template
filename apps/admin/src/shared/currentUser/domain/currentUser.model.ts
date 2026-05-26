@@ -1,21 +1,7 @@
 /**
- * Current User domain models for admin
- * Uses types from @repo/auth
+ * Current User domain models for admin.
+ * Re-exports types from @repo/auth — no custom session types needed
+ * since Better Auth manages session state via HTTPOnly cookie.
  */
 
 export type { Role, User } from '@repo/auth';
-
-export interface UserSession {
-  user: {
-    id: string;
-    email: string;
-    firstName: string | null;
-    lastName: string | null;
-    timezone?: string;
-    status: string;
-    createdAt: Date;
-    updatedAt: Date;
-  };
-  accessToken: string;
-  refreshToken: string;
-}

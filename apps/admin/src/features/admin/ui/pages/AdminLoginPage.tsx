@@ -10,12 +10,12 @@ import {
   createLoginDefaultValues,
   loginFormDefinition,
   type TLoginForm,
-} from '@/src/features/auth/infrastructure/auth.form';
+} from '@/src/features/auth/domain/auth.form';
 import { useUser } from '@/src/shared/hooks/useUser';
 
 export function AdminLoginPage() {
   const router = useRouter();
-  const { user, setSession, clearSession, refetchUser } = useUser();
+  const { user, refetchUser, clearSession } = useUser();
   const signInMutation = useSignInMutation();
   const [error, setError] = React.useState<string | null>(null);
   const [isValidatingRole, setIsValidatingRole] = React.useState(false);
@@ -29,51 +29,33 @@ export function AdminLoginPage() {
     resolver: zodResolver(loginFormDefinition),
   });
 
-  // Verificar rol después de que el usuario se actualice
+  // After sign-in triggers a user refetch, validate admin role
   React.useEffect(() => {
-    if (isValidatingRole && user) {
-      if (isAdmin(user)) {
-        router.push('/admin/dashboard');
-      } else {
-        clearSession();
-        setError('Acceso denegado. Solo los administradores pueden acceder.');
-        setIsValidatingRole(false);
-      }
+    if (!isValidatingRole || !user) return;
+    if (isAdmin(user)) {
+      router.push('/admin/dashboard');
+    } else {
+      void clearSession();
+      setError('Acceso denegado. Solo los administradores pueden acceder.');
+      setIsValidatingRole(false);
     }
   }, [user, isValidatingRole, router, clearSession]);
 
   async function onSubmit(data: TLoginForm) {
     setError(null);
     try {
-      const session = await signInMutation.mutateAsync(data);
-
-      // Guardar la sesión primero
-      setSession({
-        user: {
-          id: session.user.id,
-          email: session.user.email,
-          firstName: session.user.firstName,
-          lastName: session.user.lastName,
-          timezone: session.user.timezone ?? '',
-          status: session.user.status,
-          createdAt: session.user.createdAt,
-          updatedAt: session.user.updatedAt,
-        },
-        accessToken: session.accessToken,
-        refreshToken: session.refreshToken,
-      });
-
-      // Obtener el usuario completo con el rol
+      // BA signs in and sets the HTTPOnly session cookie
+      await signInMutation.mutateAsync(data);
+      // Refetch user (with role) then validate in useEffect
       setIsValidatingRole(true);
       await refetchUser();
-      // La validación del rol se hace en el useEffect
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error al iniciar sesión');
+      setIsValidatingRole(false);
     }
   }
 
-  const isLoading =
-    isSubmitting || signInMutation.isPending || isValidatingRole;
+  const isLoading = isSubmitting || signInMutation.isPending || isValidatingRole;
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-900 px-4">
@@ -153,9 +135,7 @@ export function AdminLoginPage() {
           <p className="text-sm text-gray-400">
             ¿No eres administrador?{' '}
             <a
-              href={
-                process.env.NEXT_PUBLIC_CLIENT_URL || 'http://localhost:3002'
-              }
+              href={process.env.NEXT_PUBLIC_CLIENT_URL ?? 'http://localhost:3002'}
               className="text-blue-400 hover:text-blue-300 transition-colors"
             >
               Ir al sitio principal

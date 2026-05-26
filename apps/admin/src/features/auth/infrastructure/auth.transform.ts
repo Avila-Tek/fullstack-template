@@ -1,35 +1,40 @@
-import type { Role, Session, User } from '@repo/auth';
-import type { TRole } from '@repo/schemas';
-import type { AuthSessionDto, AuthUserDto } from './auth.interfaces';
+import {
+  betterAuthUserSchema,
+  getSessionResponseSchema,
+  type TBetterAuthUser,
+  type TGetSessionResponse,
+} from '@repo/schemas';
+import type { Session, User } from '../domain/auth.model';
 
-export function toRoleDomain(dto: TRole | null | undefined): Role | null {
-  if (!dto) return null;
+/**
+ * Parse the raw Better Auth user payload through Zod and return a domain User.
+ * Throws a ZodError if the shape doesn't match (detects API contract drift early).
+ */
+export function toUserDomain(raw: unknown): User {
+  const dto: TBetterAuthUser = betterAuthUserSchema.parse(raw);
   return {
-    id: dto.id,
-    code: dto.code as 'USER' | 'ADMIN',
-    name: dto.name,
-    permissions: dto.permissions ?? [],
+    id:            dto.id,
+    email:         dto.email,
+    name:          dto.name,
+    emailVerified: dto.emailVerified,
+    image:         dto.image ?? null,
+    createdAt:     dto.createdAt,
+    updatedAt:     dto.updatedAt,
+    firstName:     dto.firstName ?? null,
+    lastName:      dto.lastName ?? null,
+    timezone:      dto.timezone,
+    status:        dto.status,
   };
 }
 
-export function toUserDomain(dto: AuthUserDto): User {
+/**
+ * Parse the raw Better Auth getSession response through Zod and return a domain Session.
+ */
+export function toSessionDomain(raw: unknown): Session {
+  const dto: TGetSessionResponse = getSessionResponseSchema.parse(raw);
   return {
-    id: dto.id,
-    email: dto.email,
-    firstName: dto.firstName ?? null,
-    lastName: dto.lastName ?? null,
-    timezone: dto.timezone ?? '',
-    status: dto.status as 'active' | 'inactive',
-    role: toRoleDomain(dto.role),
-    createdAt: dto.createdAt ? new Date(dto.createdAt) : new Date(),
-    updatedAt: dto.updatedAt ? new Date(dto.updatedAt) : new Date(),
-  };
-}
-
-export function toSessionDomain(dto: AuthSessionDto): Session {
-  return {
-    user: toUserDomain(dto.user),
-    accessToken: dto.accessToken,
-    refreshToken: dto.refreshToken,
+    sessionId: dto.session.id,
+    expiresAt: dto.session.expiresAt,
+    user:      toUserDomain(dto.user),
   };
 }
