@@ -12,3 +12,5 @@ export {
   useAuthGuard,
   useRoleRedirect,
 } from './useRoleRedirect';
+
+export { useSession } from './use-session';
