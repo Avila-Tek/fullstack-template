@@ -7,7 +7,7 @@ import {
 import { Reflector } from '@nestjs/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { SKIP_API_RESPONSE } from './skip-api-response.decorator';
+import { SKIP_API_RESPONSE } from './skip-api-response.decorator.js';
 
 interface ApiResponse<T> {
   success: boolean;

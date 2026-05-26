@@ -1,8 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
-import type Redis from 'ioredis';
-import { REDIS_CLIENT } from '@infra/redis/redis.constants.js';
-import { BruteForcePort } from '@/auth/application/ports/out/brute-force.port.js';
-import { env } from '@/env.js';
+import type { Redis } from 'ioredis';
+import { REDIS_CLIENT } from '../../../infrastructure/redis/redis.constants.js';
+import { BruteForcePort } from '../../application/ports/out/brute-force.port.js';
+import { env } from '../../../env.js';
 
 @Injectable()
 export class RedisBruteForceAdapter extends BruteForcePort {

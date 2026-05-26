@@ -44,7 +44,7 @@
                                ▼
                          ┌──────────┐
                          │ Grafana  │
-                         │ :3000    │
+                         │ :8080    │
                          └──────────┘
 
 Sentry (errores críticos — complementario, no reemplaza Loki)
@@ -500,7 +500,7 @@ docker compose -f docker-compose.observability.yml up -d
 
 | Servicio | Puerto host | Uso |
 |---|---|---|
-| Grafana | **3000** | UI principal — Explore → Loki/Tempo/Prometheus |
+| Grafana | **8080** | UI principal — Explore → Loki/Tempo/Prometheus |
 | OTel Collector (OTLP HTTP) | **4318** | El API envía telemetría aquí |
 | OTel Collector (OTLP gRPC) | 4317 | Alternativa gRPC |
 | OTel Collector (self-metrics) | 8889 | Prometheus scrapes aquí |
@@ -536,7 +536,7 @@ curl -s http://localhost:8889/metrics | grep otelcol_exporter_sent_metric_points
 
 ### Ver traces en Grafana
 
-1. Abrir **http://localhost:3000**
+1. Abrir **http://localhost:8080**
 2. Sidebar → **Explore**
 3. Datasource: **Tempo**
 4. Query type: **Search** → Service Name: `fullstack-api`

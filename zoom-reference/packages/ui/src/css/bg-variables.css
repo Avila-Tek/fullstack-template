@@ -1,0 +1,266 @@
+/* Surface colors - renamed from bg-primary to avoid conflict with Tailwind's bg-primary */
+@utility bg-surface {
+  background-color: var(--color-base-white);
+  @variant dark {
+    background-color: var(--color-gray-dark-mode-950);
+  }
+}
+
+@utility bg-surface_alt {
+  background-color: var(--color-base-white);
+  @variant dark {
+    background-color: var(--color-gray-dark-mode-800);
+  }
+}
+
+@utility bg-surface_hover {
+  background-color: var(--color-gray-light-mode-50);
+  @variant dark {
+    background-color: var(--color-gray-dark-mode-800);
+  }
+}
+
+@utility bg-surface-solid {
+  background-color: var(--color-gray-light-mode-950);
+  @variant dark {
+    background-color: var(--color-gray-dark-mode-800);
+  }
+}
+
+@utility bg-secondary {
+  background-color: var(--color-gray-light-mode-50);
+  @variant dark {
+    background-color: var(--color-gray-dark-mode-900);
+  }
+}
+
+@utility bg-secondary_alt {
+  background-color: var(--color-gray-light-mode-50);
+  @variant dark {
+    background-color: var(--color-gray-dark-mode-950);
+  }
+}
+
+@utility bg-secondary_hover {
+  background-color: var(--color-gray-light-mode-100);
+  @variant dark {
+    background-color: var(--color-gray-dark-mode-800);
+  }
+}
+
+@utility bg-secondary_subtle {
+  background-color: var(--color-gray-light-mode-25);
+  @variant dark {
+    background-color: var(--color-gray-dark-mode-900);
+  }
+}
+
+@utility bg-secondary-solid {
+  background-color: var(--color-gray-light-mode-600);
+  @variant dark {
+    background-color: var(--color-gray-dark-mode-600);
+  }
+}
+
+@utility bg-tertiary {
+  background-color: var(--color-gray-light-mode-100);
+  @variant dark {
+    background-color: var(--color-gray-dark-mode-800);
+  }
+}
+
+@utility bg-quaternary {
+  background-color: var(--color-gray-light-mode-200);
+  @variant dark {
+    background-color: var(--color-gray-dark-mode-700);
+  }
+}
+
+@utility bg-active {
+  background-color: var(--color-gray-light-mode-50);
+  @variant dark {
+    background-color: var(--color-gray-dark-mode-800);
+  }
+}
+
+@utility bg-disabled {
+  background-color: var(--color-gray-light-mode-100);
+  @variant dark {
+    background-color: var(--color-gray-dark-mode-800);
+  }
+}
+
+@utility bg-disabled_subtle {
+  background-color: var(--color-gray-light-mode-50);
+  @variant dark {
+    background-color: var(--color-gray-dark-mode-900);
+  }
+}
+
+@utility bg-overlay {
+  background-color: var(--color-gray-light-mode-950);
+  @variant dark {
+    background-color: var(--color-gray-dark-mode-800);
+  }
+}
+
+@utility bg-brand-surface {
+  background-color: var(--color-brand-50);
+  @variant dark {
+    background-color: var(--color-brand-500);
+  }
+}
+
+@utility bg-brand-surface-hover {
+  background-color: var(--color-brand-100);
+  @variant dark {
+    background-color: var(--color-brand-800);
+  }
+}
+
+@utility bg-brand-surface_alt {
+  background-color: var(--color-brand-50);
+  @variant dark {
+    background-color: var(--color-gray-dark-mode-800);
+  }
+}
+
+@utility bg-brand-secondary {
+  background-color: var(--color-brand-100);
+  @variant dark {
+    background-color: var(--color-brand-600);
+  }
+}
+
+@utility bg-brand-tertiary {
+  background-color: var(--color-brand-25);
+  @variant dark {
+    background-color: var(--color-gray-dark-mode-800);
+  }
+}
+
+@utility bg-brand-solid {
+  background-color: var(--color-brand-600);
+  @variant dark {
+    background-color: var(--color-brand-600);
+  }
+}
+
+@utility bg-brand-solid_alt {
+  background-color: var(--color-brand-500);
+  @variant dark {
+    background-color: var(--color-brand-400);
+  }
+}
+
+@utility bg-brand-solid_hover {
+  background-color: var(--color-brand-700);
+  @variant dark {
+    background-color: var(--color-brand-500);
+  }
+}
+
+@utility bg-brand-section {
+  background-color: var(--color-brand-800);
+  @variant dark {
+    background-color: var(--color-gray-dark-mode-800);
+  }
+}
+
+@utility bg-brand-section_subtle {
+  background-color: var(--color-brand-700);
+  @variant dark {
+    background-color: var(--color-gray-dark-mode-950);
+  }
+}
+
+@utility bg-error-surface {
+  background-color: var(--color-error-50);
+  @variant dark {
+    background-color: var(--color-error-500);
+  }
+}
+
+@utility bg-error-secondary {
+  background-color: var(--color-error-100);
+  @variant dark {
+    background-color: var(--color-error-600);
+  }
+}
+
+@utility bg-error-solid {
+  background-color: var(--color-error-600);
+  @variant dark {
+    background-color: var(--color-error-600);
+  }
+}
+
+@utility bg-error-solid_hover {
+  background-color: var(--color-error-700);
+  @variant dark {
+    background-color: var(--color-error-500);
+  }
+}
+
+@utility bg-warning-surface {
+  background-color: var(--color-warning-50);
+  @variant dark {
+    background-color: var(--color-warning-500);
+  }
+}
+
+@utility bg-warning-secondary {
+  background-color: var(--color-warning-100);
+  @variant dark {
+    background-color: var(--color-warning-600);
+  }
+}
+
+@utility bg-warning-solid {
+  background-color: var(--color-warning-600);
+  @variant dark {
+    background-color: var(--color-warning-600);
+  }
+}
+
+@utility bg-success-surface {
+  background-color: var(--color-success-50);
+  @variant dark {
+    background-color: var(--color-success-500);
+  }
+}
+
+@utility bg-success-secondary {
+  background-color: var(--color-success-100);
+  @variant dark {
+    background-color: var(--color-success-600);
+  }
+}
+
+@utility bg-success-solid {
+  background-color: var(--color-success-600);
+  @variant dark {
+    background-color: var(--color-success-600);
+  }
+}
+
+@utility bg-utility-brand-100 {
+  background-color: var(--color-brand-100);
+  @variant dark {
+    background-color: var(--color-brand-900);
+  }
+}
+
+@utility bg-utility-brand-200 {
+  background-color: var(--color-brand-200);
+  @variant dark {
+    background-color: var(--color-brand-800);
+  }
+}
+
+@utility bg-utility-brand-700 {
+  background-color: var(--color-brand-700);
+  @variant dark {
+    background-color: var(--color-brand-300);
+  }
+}

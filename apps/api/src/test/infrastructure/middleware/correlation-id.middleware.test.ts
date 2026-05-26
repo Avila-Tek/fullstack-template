@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { CorrelationIdMiddleware } from '../../../infrastructure/middleware/correlation-id.middleware';
+import { CorrelationIdMiddleware } from '../../../infrastructure/middleware/correlation-id.middleware.js';
 
 describe('CorrelationIdMiddleware', () => {
   const middleware = new CorrelationIdMiddleware();

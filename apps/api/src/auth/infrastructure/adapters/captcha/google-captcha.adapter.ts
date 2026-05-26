@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { CaptchaPort } from '@/auth/application/ports/out/captcha.port.js';
-import { env } from '@/env.js';
+import { CaptchaPort } from '../../../application/ports/out/captcha.port.js';
+import { env } from '../../../../env.js';
 
 const RECAPTCHA_URL = 'https://www.google.com/recaptcha/api/siteverify';
 const SCORE_THRESHOLD = 0.5;

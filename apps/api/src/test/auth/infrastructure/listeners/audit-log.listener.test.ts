@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
-import { AuditLogListener } from '@/auth/infrastructure/listeners/audit-log.listener.js';
-import { AuthSignedInEvent } from '@/auth/application/events/auth.events.js';
+import { AuditLogListener } from '../../../../auth/infrastructure/listeners/audit-log.listener.js';
+import { AuthSignedInEvent } from '../../../../auth/application/events/auth.events.js';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import type { PinoLogger } from 'nestjs-pino';
 

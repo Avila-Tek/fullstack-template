@@ -1,0 +1,6 @@
+/* Design tokens — imported by apps after @import "tailwindcss" */
+@import "./src/css/color-variables.css";
+@import "./src/css/bg-variables.css";
+@import "./src/css/fg-variables.css";
+@import "./src/css/border-variables.css";
+@import "./src/css/text-variables.css";

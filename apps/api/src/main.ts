@@ -1,4 +1,6 @@
-// Sentry MUST be the first import so it instruments before NestJS loads
+// OTel MUST be first — SDK must start before any instrumented module loads
+import './infrastructure/telemetry/otel.js';
+// Sentry MUST be the second import so it instruments before NestJS loads
 import './instrument.js';
 import 'reflect-metadata';
 
@@ -32,13 +34,22 @@ async function bootstrap(): Promise<void> {
     credentials: true,
   });
 
+  // ── Global prefix ───────────────────────────────────────────────────────────
+  app.setGlobalPrefix('api/v1', { exclude: ['health'] });
+
   // ── Global validation pipe ──────────────────────────────────────────────────
   app.useGlobalPipes(new ZodValidationPipe());
 
   // ── Swagger (dev only) ──────────────────────────────────────────────────────
   setupSwagger(app);
 
-  await app.listen(env.PORT);
+  await app.listen(env.PORT, '0.0.0.0');
+
+  const logger = app.get(Logger);
+  const url = `http://localhost:${env.PORT}`;
+  logger.log(`🚀 API running on ${url}`, 'Bootstrap');
+  logger.log(`📄 Swagger available at ${url}/api/v1/docs`, 'Bootstrap');
+  logger.log(`🌍 Environment: ${env.NODE_ENV}`, 'Bootstrap');
 }
 
 bootstrap();

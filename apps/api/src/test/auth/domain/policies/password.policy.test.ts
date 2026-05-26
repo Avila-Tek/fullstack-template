@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { PasswordPolicy } from '@/auth/domain/policies/password.policy.js';
-import { PasswordPolicyFailedException } from '@/auth/domain/exceptions/password-policy-failed.exception.js';
+import { PasswordPolicy } from '../../../../auth/domain/policies/password.policy.js';
+import { PasswordPolicyFailedException } from '../../../../auth/domain/exceptions/password-policy-failed.exception.js';
 
 describe('PasswordPolicy.validate', () => {
   it('accepts a valid complex password', () => {

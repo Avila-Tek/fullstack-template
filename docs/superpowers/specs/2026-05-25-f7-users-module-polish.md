@@ -13,6 +13,7 @@ Dos responsabilidades: (1) **UsersModule** como demo funcional del patrón hexag
 
 ---
 
+
 ## Fuera de scope
 
 - Lógica de negocio real de usuarios (el módulo es demo/scaffold, no feature completa)

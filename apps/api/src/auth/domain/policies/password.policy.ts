@@ -1,4 +1,4 @@
-import { PasswordPolicyFailedException } from '@/auth/domain/exceptions/password-policy-failed.exception.js';
+import { PasswordPolicyFailedException } from '../exceptions/password-policy-failed.exception.js';
 
 const MIN_LENGTH = 8;
 const MAX_LENGTH = 128;

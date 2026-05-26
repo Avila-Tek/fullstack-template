@@ -1,4 +1,4 @@
-import { DomainException } from '@shared/domain-exception.js';
+import { DomainException } from '../../../shared/domain-exception.js';
 
 export class PasswordReuseException extends DomainException {
   constructor(meta?: Record<string, unknown>) {

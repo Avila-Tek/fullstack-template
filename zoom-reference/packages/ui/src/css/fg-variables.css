@@ -1,0 +1,197 @@
+@utility fg-primary-900 {
+  border-color: var(--color-gray-light-mode-900);
+  background-color: var(--color-gray-light-mode-900);
+  @variant dark {
+    border-color: var(--color-base-white);
+    background-color: var(--color-base-white);
+  }
+}
+
+@utility fg-secondary-700 {
+  border-color: var(--color-gray-light-mode-700);
+  background-color: var(--color-gray-light-mode-700);
+  @variant dark {
+    border-color: var(--color-gray-dark-mode-300);
+    background-color: var(--color-gray-dark-mode-300);
+  }
+}
+
+@utility fg-secondary_hover {
+  border-color: var(--color-gray-light-mode-800);
+  background-color: var(--color-gray-light-mode-800);
+  @variant dark {
+    border-color: var(--color-gray-dark-mode-200);
+    background-color: var(--color-gray-dark-mode-200);
+  }
+}
+
+@utility fg-tertiary-600 {
+  border-color: var(--color-gray-light-mode-600);
+  background-color: var(--color-gray-light-mode-600);
+  @variant dark {
+    border-color: var(--color-gray-dark-mode-400);
+    background-color: var(--color-gray-dark-mode-400);
+  }
+}
+
+@utility fg-tertiary_hover {
+  border-color: var(--color-gray-light-mode-700);
+  background-color: var(--color-gray-light-mode-700);
+  @variant dark {
+    border-color: var(--color-gray-dark-mode-300);
+    background-color: var(--color-gray-dark-mode-300);
+  }
+}
+
+@utility fg-quaternary-500 {
+  border-color: var(--color-gray-light-mode-500);
+  background-color: var(--color-gray-light-mode-500);
+  @variant dark {
+    border-color: var(--color-gray-dark-mode-400);
+    background-color: var(--color-gray-dark-mode-400);
+  }
+}
+
+@utility fg-quaternary_hover {
+  border-color: var(--color-gray-light-mode-600);
+  background-color: var(--color-gray-light-mode-600);
+  @variant dark {
+    border-color: var(--color-gray-dark-mode-300);
+    background-color: var(--color-gray-dark-mode-300);
+  }
+}
+
+@utility fg-quinary-400 {
+  border-color: var(--color-gray-light-mode-400);
+  background-color: var(--color-gray-light-mode-400);
+  @variant dark {
+    border-color: var(--color-gray-dark-mode-500);
+    background-color: var(--color-gray-dark-mode-500);
+  }
+}
+
+@utility fg-quinary_hover {
+  border-color: var(--color-gray-light-mode-500);
+  background-color: var(--color-gray-light-mode-500);
+  @variant dark {
+    border-color: var(--color-gray-dark-mode-400);
+    background-color: var(--color-gray-dark-mode-400);
+  }
+}
+
+@utility fg-senary-300 {
+  border-color: var(--color-gray-light-mode-300);
+  background-color: var(--color-gray-light-mode-300);
+  @variant dark {
+    border-color: var(--color-gray-dark-mode-600);
+    background-color: var(--color-gray-dark-mode-600);
+  }
+}
+
+@utility fg-white {
+  border-color: var(--color-base-white);
+  background-color: var(--color-base-white);
+  @variant dark {
+    border-color: var(--color-base-white);
+    background-color: var(--color-base-white);
+  }
+}
+
+@utility fg-disabled {
+  border-color: var(--color-gray-light-mode-400);
+  background-color: var(--color-gray-light-mode-400);
+  @variant dark {
+    border-color: var(--color-gray-dark-mode-500);
+    background-color: var(--color-gray-dark-mode-500);
+  }
+}
+
+@utility fg-disabled_subtle {
+  border-color: var(--color-gray-light-mode-300);
+  background-color: var(--color-gray-light-mode-300);
+  @variant dark {
+    border-color: var(--color-gray-dark-mode-600);
+    background-color: var(--color-gray-dark-mode-600);
+  }
+}
+
+@utility fg-brand-primary-600 {
+  border-color: var(--color-brand-600);
+  background-color: var(--color-brand-600);
+  @variant dark {
+    border-color: var(--color-brand-500);
+    background-color: var(--color-brand-500);
+  }
+}
+
+@utility fg-brand-primary_alt {
+  border-color: var(--color-brand-600);
+  background-color: var(--color-brand-600);
+  @variant dark {
+    border-color: var(--color-gray-dark-mode-300);
+    background-color: var(--color-gray-dark-mode-300);
+  }
+}
+
+@utility fg-brand-secondary-500 {
+  border-color: var(--color-brand-500);
+  background-color: var(--color-brand-500);
+  @variant dark {
+    border-color: var(--color-brand-500);
+    background-color: var(--color-brand-500);
+  }
+}
+
+@utility fg-error-primary {
+  border-color: var(--color-error-600);
+  background-color: var(--color-error-600);
+  @variant dark {
+    border-color: var(--color-error-500);
+    background-color: var(--color-error-500);
+  }
+}
+
+@utility fg-error-secondary {
+  border-color: var(--color-error-500);
+  background-color: var(--color-error-500);
+  @variant dark {
+    border-color: var(--color-error-400);
+    background-color: var(--color-error-400);
+  }
+}
+
+@utility fg-warning-primary {
+  border-color: var(--color-warning-600);
+  background-color: var(--color-warning-600);
+  @variant dark {
+    border-color: var(--color-warning-500);
+    background-color: var(--color-warning-500);
+  }
+}
+
+@utility fg-warning-secondary {
+  border-color: var(--color-warning-500);
+  background-color: var(--color-warning-500);
+  @variant dark {
+    border-color: var(--color-warning-400);
+    background-color: var(--color-warning-400);
+  }
+}
+
+@utility fg-success-primary {
+  border-color: var(--color-success-600);
+  background-color: var(--color-success-600);
+  @variant dark {
+    border-color: var(--color-success-500);
+    background-color: var(--color-success-500);
+  }
+}
+
+@utility fg-success-secondary {
+  border-color: var(--color-success-500);
+  background-color: var(--color-success-500);
+  @variant dark {
+    border-color: var(--color-success-400);
+    background-color: var(--color-success-400);
+  }
+}

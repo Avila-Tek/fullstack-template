@@ -1,11 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { desc, eq } from 'drizzle-orm';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
-import { DRIZZLE_CLIENT } from '@infra/database/drizzle.constants.js';
+import { DRIZZLE_CLIENT } from '../../../infrastructure/database/drizzle.constants.js';
 import {
   PasswordHistoryRepositoryPort,
   type PasswordHistoryEntry,
-} from '@/auth/application/ports/out/password-history.repository.port.js';
+} from '../../application/ports/out/password-history.repository.port.js';
 import { passwordHistory } from './auth.schema.js';
 
 @Injectable()

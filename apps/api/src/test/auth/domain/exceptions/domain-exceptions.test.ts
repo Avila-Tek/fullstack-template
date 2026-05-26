@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { AccountLockedException } from '@/auth/domain/exceptions/account-locked.exception.js';
-import { EmailDeliveryFailedException } from '@/auth/domain/exceptions/email-delivery-failed.exception.js';
-import { PasswordPolicyFailedException } from '@/auth/domain/exceptions/password-policy-failed.exception.js';
-import { PasswordReuseException } from '@/auth/domain/exceptions/password-reuse.exception.js';
-import { DomainException } from '@shared/domain-exception.js';
+import { AccountLockedException } from '../../../../auth/domain/exceptions/account-locked.exception.js';
+import { EmailDeliveryFailedException } from '../../../../auth/domain/exceptions/email-delivery-failed.exception.js';
+import { PasswordPolicyFailedException } from '../../../../auth/domain/exceptions/password-policy-failed.exception.js';
+import { PasswordReuseException } from '../../../../auth/domain/exceptions/password-reuse.exception.js';
+import { DomainException } from '../../../../shared/domain-exception.js';
 
 describe('Auth domain exceptions', () => {
   it('AccountLockedException has correct error code', () => {

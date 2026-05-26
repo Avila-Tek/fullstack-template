@@ -1,0 +1,31 @@
+{
+  "name": "@zoom/services",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "dev": "tsup --watch",
+    "build": "tsup"
+  },
+  "dependencies": {
+    "@zoom/schemas": "*",
+    "@zoom/utils": "*"
+  },
+  "devDependencies": {
+    "@zoom/typescript-config": "*",
+    "@types/node": "24.3.0",
+    "tsup": "8.5.0"
+  }
+}

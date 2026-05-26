@@ -1,0 +1,4 @@
+{"type":"server-started","port":49530,"host":"127.0.0.1","url_host":"localhost","url":"http://localhost:49530","screen_dir":"/Users/luisstanislao/Documents/Projects/avila-tek/fullstack-template/.superpowers/brainstorm/6364-1779803206/content","state_dir":"/Users/luisstanislao/Documents/Projects/avila-tek/fullstack-template/.superpowers/brainstorm/6364-1779803206/state"}
+{"type":"screen-added","file":"/Users/luisstanislao/Documents/Projects/avila-tek/fullstack-template/.superpowers/brainstorm/6364-1779803206/content/01-auth-layout-options.html"}
+{"type":"screen-added","file":"/Users/luisstanislao/Documents/Projects/avila-tek/fullstack-template/.superpowers/brainstorm/6364-1779803206/content/02-specs-complete.html"}
+{"type":"server-stopped","reason":"idle timeout"}

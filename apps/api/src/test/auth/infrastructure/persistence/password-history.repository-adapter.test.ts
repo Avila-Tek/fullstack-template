@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { DrizzlePasswordHistoryAdapter } from '@/auth/infrastructure/persistence/password-history.repository-adapter.js';
+import { DrizzlePasswordHistoryAdapter } from '../../../../auth/infrastructure/persistence/password-history.repository-adapter.js';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 
 function buildDb(rows: unknown[] = []): NodePgDatabase {

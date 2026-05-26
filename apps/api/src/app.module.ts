@@ -3,18 +3,18 @@ import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { LoggerModule } from 'nestjs-pino';
 
-import { DrizzleModule } from '@infra/database/drizzle.module.js';
-import { RedisModule } from '@infra/redis/redis.module.js';
-import { HealthModule } from '@infra/health/health.module.js';
-import { AllExceptionsFilter } from '@infra/filters/all-exceptions.filter.js';
-import { HttpExceptionFilter } from '@infra/filters/http-exception.filter.js';
-import { DomainExceptionFilter } from '@infra/filters/domain-exception.filter.js';
-import { ApiResponseInterceptor } from '@infra/interceptors/api-response.interceptor.js';
-import { CorrelationIdMiddleware } from '@infra/middleware/correlation-id.middleware.js';
-import { SessionActivityMiddleware } from '@/auth/infrastructure/middleware/session-activity.middleware.js';
-import { pinoConfig } from '@infra/telemetry/pino.config.js';
-import { SecurityModule } from '@/security.module.js';
-import { AuthModule } from '@/auth/module.js';
+import { DrizzleModule } from './infrastructure/database/drizzle.module.js';
+import { RedisModule } from './infrastructure/redis/redis.module.js';
+import { HealthModule } from './infrastructure/health/health.module.js';
+import { AllExceptionsFilter } from './infrastructure/filters/all-exceptions.filter.js';
+import { HttpExceptionFilter } from './infrastructure/filters/http-exception.filter.js';
+import { DomainExceptionFilter } from './infrastructure/filters/domain-exception.filter.js';
+import { ApiResponseInterceptor } from './infrastructure/interceptors/api-response.interceptor.js';
+import { CorrelationIdMiddleware } from './infrastructure/middleware/correlation-id.middleware.js';
+import { SessionActivityMiddleware } from './auth/infrastructure/middleware/session-activity.middleware.js';
+import { pinoConfig } from './infrastructure/telemetry/pino.config.js';
+import { SecurityModule } from './security.module.js';
+import { AuthModule } from './auth/module.js';
 
 @Module({
   imports: [

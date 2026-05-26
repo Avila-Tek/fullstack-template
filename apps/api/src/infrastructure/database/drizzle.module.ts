@@ -1,8 +1,8 @@
 import { Global, Module } from '@nestjs/common';
 import { drizzle, type NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';
-import { env } from '../../env';
-import { DRIZZLE_CLIENT } from './drizzle.constants';
+import { env } from '../../env.js';
+import { DRIZZLE_CLIENT } from './drizzle.constants.js';
 
 export { DRIZZLE_CLIENT };
 

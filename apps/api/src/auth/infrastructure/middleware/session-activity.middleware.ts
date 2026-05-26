@@ -1,8 +1,8 @@
 import { Inject, Injectable, NestMiddleware } from '@nestjs/common';
 import type { Request, Response, NextFunction } from 'express';
-import type Redis from 'ioredis';
-import { REDIS_CLIENT } from '@infra/redis/redis.constants.js';
-import { env } from '@/env.js';
+import type { Redis } from 'ioredis';
+import { REDIS_CLIENT } from '../../../infrastructure/redis/redis.constants.js';
+import { env } from '../../../env.js';
 
 @Injectable()
 export class SessionActivityMiddleware implements NestMiddleware {

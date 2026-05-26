@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { CheckPasswordHistoryUseCase } from '@/auth/application/use-cases/check-password-history.use-case.js';
-import { PasswordReuseException } from '@/auth/domain/exceptions/password-reuse.exception.js';
-import type { PasswordHistoryRepositoryPort } from '@/auth/application/ports/out/password-history.repository.port.js';
+import { CheckPasswordHistoryUseCase } from '../../../../auth/application/use-cases/check-password-history.use-case.js';
+import { PasswordReuseException } from '../../../../auth/domain/exceptions/password-reuse.exception.js';
+import type { PasswordHistoryRepositoryPort } from '../../../../auth/application/ports/out/password-history.repository.port.js';
 
 describe('CheckPasswordHistoryUseCase', () => {
   let useCase: CheckPasswordHistoryUseCase;

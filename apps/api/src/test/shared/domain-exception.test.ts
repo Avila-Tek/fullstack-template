@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { DomainException } from '../../shared/domain-exception';
+import { DomainException } from '../../shared/domain-exception.js';
 
 describe('DomainException', () => {
   it('stores the error code', () => {

@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 export const envSchema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
-  PORT: z.coerce.number().default(8080),
+  PORT: z.coerce.number().default(3000),
   API_BASE_URL: z.string().url(),
   CLIENT_URL: z.string().url(),
   APP_NAME: z.string().default('MyApp'),

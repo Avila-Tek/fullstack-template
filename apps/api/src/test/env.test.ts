@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 
 // Import only the schema, not the parsed env (which reads process.env)
-import { envSchema } from '../env';
+import { envSchema } from '../env.js';
 
 describe('envSchema', () => {
   const baseValid = {

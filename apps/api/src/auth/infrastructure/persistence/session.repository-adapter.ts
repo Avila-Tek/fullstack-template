@@ -1,11 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { and, eq, ne } from 'drizzle-orm';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
-import { DRIZZLE_CLIENT } from '@infra/database/drizzle.constants.js';
+import { DRIZZLE_CLIENT } from '../../../infrastructure/database/drizzle.constants.js';
 import {
   SessionRepositoryPort,
   type SessionRecord,
-} from '@/auth/application/ports/out/session.repository.port.js';
+} from '../../application/ports/out/session.repository.port.js';
 import { session } from './auth.schema.js';
 
 @Injectable()

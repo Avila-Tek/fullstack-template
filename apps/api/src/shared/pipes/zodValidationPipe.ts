@@ -4,7 +4,7 @@ import {
   type PipeTransform,
   type ArgumentMetadata,
 } from '@nestjs/common';
-import { ZodDtoClass } from '../utils/createZodDto';
+import { ZodDtoClass } from '../utils/createZodDto.js';
 
 @Injectable()
 export class ZodValidationPipe implements PipeTransform {

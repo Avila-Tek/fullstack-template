@@ -6,7 +6,7 @@ services:
     env_file: ./apps/api/.env
     restart: unless-stopped
     ports:
-      - 8080
+      - 3000
     mem_limit: 2g
     memswap_limit: -1
     mem_swappiness: 20

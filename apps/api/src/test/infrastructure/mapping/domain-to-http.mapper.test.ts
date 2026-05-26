@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { HttpStatus } from '@nestjs/common';
-import { domainToHttpStatus } from '../../../infrastructure/mapping/domain-to-http.mapper';
-import { domainErrorMessage } from '../../../infrastructure/i18n/domain-messages';
+import { domainToHttpStatus } from '../../../infrastructure/mapping/domain-to-http.mapper.js';
+import { domainErrorMessage } from '../../../infrastructure/i18n/domain-messages.js';
 
 describe('domainToHttpStatus', () => {
   it('returns 422 for unknown domain errors', () => {

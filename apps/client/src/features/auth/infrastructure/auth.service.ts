@@ -1,5 +1,4 @@
 import { authClient } from '@repo/auth';
-import { betterAuthErrorMessage } from '../domain/auth.errors';
 import type { Session } from '../domain/auth.model';
 import type {
   ForgetPasswordInput,
@@ -13,7 +12,7 @@ import { toSessionDomain } from './auth.transform';
 
 /**
  * AuthServiceClass wraps better-auth client calls with domain error handling.
- * All methods throw an Error with the backend-translated message on failure.
+ * Error messages come pre-translated from the backend (Accept-Language i18n).
  * The session is established via HTTPOnly cookie — signIn does NOT return tokens.
  *
  * Parsing contract: raw BA responses are parsed through Zod schemas
@@ -28,9 +27,7 @@ export class AuthServiceClass {
       callbackURL: input.callbackURL,
     });
     if (result.error || !result.data) {
-      throw new Error(
-        betterAuthErrorMessage(result.error?.code, result.error?.message, 'Error al iniciar sesión.')
-      );
+      throw new Error(result.error?.message ?? 'Error al iniciar sesión.');
     }
     // BA sets the session cookie on sign-in; fetch the full session for domain mapping.
     const sessionResult = await authClient.getSession();
@@ -48,9 +45,7 @@ export class AuthServiceClass {
       callbackURL: input.callbackURL,
     });
     if (result.error) {
-      throw new Error(
-        betterAuthErrorMessage(result.error.code, result.error.message, 'Error al crear la cuenta.')
-      );
+      throw new Error(result.error.message ?? 'Error al crear la cuenta.');
     }
     return { requiresEmailVerification: true };
   }
@@ -58,9 +53,7 @@ export class AuthServiceClass {
   async signOut(): Promise<void> {
     const result = await authClient.signOut();
     if (result.error) {
-      throw new Error(
-        betterAuthErrorMessage(result.error.code, result.error.message, 'Error al cerrar sesión.')
-      );
+      throw new Error(result.error.message ?? 'Error al cerrar sesión.');
     }
   }
 
@@ -71,9 +64,7 @@ export class AuthServiceClass {
       redirectTo: input.redirectTo ?? '/auth/reset-password',
     });
     if (result.error) {
-      throw new Error(
-        betterAuthErrorMessage(result.error.code, result.error.message, 'Error al enviar el correo de restablecimiento.')
-      );
+      throw new Error(result.error.message ?? 'Error al enviar el correo de restablecimiento.');
     }
   }
 
@@ -84,9 +75,7 @@ export class AuthServiceClass {
       token:       input.token,
     });
     if (result.error) {
-      throw new Error(
-        betterAuthErrorMessage(result.error.code, result.error.message, 'Error al restablecer la contraseña.')
-      );
+      throw new Error(result.error.message ?? 'Error al restablecer la contraseña.');
     }
   }
 
@@ -94,9 +83,7 @@ export class AuthServiceClass {
   async verifyEmail(input: VerifyEmailInput): Promise<void> {
     const result = await authClient.verifyEmail({ query: { token: input.token } });
     if (result.error) {
-      throw new Error(
-        betterAuthErrorMessage(result.error.code, result.error.message, 'Error al verificar el correo.')
-      );
+      throw new Error(result.error.message ?? 'Error al verificar el correo.');
     }
   }
 
@@ -107,9 +94,7 @@ export class AuthServiceClass {
       callbackURL: '/auth/email-verified',
     });
     if (result.error) {
-      throw new Error(
-        betterAuthErrorMessage(result.error.code, result.error.message, 'Error al enviar el correo de verificación.')
-      );
+      throw new Error(result.error.message ?? 'Error al enviar el correo de verificación.');
     }
   }
 
@@ -120,9 +105,7 @@ export class AuthServiceClass {
       callbackURL: callbackURL ?? '/auth/callback',
     });
     if (result.error) {
-      throw new Error(
-        betterAuthErrorMessage(result.error.code, result.error.message, 'Error al iniciar sesión con Google.')
-      );
+      throw new Error(result.error.message ?? 'Error al iniciar sesión con Google.');
     }
   }
 }

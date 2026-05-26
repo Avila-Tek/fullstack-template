@@ -1,8 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { HealthCheckError, HealthIndicator, HealthIndicatorResult } from '@nestjs/terminus';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
-import { DRIZZLE_CLIENT } from '../database/drizzle.constants';
-import { session } from '../../auth/infrastructure/persistence/auth.schema';
+import { DRIZZLE_CLIENT } from '../database/drizzle.constants.js';
+import { session } from '../../auth/infrastructure/persistence/auth.schema.js';
 
 @Injectable()
 export class AuthHealthIndicator extends HealthIndicator {

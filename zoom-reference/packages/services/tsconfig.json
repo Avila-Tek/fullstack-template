@@ -1,0 +1,10 @@
+{
+  "extends": "@zoom/typescript-config/library.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "removeComments": false,
+    "lib": ["ESNext", "DOM", "DOM.Iterable"]
+  },
+  "include": ["src"],
+  "exclude": ["node_modules", "dist"]
+}

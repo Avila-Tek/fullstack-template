@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { HealthCheckError } from '@nestjs/terminus';
-import { DatabaseHealthIndicator } from '../../../infrastructure/health/database.health-indicator';
+import { DatabaseHealthIndicator } from '../../../infrastructure/health/database.health-indicator.js';
 
 describe('DatabaseHealthIndicator', () => {
   it('returns up status when SELECT 1 succeeds', async () => {

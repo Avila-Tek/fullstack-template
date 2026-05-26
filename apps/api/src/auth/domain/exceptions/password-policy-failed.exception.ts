@@ -1,4 +1,4 @@
-import { DomainException } from '@shared/domain-exception.js';
+import { DomainException } from '../../../shared/domain-exception.js';
 
 export class PasswordPolicyFailedException extends DomainException {
   constructor(violations: string[]) {

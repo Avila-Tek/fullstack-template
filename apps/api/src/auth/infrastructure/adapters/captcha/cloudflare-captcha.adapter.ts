@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { CaptchaPort } from '@/auth/application/ports/out/captcha.port.js';
-import { env } from '@/env.js';
+import { CaptchaPort } from '../../../application/ports/out/captcha.port.js';
+import { env } from '../../../../env.js';
 
 const TURNSTILE_URL = 'https://challenges.cloudflare.com/turnstile/v0/siteverify';
 

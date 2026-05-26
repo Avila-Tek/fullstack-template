@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { HealthCheckError, HealthIndicator, HealthIndicatorResult } from '@nestjs/terminus';
 import { sql } from 'drizzle-orm';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
-import { DRIZZLE_CLIENT } from '../database/drizzle.constants';
+import { DRIZZLE_CLIENT } from '../database/drizzle.constants.js';
 
 @Injectable()
 export class DatabaseHealthIndicator extends HealthIndicator {

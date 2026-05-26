@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from 'vitest';
 import { ExecutionContext, CallHandler } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { of, lastValueFrom } from 'rxjs';
-import { ApiResponseInterceptor } from '../../../infrastructure/interceptors/api-response.interceptor';
+import { ApiResponseInterceptor } from '../../../infrastructure/interceptors/api-response.interceptor.js';
 
 function buildContext(): ExecutionContext {
   return {

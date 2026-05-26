@@ -1,0 +1,17 @@
+{
+	"extends": "@zoom/typescript-config/api.json",
+	"compilerOptions": {
+		"emitDecoratorMetadata": true,
+		"experimentalDecorators": true,
+		"outDir": "./dist",
+		"baseUrl": "./",
+		"incremental": true,
+		"noImplicitAny": false,
+		"strictBindCallApply": false,
+		"paths": {
+			"@/*": ["./src/*"]
+		}
+	},
+	"include": ["src/**/*"],
+	"exclude": ["node_modules", "dist", "test"]
+}

@@ -3,9 +3,9 @@ import { OnEvent } from '@nestjs/event-emitter';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 import { createHash } from 'node:crypto';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
-import { DRIZZLE_CLIENT } from '@infra/database/drizzle.constants.js';
-import { authAuditLog } from '@/auth/infrastructure/persistence/auth.schema.js';
-import type { AuthEvent } from '@/auth/application/events/auth.events.js';
+import { DRIZZLE_CLIENT } from '../../../infrastructure/database/drizzle.constants.js';
+import { authAuditLog } from '../persistence/auth.schema.js';
+import type { AuthEvent } from '../../application/events/auth.events.js';
 
 function sha256(value: string): string {
   return createHash('sha256').update(value).digest('hex');

@@ -1,14 +1,15 @@
 import { ApiBody, ApiResponse } from '@nestjs/swagger';
-import { SchemaObject } from '@nestjs/swagger/dist/interfaces/open-api-spec.interface';
 import { z } from 'zod';
 
-function toSwaggerSchema(schema: z.ZodType): SchemaObject {
+type JsonSchemaObject = Record<string, unknown>;
+
+function toSwaggerSchema(schema: z.ZodType): JsonSchemaObject {
   return z.toJSONSchema(schema, {
     // turns unrepresentable pieces (transforms) into "any"
     unrepresentable: 'any',
     // often helpful with pipelines: documents input shape
     io: 'input',
-  }) as unknown as SchemaObject;
+  }) as JsonSchemaObject;
 }
 
 export function ZodApiBody(schema: z.ZodType): MethodDecorator {

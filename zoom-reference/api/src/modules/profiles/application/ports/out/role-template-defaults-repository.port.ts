@@ -1,0 +1,13 @@
+import type { TPermissionKey, TShippingServiceKey } from '@zoom/schemas';
+
+export interface RoleTemplateDefaultsRecord {
+	id: string;
+	services: Array<{ key: TShippingServiceKey; enabled: boolean }>;
+	permissions: Array<{ key: TPermissionKey; allowed: boolean }>;
+}
+
+export abstract class RoleTemplateDefaultsRepositoryPort {
+	abstract findWithDefaults(
+		id: string,
+	): Promise<RoleTemplateDefaultsRecord | null>;
+}

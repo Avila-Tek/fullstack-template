@@ -168,6 +168,9 @@ export class BetterAuthService implements OnModuleInit {
       advanced: {
         cookiePrefix: env.COOKIE_PREFIX,
         useSecureCookies: env.NODE_ENV === 'production',
+        // Disable CSRF check in non-production so Postman/curl can hit auth
+        // endpoints without an Origin header. In production the check is on.
+        disableCSRFCheck: env.NODE_ENV !== 'production',
       },
     });
   }

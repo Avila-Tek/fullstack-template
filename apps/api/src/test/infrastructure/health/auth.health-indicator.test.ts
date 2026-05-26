@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { HealthCheckError } from '@nestjs/terminus';
-import { AuthHealthIndicator } from '../../../infrastructure/health/auth.health-indicator';
+import { AuthHealthIndicator } from '../../../infrastructure/health/auth.health-indicator.js';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 
 describe('AuthHealthIndicator', () => {

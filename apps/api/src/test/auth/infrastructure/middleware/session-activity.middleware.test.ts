@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import type Redis from 'ioredis';
-import { SessionActivityMiddleware } from '@/auth/infrastructure/middleware/session-activity.middleware.js';
+import type { Redis } from 'ioredis';
+import { SessionActivityMiddleware } from '../../../../auth/infrastructure/middleware/session-activity.middleware.js';
 import type { Request, Response, NextFunction } from 'express';
 
 function buildRedis(activityValue: string | null = '12345'): Redis {
