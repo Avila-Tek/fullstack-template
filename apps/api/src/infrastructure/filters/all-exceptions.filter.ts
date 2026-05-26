@@ -13,7 +13,8 @@ export class AllExceptionsFilter implements ExceptionFilter {
   catch(exception: unknown, host: ArgumentsHost): void {
     Sentry.captureException(exception);
 
-    this.logger.error({ errorCode: 'INTERNAL_ERROR' }, 'Unhandled exception');
+    // Include err for Loki context; stack is suppressed in production by buildErrSerializer
+    this.logger.error({ errorCode: 'INTERNAL_ERROR', err: exception }, 'Unhandled exception');
 
     const ctx = host.switchToHttp();
     const res = ctx.getResponse<{ status(c: number): { send(b: unknown): void } }>();

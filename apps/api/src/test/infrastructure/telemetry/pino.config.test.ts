@@ -76,4 +76,17 @@ describe('buildErrSerializer', () => {
     expect((prodSerialize(new CustomError()) as Record<string, unknown>)['type']).toBe('CustomError');
     expect((devSerialize(new CustomError()) as Record<string, unknown>)['type']).toBeDefined();
   });
+
+  it('handles non-Error throws defensively (production)', () => {
+    const serialize = buildErrSerializer(true);
+    expect((serialize('string error') as Record<string, unknown>)['type']).toBe('UnknownError');
+    expect((serialize('string error') as Record<string, unknown>)['message']).toBe('string error');
+  });
+
+  it('handles non-Error throws defensively (development)', () => {
+    const serialize = buildErrSerializer(false);
+    const result = serialize({ code: 'custom' }) as Record<string, unknown>;
+    expect(result['type']).toBe('UnknownError');
+    expect(result['stack']).toBeUndefined();
+  });
 });

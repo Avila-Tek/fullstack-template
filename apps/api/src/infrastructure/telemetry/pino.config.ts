@@ -11,11 +11,17 @@ const isProduction = env.NODE_ENV === 'production';
  */
 export function buildErrSerializer(
   production: boolean,
-): (err: Error) => Record<string, unknown> {
+): (err: unknown) => Record<string, unknown> {
   if (production) {
-    return (err: Error) => ({ type: err.name, message: err.message });
+    return (err: unknown) => {
+      if (err instanceof Error) return { type: err.name, message: err.message };
+      return { type: 'UnknownError', message: String(err) };
+    };
   }
-  return (err: Error) => ({ type: err.name, message: err.message, stack: err.stack });
+  return (err: unknown) => {
+    if (err instanceof Error) return { type: err.name, message: err.message, stack: err.stack };
+    return { type: 'UnknownError', message: String(err) };
+  };
 }
 
 export const pinoConfig: Params = {

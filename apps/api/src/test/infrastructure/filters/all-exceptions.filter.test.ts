@@ -60,13 +60,14 @@ describe('AllExceptionsFilter', () => {
     expect(Sentry.captureException).toHaveBeenCalledWith(err);
   });
 
-  it('logs a structured error with errorCode INTERNAL_ERROR', () => {
+  it('logs errorCode INTERNAL_ERROR with err context for Loki correlation', () => {
     const { _send, _status, ...host } = buildHost();
+    const err = new Error('boom');
 
-    filter.catch(new Error('boom'), host as unknown as ArgumentsHost);
+    filter.catch(err, host as unknown as ArgumentsHost);
 
     expect(mockLogger.error).toHaveBeenCalledWith(
-      expect.objectContaining({ errorCode: 'INTERNAL_ERROR' }),
+      expect.objectContaining({ errorCode: 'INTERNAL_ERROR', err }),
       expect.any(String),
     );
   });
