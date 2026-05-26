@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { Argon2HashAdapter } from '@/auth/infrastructure/adapters/argon2-hash.adapter.js';
+import { Argon2HashAdapter } from '../../../../auth/infrastructure/adapters/argon2-hash.adapter.js';
 
 describe('Argon2HashAdapter', () => {
   const adapter = new Argon2HashAdapter();

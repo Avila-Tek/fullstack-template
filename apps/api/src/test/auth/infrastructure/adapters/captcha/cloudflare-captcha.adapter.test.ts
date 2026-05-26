@@ -1,8 +1,8 @@
 import { describe, it, expect, vi } from 'vitest';
-import { CloudflareCaptchaAdapter } from '@/auth/infrastructure/adapters/captcha/cloudflare-captcha.adapter.js';
-import { env } from '@/env.js';
+import { CloudflareCaptchaAdapter } from '../../../../../auth/infrastructure/adapters/captcha/cloudflare-captcha.adapter.js';
+import { env } from '../../../../../env.js';
 
-vi.mock('@/env.js', () => ({
+vi.mock('../../../../../env.js', () => ({
   env: {
     CAPTCHA_ENABLED: true,
     CAPTCHA_SECRET_KEY: 'test-secret',

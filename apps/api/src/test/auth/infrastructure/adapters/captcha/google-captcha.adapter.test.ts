@@ -1,8 +1,8 @@
 import { describe, it, expect, vi } from 'vitest';
-import { GoogleCaptchaAdapter } from '@/auth/infrastructure/adapters/captcha/google-captcha.adapter.js';
-import { env } from '@/env.js';
+import { GoogleCaptchaAdapter } from '../../../../../auth/infrastructure/adapters/captcha/google-captcha.adapter.js';
+import { env } from '../../../../../env.js';
 
-vi.mock('@/env.js', () => ({
+vi.mock('../../../../../env.js', () => ({
   env: {
     CAPTCHA_ENABLED: false,
     CAPTCHA_SECRET_KEY: undefined,

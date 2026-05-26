@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
-import { RedisBruteForceAdapter } from '@/auth/infrastructure/adapters/brute-force.adapter.js';
-import type Redis from 'ioredis';
+import { RedisBruteForceAdapter } from '../../../../auth/infrastructure/adapters/brute-force.adapter.js';
+import type { Redis } from 'ioredis';
 
 function buildRedis(incrResult = 1): Redis {
   return {

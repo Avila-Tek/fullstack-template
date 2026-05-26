@@ -1,31 +1,20 @@
 import { Injectable } from '@nestjs/common';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
-import * as nodemailer from 'nodemailer';
-import type { Transporter } from 'nodemailer';
+import * as postmark from 'postmark';
 import { EmailPort } from '../../application/ports/out/email.port.js';
 import { EmailDeliveryFailedException } from '../../domain/exceptions/email-delivery-failed.exception.js';
 import { env } from '../../../env.js';
 
 @Injectable()
-export class SmtpEmailAdapter extends EmailPort {
-  private readonly transporter: Transporter;
+export class PostmarkEmailAdapter extends EmailPort {
+  private readonly client: postmark.ServerClient;
 
   constructor(
-    @InjectPinoLogger(SmtpEmailAdapter.name)
+    @InjectPinoLogger(PostmarkEmailAdapter.name)
     private readonly logger: PinoLogger,
   ) {
     super();
-    this.transporter = nodemailer.createTransport(
-      env.EMAIL_SMTP_HOST
-        ? {
-            host: env.EMAIL_SMTP_HOST,
-            port: env.EMAIL_SMTP_PORT,
-            auth: env.EMAIL_SMTP_USER
-              ? { user: env.EMAIL_SMTP_USER, pass: env.EMAIL_SMTP_PASS }
-              : undefined,
-          }
-        : { jsonTransport: true }, // dev stub — logs to console, does not send
-    );
+    this.client = new postmark.ServerClient(env.POSTMARK_API_KEY ?? '');
   }
 
   async sendVerification(to: string, verificationUrl: string): Promise<void> {
@@ -54,10 +43,15 @@ export class SmtpEmailAdapter extends EmailPort {
 
   private async send(to: string, subject: string, text: string): Promise<void> {
     try {
-      await this.transporter.sendMail({ from: env.EMAIL_FROM, to, subject, text });
+      await this.client.sendEmail({
+        From: env.EMAIL_FROM,
+        To: to,
+        Subject: subject,
+        TextBody: text,
+      });
     } catch (err) {
       // Schema standard: never log PII — 'to' is an email address, 'subject' may contain context
-      this.logger.error({ err, errorCode: 'EMAIL_DELIVERY_FAILED' }, 'Email delivery failed');
+      this.logger.error({ err, errorCode: 'EMAIL_DELIVERY_FAILED' }, 'Postmark delivery failed');
       throw new EmailDeliveryFailedException({ to, subject });
     }
   }
