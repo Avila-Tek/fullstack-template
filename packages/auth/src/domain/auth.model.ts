@@ -1,10 +1,5 @@
 import { getEnumObjectFromArray } from '@repo/utils';
 
-/**
- * Auth domain models - frontend-friendly shapes
- * Aligned with backend schema (Better Auth + Supabase)
- */
-
 export const userStatus = ['active', 'inactive'] as const;
 export type TUserStatusEnum = (typeof userStatus)[number];
 export const userStatusEnumObject = getEnumObjectFromArray(userStatus);
@@ -19,22 +14,39 @@ export interface Role {
   permissions: string[];
 }
 
+/**
+ * Application User — aligned with Better Auth's session endpoint response.
+ *
+ * Fields present in every BA response: id, email, name, emailVerified, image, createdAt, updatedAt.
+ * Fields marked optional are not yet returned by BA; they will be populated once the backend
+ * adds custom user fields in F3 / F7.
+ */
 export interface User {
   id: string;
   email: string;
-  firstName: string | null;
-  lastName: string | null;
-  timezone?: string;
-  status: TUserStatusEnum;
-  role: Role | null;
+  /** Full display name returned by Better Auth ("John Doe") */
+  name: string;
+  emailVerified: boolean;
+  image?: string | null;
   createdAt: Date;
   updatedAt: Date;
+  // Extended fields — optional until backend adds them
+  firstName?: string | null;
+  lastName?: string | null;
+  timezone?: string;
+  status?: TUserStatusEnum;
+  role?: Role | null;
 }
 
+/**
+ * Active session — cookie-based (Better Auth).
+ * No JWT tokens are stored in the browser. The session is maintained via
+ * an HTTPOnly cookie managed by Better Auth.
+ */
 export interface Session {
   user: User;
-  accessToken: string;
-  refreshToken: string;
+  sessionId: string;
+  expiresAt: Date;
 }
 
 export interface AuthError {
@@ -48,13 +60,11 @@ export type AuthState =
   | { status: 'authenticated'; session: Session };
 
 export interface SignUpResult {
-  user: User | null;
-  requiresEmailConfirmation: boolean;
+  requiresEmailVerification: true;
 }
 
-/**
- * Permission check utilities
- */
+// ── Permission utilities ────────────────────────────────────────────────────
+
 export function hasPermission(
   user: User | null | undefined,
   permissionCode: string
