@@ -40,7 +40,7 @@ export class API {
 
     // Wire services with dependencies
     this.v1 = Object.freeze({
-      auth: new AuthService(this.httpClient, config.baseURL),
+      auth: new AuthService(this.httpClient),
       users: new UserService(this.httpClient),
     });
   }

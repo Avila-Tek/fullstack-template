@@ -1,37 +1,23 @@
 'use client';
 
+import { authClient } from '@repo/auth';
+import type { User } from '@repo/auth';
 import * as React from 'react';
-import {
-  clearLocalStorage,
-  getLocalStorageItem,
-  localStorageKeysEnumObject,
-  setLocalStorageItem,
-} from '@repo/services';
-import { useQueryClient } from '@tanstack/react-query';
 import { useCurrentUserQuery } from '@/src/shared/currentUser/application/queries/useCurrentUser.query';
 import {
   authStatusEnumObject,
-  currentUserQueryKey,
   type TAuthStatusEnum,
 } from '@/src/shared/currentUser/domain/currentUser.constants';
-import type {
-  CurrentUser,
-} from '@/src/shared/currentUser/domain/currentUser.model';
-import { type UserSession } from '@/src/shared/currentUser/domain/currentUser.model';
-import { CurrentUserService } from '@/src/shared/currentUser/infrastructure';
 
 interface UserContextState {
-  user: CurrentUser | null;
-  accessToken: string | null;
-  status: 'loading' | 'authenticated' | 'unauthenticated';
+  user: User | null;
+  status: TAuthStatusEnum;
   isAuthenticated: boolean;
   isLoading: boolean;
 }
 
 interface UserContextActions {
-  setSession: (session: UserSession) => void;
-  clearSession: () => void;
-  refreshSession: () => Promise<void>;
+  clearSession: () => Promise<void>;
   refetchUser: () => Promise<void>;
 }
 
@@ -44,32 +30,16 @@ interface UserProviderProps {
 }
 
 export function UserProvider({ children }: UserProviderProps) {
-  const [accessToken, setAccessToken] = React.useState<string | null>(null);
   const [status, setStatus] = React.useState<TAuthStatusEnum>(
     authStatusEnumObject.loading
   );
 
-  // Fetch current user with subscription data from shared/currentUser
   const {
     data: currentUser,
     isLoading: isUserLoading,
     error: userError,
     refetch: refetchUser,
   } = useCurrentUserQuery();
-
-  const queryClient = useQueryClient();
-
-  // Initialize from localStorage on mount
-  React.useEffect(() => {
-    const storedToken = getLocalStorageItem<string>(
-      localStorageKeysEnumObject.accessToken
-    );
-    if (storedToken) {
-      setAccessToken(storedToken);
-    } else {
-      setStatus(authStatusEnumObject.unauthenticated);
-    }
-  }, []);
 
   // Update status when current user data changes
   React.useEffect(() => {
@@ -82,69 +52,29 @@ export function UserProvider({ children }: UserProviderProps) {
     }
   }, [currentUser, isUserLoading, userError]);
 
-  const setSession = React.useCallback((session: UserSession) => {
-    setLocalStorageItem(
-      localStorageKeysEnumObject.accessToken,
-      session.accessToken
-    );
-    setLocalStorageItem(localStorageKeysEnumObject.user, session.user);
-    // Note: Cookie handling is done separately in server components
-    setAccessToken(session.accessToken);
-    setStatus(authStatusEnumObject.authenticated);
-  }, []);
-
-  const clearSession = React.useCallback(() => {
-    clearLocalStorage([
-      localStorageKeysEnumObject.accessToken,
-      localStorageKeysEnumObject.user,
-      localStorageKeysEnumObject.refreshToken,
-    ]);
-    // Note: Cookie clearing is done separately in server components
-    setAccessToken(null);
+  const clearSession = React.useCallback(async () => {
+    await authClient.signOut();
     setStatus(authStatusEnumObject.unauthenticated);
   }, []);
 
-  const refreshSession = React.useCallback(async () => {
-    try {
-      setStatus(authStatusEnumObject.loading);
-      const session = await CurrentUserService.getSession();
-      setSession(session);
-      // Also refresh current user data with subscription
-      await refetchUser();
-    } catch {
-      clearSession();
-    }
-  }, [setSession, clearSession, refetchUser]);
-
   const refetchUserWrapper = React.useCallback(async () => {
-    await queryClient.invalidateQueries({
-      queryKey: currentUserQueryKey,
-    });
     await refetchUser();
   }, [refetchUser]);
 
-  
-
   const value = React.useMemo<UserContextValue>(
     () => ({
-      user: currentUser ?? null,
-      accessToken,
+      user:            currentUser ?? null,
       status,
       isAuthenticated: status === authStatusEnumObject.authenticated,
-      isLoading: status === authStatusEnumObject.loading || isUserLoading,
-      setSession,
+      isLoading:       status === authStatusEnumObject.loading || isUserLoading,
       clearSession,
-      refreshSession,
-      refetchUser: refetchUserWrapper,
+      refetchUser:     refetchUserWrapper,
     }),
     [
       currentUser,
-      accessToken,
       status,
       isUserLoading,
-      setSession,
       clearSession,
-      refreshSession,
       refetchUserWrapper,
     ]
   );

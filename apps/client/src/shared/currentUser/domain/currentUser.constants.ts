@@ -2,7 +2,6 @@ import { getEnumObjectFromArray } from '@repo/utils';
 
 /**
  * Current user constants - object enums
- * Following the auth feature pattern
  */
 
 // Query keys for React Query
@@ -32,15 +31,3 @@ export const authStatus = [
 ] as const;
 export type TAuthStatusEnum = (typeof authStatus)[number];
 export const authStatusEnumObject = getEnumObjectFromArray(authStatus);
-
-/**
- * LocalStorage keys for user session data
- */
-export const localStorageKeys = [
-  'accessToken',
-  'user',
-  'refreshToken',
-] as const;
-export type TLocalStorageKeyEnum = (typeof localStorageKeys)[number];
-export const localStorageKeysEnumObject =
-  getEnumObjectFromArray(localStorageKeys);
