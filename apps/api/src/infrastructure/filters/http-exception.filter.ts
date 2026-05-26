@@ -1,7 +1,14 @@
-import { ArgumentsHost, Catch, ExceptionFilter, HttpException } from '@nestjs/common';
+import { ArgumentsHost, Catch, ExceptionFilter, HttpException, Injectable } from '@nestjs/common';
+import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
 @Catch(HttpException)
+@Injectable()
 export class HttpExceptionFilter implements ExceptionFilter {
+  constructor(
+    @InjectPinoLogger(HttpExceptionFilter.name)
+    private readonly logger: PinoLogger,
+  ) {}
+
   catch(exception: HttpException, host: ArgumentsHost): void {
     const ctx = host.switchToHttp();
     const res = ctx.getResponse<{ status(c: number): { send(b: unknown): void } }>();
@@ -15,6 +22,13 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const errorCode = isObj
       ? ((raw as { error?: string }).error ?? httpStatusToCode(status))
       : httpStatusToCode(status);
+
+    // Schema standard: log errorCode for observability; use warn for client errors, error for server faults
+    if (status >= 500) {
+      this.logger.error({ errorCode }, 'HTTP exception');
+    } else {
+      this.logger.warn({ errorCode }, 'HTTP exception');
+    }
 
     res.status(status).send({
       success: false,
