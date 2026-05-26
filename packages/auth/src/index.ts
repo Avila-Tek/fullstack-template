@@ -1,13 +1,4 @@
-// Domain types and utilities
-
-// Components
-export {
-  RequireAdmin,
-  RequireAllPermissions,
-  RequireAnyPermission,
-  RequirePermission,
-  RequireRole,
-} from './components/roleGuards';
+// ── Domain types + utilities ──────────────────────────────────────────────
 export type {
   AuthError,
   AuthState,
@@ -27,7 +18,14 @@ export {
   userStatus,
   userStatusEnumObject,
 } from './domain/auth.model';
-// Hooks
+
+// ── Better Auth client (browser-only) ────────────────────────────────────
+export { authClient } from './client/better-auth.client';
+
+// ── React Query ───────────────────────────────────────────────────────────
+export { sessionQueryOptions } from './queries/session.query';
+
+// ── Hooks ─────────────────────────────────────────────────────────────────
 export {
   getDefaultPathByRole,
   useAdminGuard,
@@ -38,4 +36,14 @@ export {
   usePermission,
   useRole,
   useRoleRedirect,
+  useSession,
 } from './hooks';
+
+// ── Components ────────────────────────────────────────────────────────────
+export {
+  RequireAdmin,
+  RequireAllPermissions,
+  RequireAnyPermission,
+  RequirePermission,
+  RequireRole,
+} from './components/roleGuards';
