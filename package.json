@@ -22,5 +22,10 @@
   "workspaces": [
     "apps/*",
     "packages/*"
-  ]
+  ],
+  "dependencies": {
+    "@rollup/rollup-win32-x64-msvc": "^4.57.1",
+    "@tailwindcss/oxide-win32-x64-msvc": "^4.1.18",
+    "lightningcss-win32-x64-msvc": "^1.30.2"
+  }
 }

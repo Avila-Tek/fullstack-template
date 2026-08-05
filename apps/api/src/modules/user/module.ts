@@ -8,8 +8,6 @@ import { GetUserByEmailUseCase } from './application/use-cases/GetUserByEmailUse
 import { GetUserByEmailPort } from './application/ports/in/GetUserByEmailPort';
 import { GetUserByEmailService } from './infrastructure/services/GetUserByEmailService';
 
-console.log(GetUserByEmailService);
-
 @Module({
   providers: [
     GetUserByEmailService,

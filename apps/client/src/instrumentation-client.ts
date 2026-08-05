@@ -1,20 +1,21 @@
-// This file configures the initialization of Sentry on the client.
-// The added config here will be used whenever a users loads a page in their browser.
-// https://docs.sentry.io/platforms/javascript/guides/nextjs/
+// Client Sentry bootstrap.
+// Evita import estático de @sentry/nextjs en local: infla app/layout.js (~2MB+)
+// y provoca ChunkLoadError (timeout) en Windows/dev.
+// Para activarlo: define NEXT_PUBLIC_SENTRY_DSN en .env.local
 
-import * as Sentry from '@sentry/nextjs';
+const sentryDsn = process.env.NEXT_PUBLIC_SENTRY_DSN;
 
-Sentry.init({
-  dsn: 'https://348956514402976d0b95732608ff24e2@o437709.ingest.us.sentry.io/4510465354039296',
+export const onRouterTransitionStart = (..._args: unknown[]) => {
+  // no-op sin Sentry; con DSN se reemplaza tras el import dinámico
+};
 
-  // Define how likely traces are sampled. Adjust this value in production, or use tracesSampler for greater control.
-  tracesSampleRate: 1,
-  // Enable logs to be sent to Sentry
-  enableLogs: true,
-
-  // Enable sending user PII (Personally Identifiable Information)
-  // https://docs.sentry.io/platforms/javascript/guides/nextjs/configuration/options/#sendDefaultPii
-  sendDefaultPii: true,
-});
-
-export const onRouterTransitionStart = Sentry.captureRouterTransitionStart;
+if (sentryDsn) {
+  void import('@sentry/nextjs').then((Sentry) => {
+    Sentry.init({
+      dsn: sentryDsn,
+      tracesSampleRate: 1,
+      enableLogs: true,
+      sendDefaultPii: true,
+    });
+  });
+}

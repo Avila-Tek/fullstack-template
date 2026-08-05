@@ -1,5 +1,5 @@
 import { UnauthorizedException } from '@nestjs/common';
-import { CommandHandler, ICommandHandler, QueryBus } from '@nestjs/cqrs';
+import { CommandBus, CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { LoginCommand, SignInUseCasePort } from '../ports/in/SignInUseCasePort';
 import { GetUserByEmailPort } from '../ports/out/GetUserByEmail';
 import { PasswordHasher } from '../ports/out/PasswordHasher';
@@ -8,13 +8,13 @@ import { TokenGenerator } from '../ports/out/TokenGenerator';
 @CommandHandler(SignInUseCasePort)
 export class SignInUseCase implements ICommandHandler<SignInUseCasePort> {
   constructor(
-    private readonly queryBus: QueryBus,
+    private readonly commandBus: CommandBus,
     private readonly passwordService: PasswordHasher,
     private readonly tokenGenerator: TokenGenerator
   ) {}
 
   async execute(command: LoginCommand) {
-    const user = await this.queryBus.execute(
+    const user = await this.commandBus.execute(
       new GetUserByEmailPort(command.email, command.password)
     );
 
