@@ -1,5 +1,4 @@
-import { ApiBody, ApiResponse } from '@nestjs/swagger';
-import { SchemaObject } from '@nestjs/swagger/dist/interfaces/open-api-spec.interface';
+import { ApiBody, ApiResponse, type SchemaObject } from '@nestjs/swagger';
 import { z } from 'zod';
 
 function toSwaggerSchema(schema: z.ZodType): SchemaObject {
