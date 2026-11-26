@@ -33,11 +33,11 @@
     "typescript": "5.9.2"
   },
   "dependencies": {
-    "posthog-js": "1.260.2",
-    "posthog-node": "5.7.0",
+    "posthog-js": "1.455.4",
+    "posthog-node": "5.74.0",
     "@repo/utils": "*",
-    "@growthbook/growthbook": "1.6.1",
-    "@growthbook/growthbook-react": "1.6.1",
+    "@growthbook/growthbook": "1.8.0",
+    "@growthbook/growthbook-react": "1.8.0",
     "react": "19.3.1",
     "next": "15.5.29"
   }
