@@ -38,7 +38,7 @@
     "@repo/utils": "*",
     "@growthbook/growthbook": "1.6.1",
     "@growthbook/growthbook-react": "1.6.1",
-    "react": "19.1.1",
+    "react": "19.3.1",
     "next": "15.5.29"
   }
 }
