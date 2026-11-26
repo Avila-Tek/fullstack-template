@@ -37,13 +37,13 @@
     "react": "19.3.1",
     "react-dom": "19.3.1",
     "react-hook-form": "7.71.1",
-    "tailwind-merge": "3.3.1",
+    "tailwind-merge": "3.7.1",
     "use-analytics": "1.1.0",
     "zod": "^4.3.6"
   },
   "devDependencies": {
     "@repo/typescript-config": "*",
-    "@tailwindcss/postcss": "^4.1.17",
+    "@tailwindcss/postcss": "^4.3.5",
     "@testing-library/jest-dom": "6.8.0",
     "@testing-library/react": "16.3.0",
     "@testing-library/user-event": "14.6.1",
@@ -58,7 +58,7 @@
     "msw": "2.12.8",
     "postcss": "^8.5.33",
     "shadcn": "^3.8.5",
-    "tailwindcss": "^4.1.17",
+    "tailwindcss": "^4.3.5",
     "ts-jest": "29.4.1",
     "typescript": "5.9.2"
   }
