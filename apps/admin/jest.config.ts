@@ -12,17 +12,32 @@ const createJestConfig = nextJest({
 // Add any custom config to be passed to Jest
 const config = {
   coverageProvider: 'v8',
-  testEnvironment: 'jsdom',
+  testEnvironment: 'jest-fixed-jsdom',
   setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
   testMatch: ['**/__tests__/**/*.(test|spec).[jt]s?(x)'],
+  testPathIgnorePatterns: ['<rootDir>/node_modules/', '<rootDir>/.next/', '<rootDir>/example/'],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/$1',
   },
-  setupFiles: ['<rootDir>/jest.polyfills.ts'],
   testEnvironmentOptions: {
     customExportConditions: [''],
   },
 };
 
-// createJestConfig is exported this way to ensure that next/jest can load the Next.js config which is async
-export default createJestConfig(config) as unknown;
+// msw depends on ESM-only packages that Jest must transform. next/jest always
+// ignores node_modules, so its patterns are replaced after the config resolves.
+const esmPackages = ['until-async'];
+
+async function jestConfig(): Promise<Record<string, unknown>> {
+  const nextJestConfig = await createJestConfig(config)();
+
+  return {
+    ...nextJestConfig,
+    transformIgnorePatterns: [
+      `/node_modules/(?!(${esmPackages.join('|')})/)`,
+      '^.+\\.module\\.(css|sass|scss)$',
+    ],
+  };
+}
+
+export default jestConfig;

@@ -1,80 +1,86 @@
-// sign-in.usecase.spec.ts
-import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { UnauthorizedException } from '@nestjs/common';
-import { QueryBus } from '@nestjs/cqrs';
+import type { CommandBus } from '@nestjs/cqrs';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import type { PasswordHasher } from '../../modules/auth/application/ports/out/PasswordHasher';
+import type { TokenGenerator } from '../../modules/auth/application/ports/out/TokenGenerator';
 import { SignInUseCase } from '../../modules/auth/application/use-case/SignInUseCase';
+import { AuthUser } from '../../modules/auth/domain/entities/AuthUser';
+import { UserStatusEnum } from '../../modules/auth/domain/value-objects/UserStatus';
 
-function mockUser(overrides: Partial<any> = {}) {
-  return {
+interface AuthUserOverrides {
+  passwordHash?: string | null;
+  status?: UserStatusEnum;
+}
+
+function mockUser(overrides: AuthUserOverrides = {}): AuthUser {
+  return AuthUser.restore({
     id: 'u1',
     email: 'a@b.com',
-    roleId: 'r1',
-    password: { getValue: () => 'hashed' },
-    isActive: () => true,
+    passwordHash: 'hashed',
+    status: UserStatusEnum.ACTIVE,
     ...overrides,
-  };
+  });
 }
 
 describe('SignInUseCase', () => {
-  let queryBus: Pick<QueryBus, 'execute'>;
-  let passwordHasher: { verify: ReturnType<typeof vi.fn> };
-  let tokenGenerator: { generate: ReturnType<typeof vi.fn> };
+  const execute = vi.fn();
+  const verify = vi.fn();
+  const generate = vi.fn();
+  const generateRefresh = vi.fn();
 
   let useCase: SignInUseCase;
 
   beforeEach(() => {
-    queryBus = { execute: vi.fn() };
-    passwordHasher = { verify: vi.fn() };
-    tokenGenerator = { generate: vi.fn() };
+    vi.resetAllMocks();
 
-    useCase = new SignInUseCase(
-      queryBus as any,
-      passwordHasher as any,
-      tokenGenerator as any
-    );
+    const commandBus = { execute } as unknown as CommandBus;
+    const passwordHasher: PasswordHasher = { hash: vi.fn(), verify };
+    const tokenGenerator: TokenGenerator = { generate, generateRefresh };
+
+    useCase = new SignInUseCase(commandBus, passwordHasher, tokenGenerator);
   });
 
   it('Sign In: Invalid email', async () => {
-    (queryBus.execute as any).mockResolvedValue(null);
+    execute.mockResolvedValue(null);
 
     await expect(
       useCase.execute({ email: 'a@b.com', password: 'pw' })
     ).rejects.toBeInstanceOf(UnauthorizedException);
 
-    expect(queryBus.execute).toHaveBeenCalledTimes(1);
-    expect(passwordHasher.verify).not.toHaveBeenCalled();
-    expect(tokenGenerator.generate).not.toHaveBeenCalled();
+    expect(execute).toHaveBeenCalledTimes(1);
+    expect(verify).not.toHaveBeenCalled();
+    expect(generate).not.toHaveBeenCalled();
   });
 
   it('Sign In: Disabled user', async () => {
-    (queryBus.execute as any).mockResolvedValue(
-      mockUser({ isActive: () => false })
-    );
+    execute.mockResolvedValue(mockUser({ status: UserStatusEnum.INACTIVE }));
 
     await expect(
       useCase.execute({ email: 'a@b.com', password: 'pw' })
     ).rejects.toMatchObject({ message: 'Account is disabled' });
 
-    expect(passwordHasher.verify).not.toHaveBeenCalled();
+    expect(verify).not.toHaveBeenCalled();
   });
 
   it('Sign In: Invalid password', async () => {
-    (queryBus.execute as any).mockResolvedValue(mockUser());
-    passwordHasher.verify.mockResolvedValue(false);
+    execute.mockResolvedValue(mockUser());
+    verify.mockResolvedValue(false);
 
     await expect(
       useCase.execute({ email: 'a@b.com', password: 'pw' })
     ).rejects.toMatchObject({ message: 'Invalid credentials' });
 
-    expect(passwordHasher.verify).toHaveBeenCalledWith('pw', 'hashed');
-    expect(tokenGenerator.generate).not.toHaveBeenCalled();
+    expect(verify).toHaveBeenCalledWith('pw', 'hashed');
+    expect(generate).not.toHaveBeenCalled();
+    expect(generateRefresh).not.toHaveBeenCalled();
   });
 
   it('Sign In: Success', async () => {
     const user = mockUser();
-    (queryBus.execute as any).mockResolvedValue(user);
-    passwordHasher.verify.mockResolvedValue(true);
-    tokenGenerator.generate.mockResolvedValue('token123');
+    execute.mockResolvedValue(user);
+    verify.mockResolvedValue(true);
+    generate.mockResolvedValue('token123');
+    generateRefresh.mockResolvedValue('refresh123');
 
     const result = await useCase.execute({
       email: user.email,
@@ -82,17 +88,26 @@ describe('SignInUseCase', () => {
     });
 
     expect(result).toEqual({
+      user: {
+        id: user.id,
+        email: user.email,
+        firstName: null,
+        lastName: null,
+        timezone: undefined,
+        status: UserStatusEnum.ACTIVE,
+        createdAt: undefined,
+        updatedAt: undefined,
+      },
       accessToken: 'token123',
-      userId: user.id,
-      email: user.email,
+      refreshToken: 'refresh123',
     });
 
-    expect(queryBus.execute).toHaveBeenCalledTimes(1);
-    expect(passwordHasher.verify).toHaveBeenCalledWith('pw', 'hashed');
-    expect(tokenGenerator.generate).toHaveBeenCalledWith({
+    expect(execute).toHaveBeenCalledTimes(1);
+    expect(verify).toHaveBeenCalledWith('pw', 'hashed');
+    expect(generate).toHaveBeenCalledWith({
       userId: user.id,
       email: user.email,
-      roleId: user.roleId,
     });
+    expect(generateRefresh).toHaveBeenCalledTimes(1);
   });
 });
