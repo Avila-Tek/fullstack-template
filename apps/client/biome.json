@@ -1,8 +1,9 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.2.2/schema.json",
+  "root": false,
+  "$schema": "https://biomejs.dev/schemas/2.6.9/schema.json",
   "extends": "//",
   "files": {
-    "ignore": ["example/**"]
+    "includes": ["**", "!example/**"]
   },
   "linter": {
     "domains": {
