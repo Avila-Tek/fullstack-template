@@ -11,7 +11,7 @@
     "cypress:open": "cypress open"
   },
   "dependencies": {
-    "@hookform/resolvers": "5.1.0",
+    "@hookform/resolvers": "5.9.2",
     "@repo/auth": "*",
     "@repo/feature-flags": "*",
     "@repo/schemas": "*",
@@ -36,7 +36,7 @@
     "posthog-js": "1.260.2",
     "react": "19.3.1",
     "react-dom": "19.3.1",
-    "react-hook-form": "7.71.1",
+    "react-hook-form": "7.92.0",
     "tailwind-merge": "3.7.1",
     "use-analytics": "1.1.0",
     "zod": "^4.3.6"
