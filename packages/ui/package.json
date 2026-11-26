@@ -27,7 +27,7 @@
     "@types/react-dom": "19.1.7",
     "tailwindcss": "^4.1.17",
     "typescript": "5.9.2",
-    "shadcn": "^3.8.2"
+    "shadcn": "^3.8.5"
   },
   "exports": {
     "./analytics": "./src/analytics/index.ts",
