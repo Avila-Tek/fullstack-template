@@ -1,4 +1,5 @@
 import dotenv from 'dotenv';
+import type { Config } from 'jest';
 import nextJest from 'next/jest.js';
 
 // load .env.test environment variables Importante debe colocar el nombre del archivo de las variables de entorno de su proyecto
@@ -10,7 +11,7 @@ const createJestConfig = nextJest({
 });
 
 // Add any custom config to be passed to Jest
-const config = {
+const config: Config = {
   coverageProvider: 'v8',
   testEnvironment: 'jest-fixed-jsdom',
   setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
@@ -26,7 +27,7 @@ const config = {
 
 // msw depends on ESM-only packages that Jest must transform. next/jest always
 // ignores node_modules, so its patterns are replaced after the config resolves.
-const esmPackages = ['until-async'];
+const esmPackages = ['until-async', 'rettime', '@open-draft/deferred-promise'];
 
 async function jestConfig(): Promise<Record<string, unknown>> {
   const nextJestConfig = await createJestConfig(config)();
