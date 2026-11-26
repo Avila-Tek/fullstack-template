@@ -16,7 +16,7 @@ const config = {
   setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
   testMatch: ['**/__tests__/**/*.(test|spec).[jt]s?(x)'],
   moduleNameMapper: {
-    '^@/(.*)$': '<rootDir>/src/$1',
+    '^@/(.*)$': '<rootDir>/$1',
   },
   setupFiles: ['<rootDir>/jest.polyfills.ts'],
   testEnvironmentOptions: {

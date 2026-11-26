@@ -1,14 +1,12 @@
-import React from 'react';
-import Home from '@/app/page';
-import { render } from '../test-utils/test-utils';
+import { redirect } from 'next/navigation';
+import RootPage from '@/src/app/page';
 
-// Mock the Google Font loader
-jest.mock('next/font/google', () => ({
-  Inter: jest.fn(() => 'MockedInter'),
+jest.mock('next/navigation', () => ({
+  redirect: jest.fn(),
 }));
 
-it('renders homepage unchanged', () => {
-  const { container } = render(<Home />);
+it('redirects the root route to the login page', () => {
+  RootPage();
 
-  expect(container).toMatchSnapshot();
+  expect(redirect).toHaveBeenCalledWith('/login');
 });

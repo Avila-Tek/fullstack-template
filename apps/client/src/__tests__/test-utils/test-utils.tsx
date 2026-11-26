@@ -1,7 +1,7 @@
 import { type RenderOptions, render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
-import { ReactQueryProvider } from '@/context/react-query';
+import { QueryClient } from '@/src/context/react-query';
 
 // // -----------------------------------------------------------------------------
 // This file re-exports everything from React Testing Library and then overrides
@@ -15,7 +15,7 @@ import { ReactQueryProvider } from '@/context/react-query';
 const AllProviders = ({ children }: { children: React.ReactNode }) => {
   return (
     <React.Suspense fallback={<div>Loading ...</div>}>
-      <ReactQueryProvider>{children}</ReactQueryProvider>
+      <QueryClient>{children}</QueryClient>
     </React.Suspense>
   );
 };
