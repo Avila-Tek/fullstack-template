@@ -1,0 +1,3 @@
+# Blocks the push when any workspace test fails.
+# Turbo caches results, so unchanged workspaces are not re-run.
+npx turbo test
