@@ -20,7 +20,8 @@
     "forceConsistentCasingInFileNames": true,
     "noImplicitAny": false,
     "strictBindCallApply": false,
-    "noFallthroughCasesInSwitch": false
+    "noFallthroughCasesInSwitch": false,
+    "types": ["node", "vitest/globals"]
     // "paths": {
     //   "@modules/": ["./src/modules"],
     //   "@shared/": ["./src/shared"]

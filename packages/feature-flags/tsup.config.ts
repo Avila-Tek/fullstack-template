@@ -28,7 +28,7 @@ export default defineConfig([
     format: ['cjs', 'esm'],
     splitting: true,
     sourcemap: true,
-    dts: true,
+    dts: { compilerOptions: { ignoreDeprecations: '6.0' } },
     treeshake: true,
     target: 'esnext',
     outDir: 'dist',

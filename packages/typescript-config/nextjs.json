@@ -12,7 +12,8 @@
     "moduleResolution": "Bundler",
     "allowJs": true,
     "jsx": "preserve",
-    "noEmit": true
+    "noEmit": true,
+    "noUncheckedSideEffectImports": false
   },
   "include": ["src", "next-env.d.ts"],
   "exclude": ["node_modules"]
