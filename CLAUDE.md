@@ -113,3 +113,17 @@ When working on a task, open the most relevant nested guide(s) below before codi
 - **app/api**: `apps/api/CLAUDE.md`
 
 ---
+
+## Agent skills
+
+### Issue tracker
+
+Issues, specs and Wayfinder maps live as GitHub issues in `Avila-Tek/fullstack-template`. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Five canonical triage states plus the `rol:*` triad for decision tickets. See `docs/agents/triage-labels.md`.
+
+### Workflow
+
+How a requirement runs from the Wayfinder map to delivery tickets. See `docs/agents/flujo.md`.
