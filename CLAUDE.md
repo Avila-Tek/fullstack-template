@@ -124,6 +124,10 @@ Issues, specs and Wayfinder maps live as GitHub issues in `Avila-Tek/fullstack-t
 
 Five canonical triage states plus the `rol:*` triad for decision tickets. See `docs/agents/triage-labels.md`.
 
+### Domain docs
+
+Single-context: one `GLOSSARY.md` and `docs/adr/` at the repo root. See `docs/agents/domain.md`.
+
 ### Workflow
 
 How a requirement runs from the Wayfinder map to delivery tickets. See `docs/agents/flujo.md`.
